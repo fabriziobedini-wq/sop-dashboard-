@@ -936,7 +936,30 @@ function compute(sym){
   if(oiDelta<-4&&bias==='short')bias='long';
   if(liqOI>5&&bias==='short')bias='long';
 
-  // ── KEY FILTER: zone conflict override ───────────────────────────────
+  // ── BIAS STABILITY FILTER ────────────────────────────────────────────
+  // Un cambio di bias su 4h ha vita minima 8h (2 candele)
+  // Ignora il cambio se non si verifica almeno uno di:
+  // 1. CVD invertito rispetto al bias precedente
+  // 2. OI drop >3% (flush)
+  // 3. Funding saltato in modo estremo (>0.08% o <-0.01%)
+  const savedForFilter=JSON.parse(localStorage.getItem('sop_signal_'+sym)||'null');
+  if(savedForFilter&&savedForFilter.bias!==bias&&savedForFilter.bias!=='wait'){
+    const hoursSinceLastChange=(Date.now()-savedForFilter.biasAt)/3600000;
+    if(hoursSinceLastChange<8){
+      // Check if any strong signal justifies the change
+      const cvdInverted=(savedForFilter.bias==='long'&&cvd.dir==='down')||
+                        (savedForFilter.bias==='short'&&cvd.dir==='up');
+      const oiFlush=liqOI>3;
+      const fundingExtreme=frVal>0.08||frVal<-0.01;
+      const strongSignal=cvdInverted||oiFlush||fundingExtreme;
+
+      if(!strongSignal){
+        // Ignora il cambio — troppo presto, nessun segnale forte
+        bias=savedForFilter.bias;
+        console.log(sym+': bias change ignored ('+hoursSinceLastChange.toFixed(1)+'h since last change, no strong signal)');
+      }
+    }
+  }
   let zoneConflict=null;
   if(bias==='long'&&zones.priceInSupply){
     bias='wait';
@@ -979,7 +1002,12 @@ function compute(sym){
   const alerts=checkAlerts({sym,bias,cvd,frVal,price,strat},savedState);
   const hoursActive=savedState?formatAgo(savedState.biasAt):'—';
 
-  return{sym,price,priceChg,vol24h,volRatio,oiDelta,oiCurrent,frVal,cvd,lsR,atr,bias,str,oiVolSpot,oiVolSpotStatus,liqOI,quality,qualityLabel,qualityColor,qualityDetails,zoneConflict,pivots,wPivots,zones,sr,strat,alerts,hoursActive,nearZone:zones.nearZone};
+  // Bias stability info for UI
+  const hoursSinceBias=savedState?(Date.now()-savedState.biasAt)/3600000:0;
+  const biasStable=hoursSinceBias>=8;
+  const biasAge=hoursSinceBias<1?Math.floor(hoursSinceBias*60)+'m':Math.floor(hoursSinceBias)+'h';
+
+  return{sym,price,priceChg,vol24h,volRatio,oiDelta,oiCurrent,frVal,cvd,lsR,atr,bias,str,oiVolSpot,oiVolSpotStatus,liqOI,quality,qualityLabel,qualityColor,qualityDetails,zoneConflict,pivots,wPivots,zones,sr,strat,alerts,hoursActive,nearZone:zones.nearZone,biasStable,biasAge};
 }
 
 // ── RENDER ────────────────────────────────────────────────────────────────
@@ -1158,7 +1186,9 @@ function renderCard(s,mode){
         <div style="display:flex;gap:6px;align-items:center;margin-top:4px;flex-wrap:wrap">
           <div class="scard-bias ${cardClass}">${isL?'🟢 LONG':'🔴 SHORT'}</div>
           <div style="font-size:9px;font-weight:700;padding:3px 8px;border-radius:20px;background:${st.tf==='intraday'?'#1a1a2e':'#0d1a0d'};color:${st.tf==='intraday'?'#818cf8':'#4ade80'};border:1px solid ${st.tf==='intraday'?'#2a2a50':'#0f4020'}">${st.tf==='intraday'?'⚡ INTRADAY':'📅 SWING 1-3g'}</div>
-          <div style="font-size:9px;padding:3px 9px;border-radius:20px;background:var(--bg4);color:var(--text3);border:1px solid var(--border)">⏱ bias da ${s.hoursActive}</div>
+          <div style="font-size:9px;padding:3px 9px;border-radius:20px;background:var(--bg4);color:${s.biasStable?'var(--long)':'var(--wait)'};border:1px solid ${s.biasStable?'var(--long-border)':'var(--wait-border)'}">
+            ${s.biasStable?'✓':'⚠'} bias da ${s.biasAge} ${s.biasStable?'— stabile':'— in conferma'}
+          </div>
         </div>
       </div>
       <div class="scard-right">
