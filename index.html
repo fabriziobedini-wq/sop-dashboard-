@@ -499,7 +499,52 @@ function calcSR(k1d,price){
   };
 }
 
-// ── TIMEFRAME CLASSIFICATION ──────────────────────────────────────────────
+// ── STRUCTURAL BIAS SOLIDITY ──────────────────────────────────────────────
+// Calcola la solidità strutturale del bias: 1=Fragile, 2=Moderato, 3=Solido
+// Un bias fragile non genera segnali operativi — solo monitoraggio
+function calcSolidity(bias, oiDelta, frVal, cvdData, lsR, savedState, biasAge){
+  if(bias==='wait') return{level:0,label:'WAIT',color:'var(--text3)',icon:'—'};
+
+  let score=0;
+
+  // 1. DURATA DEL BIAS — quanto tempo è stabile
+  const hoursStable=savedState?(Date.now()-savedState.biasAt)/3600000:0;
+  if(hoursStable>=12) score+=3;      // >12h = molto stabile
+  else if(hoursStable>=4) score+=2;  // 4-12h = abbastanza stabile
+  else if(hoursStable>=1) score+=1;  // 1-4h = recente
+  // <1h = 0 punti = troppo recente
+
+  // 2. INTENSITÀ OI — quanto è forte il segnale OI
+  if(Math.abs(oiDelta)>3) score+=2;      // OI molto forte
+  else if(Math.abs(oiDelta)>1) score+=1; // OI moderato
+
+  // 3. CVD — intensità e durata
+  if(cvdData.dir!=='flat') score+=1;
+  // CVD deve concordare col bias
+  const cvdOk=(bias==='long'&&cvdData.dir==='up')||(bias==='short'&&cvdData.dir==='down');
+  if(cvdOk) score+=1;
+
+  // 4. FUNDING — coerenza col bias
+  const frOk=(bias==='long'&&frVal<0.03)||(bias==='short'&&frVal>0.01)||Math.abs(frVal)<0.01;
+  if(frOk) score+=1;
+  // Funding estremo nella direzione giusta = forte conferma
+  if(bias==='short'&&frVal>0.05) score+=1;
+  if(bias==='long'&&frVal<-0.005) score+=1;
+
+  // 5. L/S coerente
+  if(lsR!==null){
+    if(bias==='long'&&lsR<0.9) score+=1;  // folla short = squeeze possibile
+    if(bias==='short'&&lsR>2.5) score+=1; // folla long = flush possibile
+  }
+
+  // Score max teorico = 11
+  // Fragile: <4, Moderato: 4-7, Solido: >7
+  if(score>=8) return{level:3,label:'Solido',color:'var(--long)',icon:'🟢',score};
+  if(score>=4) return{level:2,label:'Moderato',color:'var(--wait)',icon:'🟡',score};
+  return{level:1,label:'Fragile',color:'var(--short)',icon:'🔴',score};
+}
+
+
 // Intraday: high strength + price near level + high volume ratio
 // Swing: bias clear + good R/R + price needs to travel to level
 function classifyTimeframe(str,volRatio,distEntry,rr1,atr,price){
@@ -567,17 +612,18 @@ function calcStrategy(bias,price,atr,zones,sr,pivots,wPivots,str=3,volRatio=1){
   if(entryZone){
     entry=Math.round(entryZone.price*10000)/10000;
 
-    // Stop: use zone boundary if available, otherwise 1% from entry
+    // Stop: use zone boundary if available, otherwise ATR-based minimum
     if(entryZone.zone){
       const z=entryZone.zone;
-      const buf=Math.max(atr*0.25, entry*0.005); // at least 0.5% buffer
+      const buf=Math.max(atr*0.5, entry*0.008); // at least 0.8% buffer
       stop=isL
         ? Math.round((z.zL-buf)*10000)/10000
         : Math.round((z.zH+buf)*10000)/10000;
     } else {
+      // Minimum 1.5% from entry
       stop=isL
-        ? Math.round(entry*(1-0.01)*10000)/10000  // 1% below
-        : Math.round(entry*(1+0.01)*10000)/10000; // 1% above
+        ? Math.round(entry*(1-0.015)*10000)/10000
+        : Math.round(entry*(1+0.015)*10000)/10000;
     }
   } else {
     // Fallback: entry at 1 ATR from price in direction
@@ -590,17 +636,18 @@ function calcStrategy(bias,price,atr,zones,sr,pivots,wPivots,str=3,volRatio=1){
     entryZone={price:entry,source:'Fallback ATR',zone:null};
   }
 
-  // VALIDATION: stop must be on correct side and different from entry
+  // VALIDATION: stop must be on correct side and minimum 1×ATR from entry
+  // This prevents stops that are too tight to survive normal market noise
+  const minStopDist=Math.max(atr*1.0, entry*0.015); // 1×ATR or 1.5% — whichever is larger
   const stopDist=Math.abs(stop-entry);
-  if(stopDist<entry*0.003){
-    // Stop too close or same as entry — use 1% minimum
+  if(stopDist<minStopDist){
     stop=isL
-      ? Math.round(entry*(1-0.01)*10000)/10000
-      : Math.round(entry*(1+0.01)*10000)/10000;
+      ? Math.round((entry-minStopDist)*10000)/10000
+      : Math.round((entry+minStopDist)*10000)/10000;
   }
   // Ensure stop is on correct side
-  if(isL&&stop>=entry) stop=Math.round(entry*0.99*10000)/10000;
-  if(!isL&&stop<=entry) stop=Math.round(entry*1.01*10000)/10000;
+  if(isL&&stop>=entry) stop=Math.round(entry*(1-0.015)*10000)/10000;
+  if(!isL&&stop<=entry) stop=Math.round(entry*(1+0.015)*10000)/10000;
 
   const distEntry=Math.round(Math.abs(entry-price)/price*100*100)/100;
 
@@ -878,11 +925,26 @@ function monitorTrades(allSignals){
       localStorage.setItem(notifKey,JSON.stringify(notified));
       sendTG(`⚠️ <b>${t.sym}</b> — PREZZO VICINO ALLO STOP\nStop: ${fp(t.stop)} | Prezzo: ${fp(price)}\nDistanza rimasta: ${pctToStop.toFixed(0)}% dello stop\nValuta se uscire manualmente ora`);
     }
-
-    // Reset pre-stop warning if price moves away (>70% distance restored)
     if(pctToStop>70&&notified['prestop_'+t.id]){
       delete notified['prestop_'+t.id];
       localStorage.setItem(notifKey,JSON.stringify(notified));
+    }
+
+    // ── Pre-TP1 warning: price approaching TP1 ───────────────────────────
+    if(!t.tp1Hit){
+      const tp1Dist=Math.abs(t.tp1-t.entry);
+      const distToTp1=Math.abs(price-t.tp1);
+      const pctToTp1=tp1Dist>0?Math.min(100,(1-distToTp1/tp1Dist)*100):0;
+
+      if(pctToTp1>=75&&!notified['pretp1_'+t.id]){
+        notified['pretp1_'+t.id]=Date.now();
+        localStorage.setItem(notifKey,JSON.stringify(notified));
+        sendTG(`🎯 <b>${t.sym}</b> — VICINO AL TP1!\nTP1: ${fp(t.tp1)} | Prezzo: ${fp(price)}\nRaggiunto il ${pctToTp1.toFixed(0)}% del percorso\nValuta se chiudere manualmente ora o aspettare il TP`);
+      }
+      if(pctToTp1<60&&notified['pretp1_'+t.id]){
+        delete notified['pretp1_'+t.id];
+        localStorage.setItem(notifKey,JSON.stringify(notified));
+      }
     }
     const cvdAgainst=(isL&&sig.cvd.dir==='down'&&t.openCVD==='up')||(!isL&&sig.cvd.dir==='up'&&t.openCVD==='down');
     if(cvdAgainst&&!notified['cvd_trade_'+t.id]){
@@ -944,14 +1006,24 @@ function renderTrades(allSignals){
         const stopDist=Math.abs(t.stop-t.entry);
         const distToStop=price?Math.abs(price-t.stop):stopDist;
         const pctToStop=stopDist>0?Math.min(100,distToStop/stopDist*100):100;
-        const danger=pctToStop<50;
-        const warning=pctToStop<75&&pctToStop>=50;
-        if(!danger&&!warning) return '';
-        const bg=danger?'var(--short-bg)':'var(--wait-bg)';
-        const bdr=danger?'var(--short-border)':'var(--wait-border)';
-        const col=danger?'var(--short)':'var(--wait)';
-        const icon=danger?'🔴':'🟡';
-        return '<div style="margin:0 16px 8px;padding:6px 10px;background:'+bg+';border:1px solid '+bdr+';border-radius:6px;font-size:10px;font-weight:600;color:'+col+'">'+icon+' Prezzo vicino allo stop — '+pctToStop.toFixed(0)+'% rimasto · considera uscita manuale</div>';
+        const tp1Dist=Math.abs(t.tp1-t.entry);
+        const distToTp1=price?Math.abs(price-t.tp1):tp1Dist;
+        const pctToTp1=tp1Dist>0?Math.min(100,(1-distToTp1/tp1Dist)*100):0;
+        const stopDanger=pctToStop<50;
+        const stopWarn=pctToStop<75&&pctToStop>=50;
+        const tpNear=pctToTp1>=75&&!t.tp1Hit;
+        let html='';
+        if(tpNear){
+          html+='<div style="margin:0 16px 4px;padding:6px 10px;background:#052010;border:1px solid #0f4020;border-radius:6px;font-size:10px;font-weight:600;color:var(--long)">🎯 Vicino al TP1 — '+pctToTp1.toFixed(0)+'% del percorso · valuta se chiudere manualmente</div>';
+        }
+        if(stopDanger||stopWarn){
+          const bg=stopDanger?'var(--short-bg)':'var(--wait-bg)';
+          const bdr=stopDanger?'var(--short-border)':'var(--wait-border)';
+          const col=stopDanger?'var(--short)':'var(--wait)';
+          const icon=stopDanger?'🔴':'🟡';
+          html+='<div style="margin:0 16px 8px;padding:6px 10px;background:'+bg+';border:1px solid '+bdr+';border-radius:6px;font-size:10px;font-weight:600;color:'+col+'">'+icon+' Vicino allo stop — '+pctToStop.toFixed(0)+'% rimasto · considera uscita manuale</div>';
+        }
+        return html;
       })()}
 
       <div class="trade-levels">
@@ -1288,7 +1360,17 @@ function compute(sym){
   const biasStable=hoursSinceBias>=8;
   const biasAge=hoursSinceBias<1?Math.floor(hoursSinceBias*60)+'m':Math.floor(hoursSinceBias)+'h';
 
-  return{sym,price,priceChg,vol24h,volRatio,oiDelta,oiCurrent,frVal,cvd,lsR,atr,bias,str,oiVolSpot,oiVolSpotStatus,liqOI,quality,qualityLabel,qualityColor,qualityDetails,zoneConflict,pivots,wPivots,zones,sr,strat,alerts,hoursActive,nearZone:zones.nearZone,biasStable,biasAge};
+  // Structural solidity
+  const solidity=calcSolidity(bias,oiDelta,frVal,cvd,lsR,savedState,biasAge);
+
+  // If bias is Fragile (level 1) → downgrade strat to watch-only, no operative signal
+  const stratFinal=solidity.level>=2?strat:strat?{...strat,
+    statusLabel:'⚠ BIAS FRAGILE — monitoraggio',
+    statusColor:'var(--short)',
+    atEntry:false,isRetest:false,momentumStrong:false,watch:true
+  }:null;
+
+  return{sym,price,priceChg,vol24h,volRatio,oiDelta,oiCurrent,frVal,cvd,lsR,atr,bias,str,oiVolSpot,oiVolSpotStatus,liqOI,quality,qualityLabel,qualityColor,qualityDetails,zoneConflict,pivots,wPivots,zones,sr,strat:stratFinal,alerts,hoursActive,nearZone:zones.nearZone,biasStable,biasAge,solidity};
 }
 
 // ── RENDER ────────────────────────────────────────────────────────────────
@@ -1316,8 +1398,8 @@ function render(){
   // Monitor active trades
   monitorTrades(all);
 
-  // Notify new actionable signals via Telegram
-  all.filter(s=>s.strat&&(s.strat.atEntry||s.strat.isRetest||(s.strat.momentumStrong&&s.strat.momentumRR>=1.5))).forEach(s=>{
+  // Notify new actionable signals via Telegram — only Moderato or Solido
+  all.filter(s=>s.strat&&s.solidity.level>=2&&(s.strat.atEntry||s.strat.isRetest||(s.strat.momentumStrong&&s.strat.momentumRR>=1.5))).forEach(s=>{
     const notifKey='sop_notif_'+s.sym;
     const notified=JSON.parse(localStorage.getItem(notifKey)||'{}');
     const signalKey='new_signal_'+s.bias+'_'+Math.round(s.strat.entry*100);
@@ -1368,7 +1450,7 @@ function render(){
   document.getElementById('rankingBox').innerHTML=`
     <table class="ranking-table">
       <thead><tr>
-        <th>#</th><th>Asset</th><th>Bias</th><th>Qualità ★</th>
+        <th>#</th><th>Asset</th><th>Bias</th><th>Solidità</th><th>Qualità ★</th>
         <th>Perf 24h</th><th>RS vs BTC</th>
         <th>OI Delta</th><th>OI/Vol</th><th>CVD</th><th>Setup</th>
       </tr></thead>
@@ -1386,6 +1468,7 @@ function render(){
           <td style="color:var(--text3);font-weight:700">${i+1}</td>
           <td style="font-size:13px;font-weight:700;color:${s.bias==='long'?'var(--long)':s.bias==='short'?'var(--short)':'var(--text2)'}">${s.sym}</td>
           <td><span class="tag ${s.bias}">${s.bias.toUpperCase()}</span></td>
+          <td style="font-size:10px;font-weight:700;color:${s.solidity.color}">${s.solidity.icon} ${s.solidity.label}</td>
           <td style="color:${s.qualityColor};font-size:11px;letter-spacing:1px">${stars}</td>
           <td style="font-weight:700;color:${s.priceChg>=0?'var(--long)':'var(--short)'}">${fpp(s.priceChg)}</td>
           <td>
@@ -1547,6 +1630,9 @@ function renderCard(s,mode){
           <div style="font-size:9px;font-weight:700;padding:3px 8px;border-radius:20px;background:${st.tf==='intraday'?'#1a1a2e':'#0d1a0d'};color:${st.tf==='intraday'?'#818cf8':'#4ade80'};border:1px solid ${st.tf==='intraday'?'#2a2a50':'#0f4020'}">${st.tf==='intraday'?'⚡ INTRADAY':'📅 SWING 1-3g'}</div>
           <div style="font-size:9px;padding:3px 9px;border-radius:20px;background:var(--bg4);color:${s.biasStable?'var(--long)':'var(--wait)'};border:1px solid ${s.biasStable?'var(--long-border)':'var(--wait-border)'}">
             ${s.biasStable?'✓':'⚠'} bias da ${s.biasAge} ${s.biasStable?'— stabile':'— in conferma'}
+          </div>
+          <div style="font-size:9px;font-weight:700;padding:3px 9px;border-radius:20px;background:var(--bg4);color:${s.solidity.color};border:1px solid ${s.solidity.color}44">
+            ${s.solidity.icon} ${s.solidity.label}
           </div>
         </div>
       </div>
