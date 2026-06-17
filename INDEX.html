@@ -567,17 +567,18 @@ function calcStrategy(bias,price,atr,zones,sr,pivots,wPivots,str=3,volRatio=1){
   if(entryZone){
     entry=Math.round(entryZone.price*10000)/10000;
 
-    // Stop: use zone boundary if available, otherwise 1% from entry
+    // Stop: use zone boundary if available, otherwise ATR-based minimum
     if(entryZone.zone){
       const z=entryZone.zone;
-      const buf=Math.max(atr*0.25, entry*0.005); // at least 0.5% buffer
+      const buf=Math.max(atr*0.5, entry*0.008); // at least 0.8% buffer
       stop=isL
         ? Math.round((z.zL-buf)*10000)/10000
         : Math.round((z.zH+buf)*10000)/10000;
     } else {
+      // Minimum 1.5% from entry
       stop=isL
-        ? Math.round(entry*(1-0.01)*10000)/10000  // 1% below
-        : Math.round(entry*(1+0.01)*10000)/10000; // 1% above
+        ? Math.round(entry*(1-0.015)*10000)/10000
+        : Math.round(entry*(1+0.015)*10000)/10000;
     }
   } else {
     // Fallback: entry at 1 ATR from price in direction
@@ -590,17 +591,18 @@ function calcStrategy(bias,price,atr,zones,sr,pivots,wPivots,str=3,volRatio=1){
     entryZone={price:entry,source:'Fallback ATR',zone:null};
   }
 
-  // VALIDATION: stop must be on correct side and different from entry
+  // VALIDATION: stop must be on correct side and minimum 1×ATR from entry
+  // This prevents stops that are too tight to survive normal market noise
+  const minStopDist=Math.max(atr*1.0, entry*0.015); // 1×ATR or 1.5% — whichever is larger
   const stopDist=Math.abs(stop-entry);
-  if(stopDist<entry*0.003){
-    // Stop too close or same as entry — use 1% minimum
+  if(stopDist<minStopDist){
     stop=isL
-      ? Math.round(entry*(1-0.01)*10000)/10000
-      : Math.round(entry*(1+0.01)*10000)/10000;
+      ? Math.round((entry-minStopDist)*10000)/10000
+      : Math.round((entry+minStopDist)*10000)/10000;
   }
   // Ensure stop is on correct side
-  if(isL&&stop>=entry) stop=Math.round(entry*0.99*10000)/10000;
-  if(!isL&&stop<=entry) stop=Math.round(entry*1.01*10000)/10000;
+  if(isL&&stop>=entry) stop=Math.round(entry*(1-0.015)*10000)/10000;
+  if(!isL&&stop<=entry) stop=Math.round(entry*(1+0.015)*10000)/10000;
 
   const distEntry=Math.round(Math.abs(entry-price)/price*100*100)/100;
 
