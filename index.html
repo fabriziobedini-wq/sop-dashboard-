@@ -792,60 +792,64 @@ function checkAlerts(s, savedState){
   if(!savedState) return[];
   const alerts=[];
   const isL=s.bias==='long';
+  const notifKey='sop_notif_'+s.sym;
+  const notified=JSON.parse(localStorage.getItem(notifKey)||'{}');
+  const now=Date.now();
+
+  // Helper: send once per event type per session (reset after 4h)
+  const shouldNotify=(key)=>{
+    if(notified[key]&&(now-notified[key])<4*3600000) return false;
+    notified[key]=now;
+    localStorage.setItem(notifKey,JSON.stringify(notified));
+    return true;
+  };
 
   // 1. Bias cambiato
-  if(savedState.bias!==s.bias&&savedState.bias!=='wait'){
+  if(savedState.bias!==s.bias&&savedState.bias!=='wait'&&shouldNotify('bias_'+s.bias)){
     const msg=`⚠️ <b>${s.sym}</b> — BIAS CAMBIATO\nEra ${savedState.bias.toUpperCase()} → ora ${s.bias.toUpperCase()}\nPrezzo: ${s.price}\n${new Date().toLocaleTimeString('it-IT')}`;
     alerts.push({type:'danger',msg:'🔴 BIAS CAMBIATO: era '+savedState.bias.toUpperCase()+' ora '+s.bias.toUpperCase()+' — considera di chiudere'});
     sendTG(msg);
   }
 
   // 2. CVD girato contro
-  if(isL&&s.cvd.dir==='down'&&savedState.cvdDir==='up'){
-    const msg=`🟡 <b>${s.sym}</b> — CVD girato negativo\nEri LONG, CVD ora Sell\nPrezzo: ${s.price}\n${new Date().toLocaleTimeString('it-IT')}`;
+  if(isL&&s.cvd.dir==='down'&&savedState.cvdDir==='up'&&shouldNotify('cvd_down')){
+    sendTG(`🟡 <b>${s.sym}</b> — CVD girato negativo\nEri LONG, CVD ora Sell\nPrezzo: ${s.price}`);
     alerts.push({type:'warning',msg:'🟡 CVD girato negativo — pressione venditrice in aumento'});
-    sendTG(msg);
   }
-  if(!isL&&s.cvd.dir==='up'&&savedState.cvdDir==='down'){
-    const msg=`🟡 <b>${s.sym}</b> — CVD girato positivo\nEri SHORT, CVD ora Buy\nPrezzo: ${s.price}\n${new Date().toLocaleTimeString('it-IT')}`;
+  if(!isL&&s.cvd.dir==='up'&&savedState.cvdDir==='down'&&shouldNotify('cvd_up')){
+    sendTG(`🟡 <b>${s.sym}</b> — CVD girato positivo\nEri SHORT, CVD ora Buy\nPrezzo: ${s.price}`);
     alerts.push({type:'warning',msg:'🟡 CVD girato positivo — pressione compratrice in aumento'});
-    sendTG(msg);
   }
 
   // 3. Funding girato contro
-  if(isL&&s.frVal>0.05&&savedState.frTrend!=='high_pos'){
-    const msg=`🟡 <b>${s.sym}</b> — Funding girato alto positivo (${s.frVal.toFixed(4)}%)\nRischio flush — sei LONG\nPrezzo: ${s.price}`;
-    alerts.push({type:'warning',msg:'🟡 FUNDING alto positivo ('+s.frVal.toFixed(4)+'%) — rischio flush'});
-    sendTG(msg);
+  if(isL&&s.frVal>0.05&&savedState.frTrend!=='high_pos'&&shouldNotify('fr_high')){
+    sendTG(`🟡 <b>${s.sym}</b> — Funding alto (${s.frVal.toFixed(4)}%)\nRischio flush — sei LONG`);
+    alerts.push({type:'warning',msg:'🟡 FUNDING alto positivo — rischio flush'});
   }
-  if(!isL&&s.frVal<-0.005&&savedState.frTrend!=='high_neg'){
-    const msg=`🟡 <b>${s.sym}</b> — Funding negativo (${s.frVal.toFixed(4)}%)\nRischio squeeze — sei SHORT\nPrezzo: ${s.price}`;
-    alerts.push({type:'warning',msg:'🟡 FUNDING negativo ('+s.frVal.toFixed(4)+'%) — rischio squeeze'});
-    sendTG(msg);
+  if(!isL&&s.frVal<-0.005&&savedState.frTrend!=='high_neg'&&shouldNotify('fr_neg')){
+    sendTG(`🟡 <b>${s.sym}</b> — Funding negativo (${s.frVal.toFixed(4)}%)\nRischio squeeze — sei SHORT`);
+    alerts.push({type:'warning',msg:'🟡 FUNDING negativo — rischio squeeze'});
   }
 
   // 4. Stop colpito
-  if(s.strat&&isL&&s.price<s.strat.stop){
-    const msg=`🔴 <b>${s.sym}</b> — STOP COLPITO\nStop: ${s.strat.stop} | Prezzo: ${s.price}\nCHIUDI LA POSIZIONE LONG`;
-    alerts.push({type:'danger',msg:'🔴 STOP COLPITO — prezzo sotto '+s.strat.stop+' — CHIUDI'});
-    sendTG(msg);
+  if(s.strat&&isL&&s.price<s.strat.stop&&shouldNotify('stop')){
+    sendTG(`🔴 <b>${s.sym}</b> — STOP COLPITO\nStop: ${s.strat.stop} | Prezzo: ${s.price}\nCHIUDI LA POSIZIONE LONG`);
+    alerts.push({type:'danger',msg:'🔴 STOP COLPITO — CHIUDI'});
   }
-  if(s.strat&&!isL&&s.price>s.strat.stop){
-    const msg=`🔴 <b>${s.sym}</b> — STOP COLPITO\nStop: ${s.strat.stop} | Prezzo: ${s.price}\nCHIUDI LA POSIZIONE SHORT`;
-    alerts.push({type:'danger',msg:'🔴 STOP COLPITO — prezzo sopra '+s.strat.stop+' — CHIUDI'});
-    sendTG(msg);
+  if(s.strat&&!isL&&s.price>s.strat.stop&&shouldNotify('stop')){
+    sendTG(`🔴 <b>${s.sym}</b> — STOP COLPITO\nStop: ${s.strat.stop} | Prezzo: ${s.price}\nCHIUDI LA POSIZIONE SHORT`);
+    alerts.push({type:'danger',msg:'🔴 STOP COLPITO — CHIUDI'});
   }
 
-  // 5. TP1 raggiunto
-  if(s.strat&&isL&&s.price>=s.strat.tp1){
-    const msg=`✅ <b>${s.sym}</b> — TP1 RAGGIUNTO!\nTP1: ${s.strat.tp1} | Prezzo: ${s.price}\nCHIUDI 50% e sposta stop a breakeven`;
+  // 5. TP1 raggiunto — notifica UNA SOLA VOLTA per sessione (reset dopo 8h)
+  const tp1Key='tp1_'+Math.round((s.strat?.tp1||0)*100);
+  if(s.strat&&isL&&s.price>=s.strat.tp1&&shouldNotify(tp1Key)){
+    sendTG(`✅ <b>${s.sym}</b> — TP1 RAGGIUNTO!\nTP1: ${s.strat.tp1} | Prezzo: ${s.price}\nCHIUDI 50% e sposta stop a breakeven`);
     alerts.push({type:'success',msg:'✅ TP1 RAGGIUNTO ('+s.strat.tp1+') — chiudi 50% e sposta stop a breakeven'});
-    sendTG(msg);
   }
-  if(s.strat&&!isL&&s.price<=s.strat.tp1){
-    const msg=`✅ <b>${s.sym}</b> — TP1 RAGGIUNTO!\nTP1: ${s.strat.tp1} | Prezzo: ${s.price}\nCHIUDI 50% e sposta stop a breakeven`;
+  if(s.strat&&!isL&&s.price<=s.strat.tp1&&shouldNotify(tp1Key)){
+    sendTG(`✅ <b>${s.sym}</b> — TP1 RAGGIUNTO!\nTP1: ${s.strat.tp1} | Prezzo: ${s.price}\nCHIUDI 50% e sposta stop a breakeven`);
     alerts.push({type:'success',msg:'✅ TP1 RAGGIUNTO ('+s.strat.tp1+') — chiudi 50% e sposta stop a breakeven'});
-    sendTG(msg);
   }
 
   return alerts;
