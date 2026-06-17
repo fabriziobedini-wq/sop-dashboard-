@@ -868,7 +868,22 @@ function monitorTrades(allSignals){
       sendTG(`🟡 <b>${t.sym}</b> — Bias diventato WAIT\nSegnale indebolito — trade ancora aperto\nPorta stop a breakeven (${fp(t.entry)})\nPrezzo: ${fp(price)} | TP1: ${fp(t.tp1)}`);
     }
 
-    // ── CVD girato contro ─────────────────────────────────────────────────
+    // ── Pre-stop warning: price approaching stop ──────────────────────────
+    const stopDist=Math.abs(t.stop-t.entry);
+    const distToStop=Math.abs(price-t.stop);
+    const pctToStop=stopDist>0?distToStop/stopDist*100:100;
+
+    if(pctToStop<50&&!notified['prestop_'+t.id]){
+      notified['prestop_'+t.id]=Date.now();
+      localStorage.setItem(notifKey,JSON.stringify(notified));
+      sendTG(`⚠️ <b>${t.sym}</b> — PREZZO VICINO ALLO STOP\nStop: ${fp(t.stop)} | Prezzo: ${fp(price)}\nDistanza rimasta: ${pctToStop.toFixed(0)}% dello stop\nValuta se uscire manualmente ora`);
+    }
+
+    // Reset pre-stop warning if price moves away (>70% distance restored)
+    if(pctToStop>70&&notified['prestop_'+t.id]){
+      delete notified['prestop_'+t.id];
+      localStorage.setItem(notifKey,JSON.stringify(notified));
+    }
     const cvdAgainst=(isL&&sig.cvd.dir==='down'&&t.openCVD==='up')||(!isL&&sig.cvd.dir==='up'&&t.openCVD==='down');
     if(cvdAgainst&&!notified['cvd_trade_'+t.id]){
       notified['cvd_trade_'+t.id]=Date.now();
@@ -924,6 +939,20 @@ function renderTrades(allSignals){
       <div class="trade-progress">
         <div class="trade-progress-fill" style="width:${progress}%;background:${progressColor}"></div>
       </div>
+
+      ${(()=>{
+        const stopDist=Math.abs(t.stop-t.entry);
+        const distToStop=price?Math.abs(price-t.stop):stopDist;
+        const pctToStop=stopDist>0?Math.min(100,distToStop/stopDist*100):100;
+        const danger=pctToStop<50;
+        const warning=pctToStop<75&&pctToStop>=50;
+        if(!danger&&!warning) return '';
+        const bg=danger?'var(--short-bg)':'var(--wait-bg)';
+        const bdr=danger?'var(--short-border)':'var(--wait-border)';
+        const col=danger?'var(--short)':'var(--wait)';
+        const icon=danger?'🔴':'🟡';
+        return '<div style="margin:0 16px 8px;padding:6px 10px;background:'+bg+';border:1px solid '+bdr+';border-radius:6px;font-size:10px;font-weight:600;color:'+col+'">'+icon+' Prezzo vicino allo stop — '+pctToStop.toFixed(0)+'% rimasto · considera uscita manuale</div>';
+      })()}
 
       <div class="trade-levels">
         <div class="trade-level">
