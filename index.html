@@ -148,6 +148,20 @@ body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code',mo
 .sdot.on-long{background:var(--long)}.sdot.on-short{background:var(--short)}.sdot.on-wait{background:var(--wait)}
 
 .nodata{text-align:center;padding:40px;color:var(--text3);font-size:12px;line-height:1.8}
+.trade-card{border-radius:12px;border:2px solid;overflow:hidden}
+.trade-card.long{border-color:var(--long)}.trade-card.short{border-color:var(--short)}
+.trade-card-header{padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.trade-card-header.long{background:linear-gradient(135deg,var(--long-bg),#071a10)}
+.trade-card-header.short{background:linear-gradient(135deg,var(--short-bg),#1a0707)}
+.trade-pnl{font-size:22px;font-weight:700;text-align:right}
+.trade-levels{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;padding:10px 16px;background:var(--bg3)}
+.trade-level{background:var(--bg4);border-radius:6px;padding:7px 9px;text-align:center}
+.trade-level-label{font-size:8px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+.trade-level-val{font-size:12px;font-weight:700}
+.trade-progress{height:6px;background:var(--bg4);margin:0 16px 8px;border-radius:3px;overflow:hidden}
+.trade-progress-fill{height:100%;border-radius:3px;transition:width .5s}
+.close-btn{background:var(--bg4);border:1px solid var(--border2);border-radius:6px;color:var(--text2);font-family:inherit;font-size:10px;padding:5px 12px;cursor:pointer}
+.close-btn:hover{background:var(--short-bg);border-color:var(--short);color:var(--short)}
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
 
 @media(max-width:800px){
@@ -182,6 +196,12 @@ body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code',mo
 </div>
 
 <div class="wrap">
+
+  <!-- TRADE ATTIVI IN MONITORAGGIO -->
+  <div id="tradesSection" style="display:none">
+    <div class="stitle">📌 Trade in monitoraggio</div>
+    <div class="strategy-grid" id="tradesGrid"></div>
+  </div>
 
   <!-- OVERVIEW -->
   <div>
@@ -719,7 +739,197 @@ async function loadOne(sym){
   }catch(e){console.warn(sym,e);cache[sym]=null;}
 }
 
-// ── TELEGRAM ──────────────────────────────────────────────────────────────
+// ── TRADE MONITORING SYSTEM ───────────────────────────────────────────────
+const TRADES_KEY='sop_active_trades';
+
+function getTrades(){
+  return JSON.parse(localStorage.getItem(TRADES_KEY)||'[]');
+}
+function saveTrades(trades){
+  localStorage.setItem(TRADES_KEY,JSON.stringify(trades));
+}
+
+function openTrade(sym,dir,entry,stop,tp1,tp2,currentBias,currentCVD){
+  const trades=getTrades();
+  // Remove any existing open trade for same sym
+  const filtered=trades.filter(t=>t.sym!==sym||t.closed);
+  filtered.push({
+    id:Date.now(),
+    sym, dir, entry, stop, tp1, tp2,
+    openedAt:Date.now(),
+    openBias:currentBias,
+    openCVD:currentCVD,
+    tp1Hit:false,
+    closed:false,
+    closeReason:null,
+  });
+  saveTrades(filtered);
+  renderTrades([]);
+}
+
+function closeTrade(id,reason){
+  const trades=getTrades();
+  const t=trades.find(t=>t.id===id);
+  if(t){t.closed=true;t.closeReason=reason;t.closedAt=Date.now();}
+  saveTrades(trades);
+  renderTrades([]);
+}
+
+function monitorTrades(allSignals){
+  const trades=getTrades().filter(t=>!t.closed);
+  if(!trades.length) return;
+
+  trades.forEach(t=>{
+    const sig=allSignals.find(s=>s.sym===t.sym);
+    if(!sig) return;
+    const price=sig.price;
+    const isL=t.dir==='long';
+
+    // ── TP1 check ────────────────────────────────────────────────────────
+    if(!t.tp1Hit&&((isL&&price>=t.tp1)||(!isL&&price<=t.tp1))){
+      t.tp1Hit=true;
+      saveTrades(getTrades().map(x=>x.id===t.id?{...x,tp1Hit:true}:x));
+      sendTG(`✅ <b>${t.sym}</b> — TP1 RAGGIUNTO!\nTP1: ${fp(t.tp1)} | Prezzo: ${fp(price)}\nCHIUDI 50% e sposta stop a breakeven\nTrade aperto: ${formatAgo(t.openedAt)}`);
+    }
+
+    // ── TP2 check → auto-close ────────────────────────────────────────────
+    if(t.tp2&&((isL&&price>=t.tp2)||(!isL&&price<=t.tp2))){
+      closeTrade(t.id,'tp2');
+      sendTG(`🏆 <b>${t.sym}</b> — TP2 RAGGIUNTO!\nTP2: ${fp(t.tp2)} | Prezzo: ${fp(price)}\nCHIUDI TUTTO — Trade completato ✅\nAperto: ${formatAgo(t.openedAt)}`);
+      return;
+    }
+
+    // ── Stop check → auto-close ───────────────────────────────────────────
+    if((isL&&price<=t.stop)||(!isL&&price>=t.stop)){
+      closeTrade(t.id,'stop');
+      sendTG(`🔴 <b>${t.sym}</b> — STOP COLPITO\nStop: ${fp(t.stop)} | Prezzo: ${fp(price)}\nPosizione chiusa automaticamente\nAperto: ${formatAgo(t.openedAt)}`);
+      return;
+    }
+
+    // ── Bias invertito ────────────────────────────────────────────────────
+    const biasInverted=(isL&&sig.bias==='short')||(!isL&&sig.bias==='long');
+    const notifKey='sop_notif_'+t.sym;
+    const notified=JSON.parse(localStorage.getItem(notifKey)||'{}');
+
+    if(biasInverted){
+      if(sig.biasStable){
+        // Bias invertito E confermato (>8h) → chiudi automaticamente
+        closeTrade(t.id,'bias_inverted');
+        const pnlPct=price&&t.entry?((isL?(price-t.entry):(t.entry-price))/t.entry*100):0;
+        sendTG(`⚠️ <b>${t.sym}</b> — BIAS INVERTITO (confermato) — trade chiuso\nEri ${t.dir.toUpperCase()}, bias ${sig.bias.toUpperCase()} stabile da ${sig.biasAge}\nPrezzo: ${fp(price)} | P&L: ${pnlPct>=0?'+':''}${pnlPct.toFixed(2)}%\nTP1 ${t.tp1Hit?'già raggiunto ✅':'non raggiunto'}`);
+        if(sig.strat&&sig.quality>=4){
+          setTimeout(()=>sendTG(`${sig.bias==='long'?'🟢':'🔴'} <b>${t.sym}</b> — NUOVO SEGNALE ${sig.bias.toUpperCase()}\nEntry: ${fp(sig.strat.entry)} | Stop: ${fp(sig.strat.stop)} | TP1: ${fp(sig.strat.tp1)}\nR/R ${sig.strat.rr1}:1 | Qualità ${'★'.repeat(sig.quality)}`),2000);
+        }
+        return;
+      } else {
+        // Bias invertito ma NON ancora confermato → notifica, lascia aperto
+        if(!notified['bias_inv_'+t.id]){
+          notified['bias_inv_'+t.id]=Date.now();
+          localStorage.setItem(notifKey,JSON.stringify(notified));
+          sendTG(`🟡 <b>${t.sym}</b> — Bias girato ${sig.bias.toUpperCase()} (in conferma — ${sig.biasAge})\nTrade ${t.dir.toUpperCase()} ancora aperto — attendi conferma bias\nSe confermato entro 8h il trade verrà chiuso automaticamente\nPrezzo: ${fp(price)} | TP1: ${fp(t.tp1)}`);
+        }
+      }
+    }
+
+    // ── Bias→WAIT → notifica ma tieni aperto ─────────────────────────────
+    if(sig.bias==='wait'&&t.openBias!=='wait'&&!notified['wait_'+t.id]){
+      notified['wait_'+t.id]=Date.now();
+      localStorage.setItem(notifKey,JSON.stringify(notified));
+      sendTG(`🟡 <b>${t.sym}</b> — Bias diventato WAIT\nSegnale indebolito — trade ancora aperto\nPorta stop a breakeven (${fp(t.entry)})\nPrezzo: ${fp(price)} | TP1: ${fp(t.tp1)}`);
+    }
+
+    // ── CVD girato contro ─────────────────────────────────────────────────
+    const cvdAgainst=(isL&&sig.cvd.dir==='down'&&t.openCVD==='up')||(!isL&&sig.cvd.dir==='up'&&t.openCVD==='down');
+    if(cvdAgainst&&!notified['cvd_trade_'+t.id]){
+      notified['cvd_trade_'+t.id]=Date.now();
+      localStorage.setItem(notifKey,JSON.stringify(notified));
+      sendTG(`🟡 <b>${t.sym}</b> — CVD girato contro\nEri ${t.dir.toUpperCase()}, CVD ora ${sig.cvd.dir==='up'?'Buy':'Sell'}\nAttenzione — pressione cambiata\nPrezzo: ${fp(price)} | TP1: ${fp(t.tp1)}`);
+    }
+  });
+
+  renderTrades(allSignals);
+}
+
+function renderTrades(allSignals){
+  const trades=getTrades().filter(t=>!t.closed);
+  const section=document.getElementById('tradesSection');
+  const grid=document.getElementById('tradesGrid');
+  if(!trades.length){section.style.display='none';return;}
+  section.style.display='';
+
+  grid.innerHTML=trades.map(t=>{
+    const sig=allSignals.find(s=>s.sym===t.sym);
+    const price=sig?.price||0;
+    const isL=t.dir==='long';
+    const pnlPct=price&&t.entry?((isL?(price-t.entry):(t.entry-price))/t.entry*100):0;
+    const pnlColor=pnlPct>0?'var(--long)':pnlPct<0?'var(--short)':'var(--text2)';
+    const elapsed=formatAgo(t.openedAt);
+
+    // Progress bar: 0% = entry, 100% = TP1
+    const range=Math.abs(t.tp1-t.entry);
+    const progress=range>0?Math.min(100,Math.max(0,Math.abs((price||t.entry)-t.entry)/range*100)):0;
+    const progressColor=pnlPct>=0?'var(--long)':'var(--short)';
+
+    // Current signal status
+    const biasNow=sig?.bias||'—';
+    const biasOk=(isL&&biasNow==='long')||(!isL&&biasNow==='short');
+    const biasWait=biasNow==='wait';
+    const statusColor=biasOk?'var(--long)':biasWait?'var(--wait)':'var(--short)';
+    const statusLabel=biasOk?'✓ Bias confermato':biasWait?'⚠ Bias diventato WAIT':'⛔ Bias invertito';
+
+    return`<div class="trade-card ${t.dir}" id="trade-${t.id}">
+      <div class="trade-card-header ${t.dir}">
+        <div>
+          <div style="font-size:18px;font-weight:700;color:${isL?'var(--long)':'var(--short)'}">${t.sym} ${isL?'🟢 LONG':'🔴 SHORT'}</div>
+          <div style="font-size:9px;color:var(--text3);margin-top:3px">Aperto ${elapsed} · Entry: ${fp(t.entry)}</div>
+          <div style="font-size:10px;font-weight:700;color:${statusColor};margin-top:4px">${statusLabel}</div>
+        </div>
+        <div class="trade-pnl" style="color:${pnlColor}">
+          ${pnlPct>=0?'+':''}${pnlPct.toFixed(2)}%
+          <div style="font-size:11px;color:var(--text3);font-weight:400">${fp(price)} ora</div>
+          ${t.tp1Hit?'<div style="font-size:9px;color:var(--long);font-weight:700">✅ TP1 già raggiunto</div>':''}
+        </div>
+      </div>
+
+      <div class="trade-progress">
+        <div class="trade-progress-fill" style="width:${progress}%;background:${progressColor}"></div>
+      </div>
+
+      <div class="trade-levels">
+        <div class="trade-level">
+          <div class="trade-level-label">Stop</div>
+          <div class="trade-level-val" style="color:var(--short)">${fp(t.stop)}</div>
+          <div style="font-size:8px;color:var(--text3)">${price?((isL?(t.stop-price):(price-t.stop))/price*100).toFixed(1)+'%':'—'}</div>
+        </div>
+        <div class="trade-level">
+          <div class="trade-level-label">Entry</div>
+          <div class="trade-level-val">${fp(t.entry)}</div>
+        </div>
+        <div class="trade-level" style="border:1px solid ${t.tp1Hit?'var(--long)':'var(--border)'}">
+          <div class="trade-level-label">TP1${t.tp1Hit?' ✅':''}</div>
+          <div class="trade-level-val" style="color:var(--long)">${fp(t.tp1)}</div>
+          <div style="font-size:8px;color:var(--text3)">${price?((isL?(t.tp1-price):(price-t.tp1))/price*100).toFixed(1)+'%':'—'}</div>
+        </div>
+        <div class="trade-level">
+          <div class="trade-level-label">TP2</div>
+          <div class="trade-level-val" style="color:var(--long)">${fp(t.tp2)||'—'}</div>
+          <div style="font-size:8px;color:var(--text3)">${price&&t.tp2?((isL?(t.tp2-price):(price-t.tp2))/price*100).toFixed(1)+'%':'—'}</div>
+        </div>
+      </div>
+
+      <div style="padding:10px 16px;background:var(--bg2);display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:9px;color:var(--text3)">
+          CVD ora: <span style="color:${sig?.cvd?.dir==='up'?'var(--long)':sig?.cvd?.dir==='down'?'var(--short)':'var(--text3)'}">${sig?.cvd?.dir||'—'}</span>
+          · OI/Vol: <span style="color:${(sig?.oiVolSpot||0)>2?'var(--short)':'var(--text3)'}">${sig?.oiVolSpot||'—'}x</span>
+          · Funding: <span>${sig?.frVal?.toFixed(4)||'—'}%</span>
+        </div>
+        <button class="close-btn" onclick="closeTrade(${t.id},'manual');renderTrades([])">✕ Chiudi</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+
 function getTGConfig(){
   return{
     token: localStorage.getItem('tg_token')||'',
@@ -757,6 +967,8 @@ window.addEventListener('DOMContentLoaded',()=>{
   const {token,chat}=getTGConfig();
   if(token) document.getElementById('tgToken').value=token;
   if(chat)  document.getElementById('tgChat').value=chat;
+  // Show any existing open trades immediately
+  renderTrades([]);
 });
 
 // ── SIGNAL STATE MEMORY ───────────────────────────────────────────────────
@@ -1041,6 +1253,21 @@ function render(){
   } else {
     alertBanner.style.display='none';
   }
+
+  // Monitor active trades
+  monitorTrades(all);
+
+  // Notify new actionable signals via Telegram
+  all.filter(s=>s.strat&&(s.strat.atEntry||s.strat.isRetest)).forEach(s=>{
+    const notifKey='sop_notif_'+s.sym;
+    const notified=JSON.parse(localStorage.getItem(notifKey)||'{}');
+    const signalKey='new_signal_'+s.bias+'_'+Math.round(s.strat.entry*100);
+    if(!notified[signalKey]){
+      notified[signalKey]=Date.now();
+      localStorage.setItem(notifKey,JSON.stringify(notified));
+      sendTG(`${s.bias==='long'?'🟢':'🔴'} <b>${s.sym}</b> — NUOVO SEGNALE ${s.bias.toUpperCase()}\n${s.strat.statusLabel}\nEntry: ${fp(s.strat.entry)} | Stop: ${fp(s.strat.stop)}\nTP1: ${fp(s.strat.tp1)} | R/R ${s.strat.rr1}:1\nQualità: ${'★'.repeat(s.quality)}${'☆'.repeat(5-s.quality)}\n\nPremi "Segui trade" nel dashboard per monitorare`);
+    }
+  });
 
   // Overview
   const longs=all.filter(s=>s.bias==='long');
@@ -1368,6 +1595,10 @@ function renderCard(s,mode){
         <span class="rr-badge ${rrClass}">R/R TP1: ${st.rr1}:1</span>
         ${st.rr2?`<span class="rr-badge good">R/R TP2: ${st.rr2}:1</span>`:''}
         <span style="font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;background:var(--bg4);border:1px solid;border-color:${st.risk.color};color:${st.risk.color}">${st.risk.label} — rischia ${st.risk.pct}% capitale</span>
+        <button onclick="openTrade('${s.sym}','${bias}',${st.entry},${st.stop},${st.tp1},${st.tp2||0},'${s.bias}','${s.cvd.dir}')"
+          style="margin-left:auto;background:var(--accent);border:none;border-radius:6px;color:#fff;font-family:inherit;font-size:10px;padding:5px 14px;cursor:pointer;font-weight:600">
+          📌 Segui trade
+        </button>
       </div>
 
       <div style="background:var(--bg4);border-radius:7px;padding:9px 12px;margin-bottom:10px;margin-top:6px;font-size:10px;line-height:1.6">
