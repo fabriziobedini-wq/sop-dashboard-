@@ -661,6 +661,32 @@ function calcStrategy(bias,price,atr,zones,sr,pivots,wPivots,str=3,volRatio=1){
   // "In osservazione": price needs to travel to the zone OR already bounced
   const watch = distFromZone > 3 || alreadyBounced;
 
+  // ── MOMENTUM FORTE: entra a mercato senza aspettare il retest ────────────
+  // Condizioni: bias stabile (passato come parametro str>=4),
+  // CVD allineato, prezzo si muove nella direzione giusta,
+  // nessun livello di resistenza/supporto immediato tra prezzo e TP
+  // Questo cattura i movimenti forti tipo BTC stamattina
+  const momentumStrong = (
+    str >= 4 &&                          // segnale forte
+    alreadyBounced &&                    // prezzo già mosso nella direzione
+    distFromZone > 3 &&                  // lontano dalla zona (non è retest)
+    distFromZone < 15 &&                 // ma non troppo lontano
+    rr1 >= 1.5                           // R/R ancora accettabile dal prezzo attuale
+  );
+
+  // Se momentum forte: ricalcola entry, stop e TP dal prezzo attuale
+  let momentumEntry=null, momentumStop=null, momentumTp1=null, momentumRR=null;
+  if(momentumStrong){
+    momentumEntry=price;
+    // Stop al livello più vicino nella direzione opposta
+    momentumStop=isL
+      ? Math.round(price*(1-0.015)*10000)/10000  // 1.5% sotto il prezzo
+      : Math.round(price*(1+0.015)*10000)/10000; // 1.5% sopra il prezzo
+    momentumTp1=tp1; // TP rimane lo stesso livello tecnico
+    const mDist=Math.abs(momentumStop-momentumEntry);
+    momentumRR=mDist>0?Math.round(Math.abs(momentumTp1-momentumEntry)/mDist*10)/10:0;
+  }
+
   // Status label
   let statusLabel, statusColor;
   if(atEntry){
@@ -669,6 +695,9 @@ function calcStrategy(bias,price,atr,zones,sr,pivots,wPivots,str=3,volRatio=1){
   } else if(isRetest){
     statusLabel='🔄 RETEST IN CORSO — pronto';
     statusColor='#4ade80';
+  } else if(momentumStrong&&momentumRR>=1.5){
+    statusLabel='🚀 MOMENTUM FORTE — entra a mercato';
+    statusColor='#f59e0b';
   } else if(alreadyBounced){
     statusLabel='⏳ GIÀ RIMBALZATO — aspetta retest';
     statusColor='var(--wait)';
@@ -678,7 +707,7 @@ function calcStrategy(bias,price,atr,zones,sr,pivots,wPivots,str=3,volRatio=1){
   }
 
   const tf=classifyTimeframe(str,volRatio,distFromZone,rr1,atr,price);
-  const risk=suggestRisk(rr1,str,atEntry||isRetest,volRatio);
+  const risk=suggestRisk(rr1,str,atEntry||isRetest||momentumStrong,volRatio);
 
   return{
     entry,
@@ -687,6 +716,7 @@ function calcStrategy(bias,price,atr,zones,sr,pivots,wPivots,str=3,volRatio=1){
     rr1,rr2,
     stopPct,distEntry:distFromZone,
     atEntry,isRetest,watch,alreadyBounced,
+    momentumStrong,momentumEntry,momentumStop,momentumTp1,momentumRR,
     statusLabel,statusColor,
     tf,risk
   };
@@ -1258,7 +1288,7 @@ function render(){
   monitorTrades(all);
 
   // Notify new actionable signals via Telegram
-  all.filter(s=>s.strat&&(s.strat.atEntry||s.strat.isRetest)).forEach(s=>{
+  all.filter(s=>s.strat&&(s.strat.atEntry||s.strat.isRetest||(s.strat.momentumStrong&&s.strat.momentumRR>=1.5))).forEach(s=>{
     const notifKey='sop_notif_'+s.sym;
     const notified=JSON.parse(localStorage.getItem(notifKey)||'{}');
     const signalKey='new_signal_'+s.bias+'_'+Math.round(s.strat.entry*100);
@@ -1345,10 +1375,10 @@ function render(){
       }).join('')}</tbody>
     </table>`;
 
-  // Strategy cards — active = at zone or retest, watch = waiting or already bounced
+  // Strategy cards — active = at zone, retest, or strong momentum
   const actionable=all.filter(s=>s.bias!=='wait'&&s.strat);
-  const active=actionable.filter(s=>s.strat.atEntry||s.strat.isRetest);
-  const watch=actionable.filter(s=>!s.strat.atEntry&&!s.strat.isRetest);
+  const active=actionable.filter(s=>s.strat.atEntry||s.strat.isRetest||(s.strat.momentumStrong&&s.strat.momentumRR>=1.5));
+  const watch=actionable.filter(s=>!s.strat.atEntry&&!s.strat.isRetest&&!(s.strat.momentumStrong&&s.strat.momentumRR>=1.5));
 
   if(active.length>0){
     document.getElementById('strategySection').style.display='';
@@ -1551,6 +1581,33 @@ function renderCard(s,mode){
 
     <div class="scard-body">
       <div class="strategy-title ${cardClass}" style="color:${st.statusColor}">${st.statusLabel}</div>
+
+      ${st.momentumStrong&&st.momentumRR>=1.5?`
+      <div style="background:#1a1005;border:1px solid var(--wait-border);border-radius:8px;padding:10px 12px;margin-bottom:10px">
+        <div style="font-size:10px;font-weight:700;color:var(--wait);margin-bottom:6px">🚀 ENTRY A MERCATO — momentum forte</div>
+        <div style="font-size:9px;color:var(--text2);margin-bottom:8px;line-height:1.5">
+          Il prezzo si sta muovendo con forza nella direzione del bias senza ritracciare.
+          Puoi entrare ora al prezzo di mercato con stop stretto.<br>
+          <strong style="color:var(--wait)">Rischio: stop più stretto, ma nessun retest da attendere.</strong>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px">
+          <div class="price-cell">
+            <div class="price-cell-label">Stop momentum</div>
+            <div class="price-cell-val" style="color:var(--short)">${fp(st.momentumStop)}</div>
+            <div style="font-size:8px;color:var(--text3);margin-top:1px">−1.5% dal mercato</div>
+          </div>
+          <div class="price-cell">
+            <div class="price-cell-label">Entry ora</div>
+            <div class="price-cell-val" style="color:var(--accent)">${fp(st.momentumEntry)}</div>
+            <div style="font-size:8px;color:var(--text3);margin-top:1px">Prezzo attuale</div>
+          </div>
+          <div class="price-cell">
+            <div class="price-cell-label">TP1 (stesso)</div>
+            <div class="price-cell-val" style="color:var(--long)">${fp(st.momentumTp1)}</div>
+            <div style="font-size:8px;color:${st.momentumRR>=1.5?'var(--long)':'var(--short)'};margin-top:1px">R/R ${st.momentumRR}:1</div>
+          </div>
+        </div>
+      </div>`:''}
 
       <div class="levels-row">
         <div class="level-box stop">
