@@ -212,6 +212,12 @@ body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code',mo
     <div class="strategy-grid" id="watchGrid"></div>
   </div>
 
+  <!-- WAIT INFO -->
+  <div id="waitSection" style="display:none">
+    <div class="stitle">Segnale indeciso — dati di monitoraggio</div>
+    <div class="strategy-grid" id="waitGrid"></div>
+  </div>
+
 </div>
 
 <script>
@@ -1121,17 +1127,79 @@ function render(){
     document.getElementById('strategySection').style.display='';
     document.getElementById('strategyTitle').textContent='Setup operativi — '+active.length+' asset (prezzo vicino al livello)';
     document.getElementById('strategyGrid').innerHTML=active.map(s=>renderCard(s,'active')).join('');
+  }else{
+    document.getElementById('strategySection').style.display='none';
   }
 
   if(watch.length>0){
     document.getElementById('watchSection').style.display='';
     document.getElementById('watchGrid').innerHTML=watch.map(s=>renderCard(s,'watch')).join('');
+  }else{
+    document.getElementById('watchSection').style.display='none';
+  }
+
+  // WAIT section — show info cards for WAIT assets too
+  const waitAssets=all.filter(s=>s.bias==='wait');
+  const waitSection=document.getElementById('waitSection');
+  if(waitAssets.length>0&&waitSection){
+    waitSection.style.display='';
+    document.getElementById('waitGrid').innerHTML=waitAssets.map(s=>renderWaitCard(s)).join('');
   }
   }catch(err){
     console.error('Render error:',err);
     document.getElementById('rankingBox').innerHTML='<div class="nodata" style="color:var(--short)">Errore: '+err.message+'<br><small>Apri F12 console per dettagli</small></div>';
     document.getElementById('statusEl').textContent='Errore — vedi console F12';
   }
+}
+
+function renderWaitCard(s){
+  const dz=s.zones?.demand?.[0];
+  const sz=s.zones?.supply?.[0];
+  const p=s.pivots,wp=s.wPivots;
+  return`<div class="scard wait" id="card-${s.sym}" style="border-color:#2a2a50">
+    <div class="scard-header" style="background:#0d0d1a">
+      <div>
+        <div class="scard-sym" style="color:var(--text2)">${s.sym}</div>
+        <div style="display:flex;gap:6px;align-items:center;margin-top:4px">
+          <span class="tag wait">WAIT</span>
+          <span style="font-size:9px;color:var(--text3)">⏳ Segnali non allineati</span>
+        </div>
+      </div>
+      <div class="scard-right">
+        <div class="scard-price">${fp(s.price)}</div>
+        <div class="scard-chg ${s.priceChg>=0?'up':'dn'}">${fpp(s.priceChg)}</div>
+      </div>
+    </div>
+    <div class="scard-signals">
+      <div class="sig-item"><div class="sig-label">OI delta</div><div class="sig-val ${s.oiDelta>1?'up':s.oiDelta<-1?'dn':'nt'}">${s.oiDelta>=0?'+':''}${s.oiDelta.toFixed(1)}%</div></div>
+      <div class="sig-item"><div class="sig-label">Funding</div><div class="sig-val ${s.frVal>0.05?'dn':s.frVal<-0.005?'up':'nt'}">${s.frVal.toFixed(4)}%</div></div>
+      <div class="sig-item"><div class="sig-label">CVD</div><div class="sig-val ${s.cvd.dir==='up'?'up':s.cvd.dir==='down'?'dn':'nt'}">${s.cvd.dir==='up'?'↑ Buy':s.cvd.dir==='down'?'↓ Sell':'Flat'}</div></div>
+      <div class="sig-item"><div class="sig-label">RS vs BTC</div><div class="sig-val ${s.rsBTC>2?'up':s.rsBTC<-2?'dn':'nt'}">${s.rsBTC>=0?'+':''}${s.rsBTC?.toFixed(1)}%</div></div>
+    </div>
+    <div style="background:var(--bg2);padding:12px 16px">
+      <div style="font-size:9px;color:var(--text3);margin-bottom:7px;font-weight:600;text-transform:uppercase;letter-spacing:.06em">Cosa manca per avere un bias</div>
+      ${(()=>{
+        const missing=[];
+        if(s.oiDelta>-1&&s.oiDelta<1) missing.push('OI piatto — aspetta build-up o scarico');
+        if(s.cvd.dir==='flat') missing.push('CVD indeciso — equilibrio tra acquirenti e venditori');
+        if(Math.abs(s.frVal)<0.008) missing.push('Funding neutro — nessun eccesso di leva');
+        if(missing.length===0) missing.push('Segnali contrastanti tra loro');
+        return missing.map(m=>`<div style="font-size:10px;color:var(--wait);padding:2px 0">→ ${m}</div>`).join('');
+      })()}
+      ${s.nearZone?`<div style="margin-top:8px;padding:8px 10px;background:var(--bg4);border-radius:6px;border-left:3px solid ${s.nearZone.dir==='supply'?'var(--short)':'var(--long)'}">
+        <div style="font-size:9px;font-weight:700;color:${s.nearZone.dir==='supply'?'var(--short)':'var(--long)'}">${s.nearZone.dir==='supply'?'🔴 Supply':'🟢 Demand'} ${fp(s.nearZone.zL)}–${fp(s.nearZone.zH)} (${s.nearZone.distPct>=0?'+':''}${s.nearZone.distPct}%)</div>
+        <div style="font-size:9px;color:var(--text2);margin-top:3px">${s.nearZone.action}</div>
+      </div>`:''}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:8px;font-size:9px;color:var(--text3)">
+        <div>S1 daily: <strong style="color:var(--long)">${fp(p?.S1)}</strong></div>
+        <div>R1 daily: <strong style="color:var(--short)">${fp(p?.R1)}</strong></div>
+        <div>S1 weekly: <strong style="color:var(--long)">${fp(wp?.S1)}</strong></div>
+        <div>R1 weekly: <strong style="color:var(--short)">${fp(wp?.R1)}</strong></div>
+        ${dz?`<div>Demand: <strong style="color:var(--long)">${fp(dz.zL)}–${fp(dz.zH)}</strong></div>`:''}
+        ${sz?`<div>Supply: <strong style="color:var(--short)">${fp(sz.zL)}–${fp(sz.zH)}</strong></div>`:''}
+      </div>
+    </div>
+  </div>`;
 }
 
 function renderCard(s,mode){
