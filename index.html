@@ -203,6 +203,21 @@ body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code',mo
     <div class="strategy-grid" id="tradesGrid"></div>
   </div>
 
+  <!-- MACRO SEMAPHORE -->
+  <div id="macroBlock" style="display:none;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 18px;margin-bottom:4px">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div id="macroLight" style="width:16px;height:16px;border-radius:50%;flex-shrink:0"></div>
+        <div>
+          <div id="macroLabel" style="font-size:13px;font-weight:700"></div>
+          <div id="macroSub" style="font-size:10px;color:var(--text3);margin-top:2px"></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap" id="macroPills"></div>
+    </div>
+    <div id="macroAssets" style="font-size:9px;color:var(--text3);margin-top:8px"></div>
+  </div>
+
   <!-- OVERVIEW -->
   <div>
     <div class="stitle">Market overview — 15 Jun 2026</div>
@@ -242,7 +257,49 @@ body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code',mo
 
 <script>
 'use strict';
-const ASSETS=['BTC','ETH','SOL','BNB','XRP','DOGE','ADA','AVAX','LINK','DOT'];
+// Assets loaded dynamically — top 10 by OI on Binance Futures
+// Fallback list if dynamic load fails
+const ASSETS_FALLBACK=['BTC','ETH','SOL','BNB','XRP','DOGE','ADA','AVAX','LINK','DOT'];
+let ASSETS=[...ASSETS_FALLBACK];
+
+// Always include BTC and ETH as macro anchors regardless of OI rank
+const MACRO_ASSETS=['BTC','ETH','SOL'];
+
+async function loadTopAssets(){
+  try{
+    // Get all futures tickers sorted by quoteVolume (proxy for activity)
+    const tickers=await bnGet('/fapi/v1/ticker/24hr');
+    if(!tickers||!Array.isArray(tickers)) return;
+
+    // Filter: USDT pairs only, exclude stablecoins and leveraged tokens
+    const excluded=['USDC','BUSD','TUSD','FDUSD','USDP','DAI','USDT','UP','DOWN','BULL','BEAR'];
+    const usdt=tickers
+      .filter(t=>t.symbol.endsWith('USDT'))
+      .map(t=>({
+        sym:t.symbol.replace('USDT',''),
+        vol:parseFloat(t.quoteVolume)||0,
+        oi:parseFloat(t.openInterest)||0
+      }))
+      .filter(t=>!excluded.some(ex=>t.sym.includes(ex)))
+      .filter(t=>t.vol>50000000); // minimum $50M daily volume
+
+    // Get OI for top candidates to rank properly
+    const oiData=await bnGet('/futures/data/openInterestHist',{symbol:'BTCUSDT',period:'1d',limit:'1'}).catch(()=>null);
+
+    // Sort by volume (best proxy for liquidity without extra API calls)
+    usdt.sort((a,b)=>b.vol-a.vol);
+
+    // Take top 12, ensure BTC/ETH/SOL are always included
+    const top=usdt.slice(0,15).map(t=>t.sym);
+    const final=[...new Set([...MACRO_ASSETS,...top])].slice(0,12);
+
+    ASSETS=final;
+    console.log('Dynamic assets loaded:',ASSETS);
+  }catch(e){
+    console.warn('Dynamic asset load failed, using fallback:',e);
+    ASSETS=ASSETS_FALLBACK;
+  }
+}
 const BN='https://fapi.binance.com';
 const cache={};
 
@@ -781,13 +838,94 @@ function fpp(v){return v===null||v===undefined?'—':(v>=0?'+':'')+v.toFixed(2)+
 // ── LOAD ─────────────────────────────────────────────────────────────────
 async function loadAll(){
   document.getElementById('refreshBtn').disabled=true;
-  document.getElementById('statusEl').textContent='Caricamento...';
-  await Promise.allSettled(ASSETS.slice(0,5).map(loadOne));
+  document.getElementById('statusEl').textContent='Caricamento asset...';
+
+  // Load dynamic top assets first
+  await loadTopAssets();
+
+  document.getElementById('statusEl').textContent='Caricamento dati...';
+  await Promise.allSettled(ASSETS.slice(0,6).map(loadOne));
   await new Promise(r=>setTimeout(r,300));
-  await Promise.allSettled(ASSETS.slice(5).map(loadOne));
+  await Promise.allSettled(ASSETS.slice(6).map(loadOne));
   render();
   document.getElementById('statusEl').textContent='Aggiornato '+new Date().toLocaleTimeString('it-IT');
   document.getElementById('refreshBtn').disabled=false;
+}
+
+function renderMacro(all){
+  // Macro semaphore logic
+  const btc=all.find(s=>s.sym==='BTC');
+  const eth=all.find(s=>s.sym==='ETH');
+  const sol=all.find(s=>s.sym==='SOL');
+
+  const longCount=all.filter(s=>s.bias==='long').length;
+  const shortCount=all.filter(s=>s.bias==='short').length;
+  const total=all.length;
+  const shortPct=Math.round(shortCount/total*100);
+  const longPct=Math.round(longCount/total*100);
+
+  // BTC direction is king
+  const btcBias=btc?.bias||'wait';
+  const btcSolid=btc?.solidity?.level>=2;
+  const ethSolid=eth?.solidity?.level>=2;
+
+  // ETH vs BTC RS — alt season signal
+  const ethRS=eth?.rsBTC||0;
+  const solRS=sol?.rsBTC||0;
+  const altSeasonSignal=ethRS>2&&solRS>2; // ETH and SOL outperforming BTC
+
+  let macroState, macroColor, macroLight, macroLabel, macroSub;
+
+  if(btcBias==='short'&&btcSolid&&shortPct>=60){
+    macroState='bearish';
+    macroColor='var(--short)';
+    macroLight='#ef4444';
+    macroLabel='🔴 MERCATO RIBASSISTA';
+    macroSub=`BTC SHORT solido · ${shortPct}% asset in short · No long su altcoin`;
+  } else if(btcBias==='long'&&btcSolid&&altSeasonSignal){
+    macroState='altseason';
+    macroColor='#a78bfa';
+    macroLight='#a78bfa';
+    macroLabel='🚀 ALT SEASON — ETH e SOL guidano';
+    macroSub=`ETH +${ethRS.toFixed(1)}% vs BTC · SOL +${solRS.toFixed(1)}% vs BTC · Altcoin operative`;
+  } else if(btcBias==='long'&&btcSolid){
+    macroState='bullish';
+    macroColor='var(--long)';
+    macroLight='#22c55e';
+    macroLabel='🟢 MERCATO RIALZISTA';
+    macroSub=`BTC LONG solido · ${longPct}% asset in long · Altcoin operative con conferma`;
+  } else if(btcBias==='wait'||!btcSolid){
+    macroState='neutral';
+    macroColor='var(--wait)';
+    macroLight='#f59e0b';
+    macroLabel='🟡 MERCATO INDECISO';
+    macroSub=`BTC ${btcBias.toUpperCase()} ${btcSolid?'':'— bias non confermato'} · Opera solo sui segnali più forti`;
+  } else {
+    macroState='neutral';
+    macroColor='var(--wait)';
+    macroLight='#f59e0b';
+    macroLabel='🟡 MERCATO MISTO';
+    macroSub=`${longPct}% long · ${shortPct}% short · Seleziona solo solidità ≥ Moderato`;
+  }
+
+  // Pills for macro assets
+  const pills=[btc,eth,sol].filter(Boolean).map(s=>`
+    <div style="display:flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;background:var(--bg3);border:1px solid var(--border)">
+      <span style="font-size:10px;font-weight:700;color:${s.bias==='long'?'var(--long)':s.bias==='short'?'var(--short)':'var(--text3)'}">${s.sym}</span>
+      <span style="font-size:9px;color:${s.solidity?.color||'var(--text3)'}">${s.solidity?.icon||'—'} ${s.bias.toUpperCase()}</span>
+      <span style="font-size:9px;color:${s.rsBTC>0?'var(--long)':'var(--short)'}">${s.rsBTC>=0?'+':''}${s.rsBTC?.toFixed(1)}%</span>
+    </div>`).join('');
+
+  document.getElementById('macroBlock').style.display='';
+  document.getElementById('macroLight').style.background=macroLight;
+  document.getElementById('macroLight').style.boxShadow=`0 0 8px ${macroLight}`;
+  document.getElementById('macroLabel').textContent=macroLabel;
+  document.getElementById('macroLabel').style.color=macroColor;
+  document.getElementById('macroSub').textContent=macroSub;
+  document.getElementById('macroPills').innerHTML=pills;
+  document.getElementById('macroAssets').textContent='Asset monitorati: '+ASSETS.join(' · ');
+
+  return macroState;
 }
 
 async function loadOne(sym){
@@ -1054,7 +1192,13 @@ function renderTrades(allSignals){
           · OI/Vol: <span style="color:${(sig?.oiVolSpot||0)>2?'var(--short)':'var(--text3)'}">${sig?.oiVolSpot||'—'}x</span>
           · Funding: <span>${sig?.frVal?.toFixed(4)||'—'}%</span>
         </div>
-        <button class="close-btn" onclick="closeTrade(${t.id},'manual');renderTrades([])">✕ Chiudi</button>
+        <div style="display:flex;gap:6px">
+          <a href="https://www.tradingview.com/chart/?symbol=BINANCE:${t.sym}USDT.P&interval=60" target="_blank"
+            style="background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text2);font-family:inherit;font-size:10px;padding:4px 10px;text-decoration:none">
+            📊 TV
+          </a>
+          <button class="close-btn" onclick="closeTrade(${t.id},'manual');renderTrades([])">✕ Chiudi</button>
+        </div>
       </div>
     </div>`;
   }).join('');
@@ -1398,6 +1542,25 @@ function render(){
   // Monitor active trades
   monitorTrades(all);
 
+  // Macro semaphore
+  const macroState=renderMacro(all);
+
+  // If market is bearish → downgrade long signals to watch
+  if(macroState==='bearish'){
+    all.forEach(s=>{
+      if(s.bias==='long'&&s.sym!=='BTC'){
+        if(s.strat){
+          s.strat.statusLabel='⛔ LONG bloccato — mercato macro bearish';
+          s.strat.statusColor='var(--short)';
+          s.strat.atEntry=false;
+          s.strat.isRetest=false;
+          s.strat.momentumStrong=false;
+          s.strat.watch=true;
+        }
+      }
+    });
+  }
+
   // Notify new actionable signals via Telegram — only Moderato or Solido
   all.filter(s=>s.strat&&s.solidity.level>=2&&(s.strat.atEntry||s.strat.isRetest||(s.strat.momentumStrong&&s.strat.momentumRR>=1.5))).forEach(s=>{
     const notifKey='sop_notif_'+s.sym;
@@ -1466,7 +1629,12 @@ function render(){
         const rsBarColor=s.rsBTC>0?'var(--long)':'var(--short)';
         return`<tr onclick="scrollToCard('${s.sym}')">
           <td style="color:var(--text3);font-weight:700">${i+1}</td>
-          <td style="font-size:13px;font-weight:700;color:${s.bias==='long'?'var(--long)':s.bias==='short'?'var(--short)':'var(--text2)'}">${s.sym}</td>
+          <td style="font-size:13px;font-weight:700;">
+            <a href="https://www.tradingview.com/chart/?symbol=BINANCE:${s.sym}USDT.P&interval=60" target="_blank"
+              style="color:${s.bias==='long'?'var(--long)':s.bias==='short'?'var(--short)':'var(--text2)'};text-decoration:none">
+              ${s.sym} 📊
+            </a>
+          </td>
           <td><span class="tag ${s.bias}">${s.bias.toUpperCase()}</span></td>
           <td style="font-size:10px;font-weight:700;color:${s.solidity.color}">${s.solidity.icon} ${s.solidity.label}</td>
           <td style="color:${s.qualityColor};font-size:11px;letter-spacing:1px">${stars}</td>
@@ -1567,8 +1735,14 @@ function renderWaitCard(s){
         ${dz?`<div>Demand: <strong style="color:var(--long)">${fp(dz.zL)}–${fp(dz.zH)}</strong></div>`:''}
         ${sz?`<div>Supply: <strong style="color:var(--short)">${fp(sz.zL)}–${fp(sz.zH)}</strong></div>`:''}
       </div>
-    </div>
-  </div>`;
+      <div style="padding:10px 16px;background:var(--bg2);display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border)">
+        <div style="font-size:9px;color:var(--text3)">Nessun setup operativo — segnali non allineati</div>
+        <a href="https://www.tradingview.com/chart/?symbol=BINANCE:${s.sym}USDT.P&interval=60" target="_blank"
+          style="background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text2);font-family:inherit;font-size:10px;padding:4px 10px;cursor:pointer;text-decoration:none">
+          📊 TradingView
+        </a>
+      </div>
+    </div>`;
 }
 
 function renderCard(s,mode){
@@ -1768,10 +1942,16 @@ function renderCard(s,mode){
         <span class="rr-badge ${rrClass}">R/R TP1: ${st.rr1}:1</span>
         ${st.rr2?`<span class="rr-badge good">R/R TP2: ${st.rr2}:1</span>`:''}
         <span style="font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;background:var(--bg4);border:1px solid;border-color:${st.risk.color};color:${st.risk.color}">${st.risk.label} — rischia ${st.risk.pct}% capitale</span>
-        <button onclick="openTrade('${s.sym}','${bias}',${st.entry},${st.stop},${st.tp1},${st.tp2||0},'${s.bias}','${s.cvd.dir}')"
-          style="margin-left:auto;background:var(--accent);border:none;border-radius:6px;color:#fff;font-family:inherit;font-size:10px;padding:5px 14px;cursor:pointer;font-weight:600">
-          📌 Segui trade
-        </button>
+        <div style="display:flex;gap:6px;margin-left:auto">
+          <a href="https://www.tradingview.com/chart/?symbol=BINANCE:${s.sym}USDT.P&interval=60" target="_blank"
+            style="background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text2);font-family:inherit;font-size:10px;padding:5px 12px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:4px">
+            📊 TradingView
+          </a>
+          <button onclick="openTrade('${s.sym}','${bias}',${st.entry},${st.stop},${st.tp1},${st.tp2||0},'${s.bias}','${s.cvd.dir}')"
+            style="background:var(--accent);border:none;border-radius:6px;color:#fff;font-family:inherit;font-size:10px;padding:5px 14px;cursor:pointer;font-weight:600">
+            📌 Segui trade
+          </button>
+        </div>
       </div>
 
       <div style="background:var(--bg4);border-radius:7px;padding:9px 12px;margin-bottom:10px;margin-top:6px;font-size:10px;line-height:1.6">
