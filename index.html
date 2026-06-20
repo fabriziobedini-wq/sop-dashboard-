@@ -247,6 +247,21 @@ body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code',mo
     <div class="strategy-grid" id="watchGrid"></div>
   </div>
 
+  <!-- STORICO TRADE -->
+  <div id="historySection" style="display:none">
+    <div class="stitle">📊 Storico trade — performance metodo SOP</div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 16px">
+      <div id="historyStats"></div>
+      <div id="historyTable" style="overflow-x:auto"></div>
+      <div style="margin-top:10px;text-align:right">
+        <button onclick="if(confirm('Cancellare tutto lo storico?')){localStorage.setItem('sop_active_trades',JSON.stringify(getTrades().filter(t=>!t.closed)));renderHistory();}" 
+          style="background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text3);font-family:inherit;font-size:9px;padding:4px 10px;cursor:pointer">
+          🗑 Cancella storico
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- WAIT INFO -->
   <div id="waitSection" style="display:none">
     <div class="stitle">Segnale indeciso — dati di monitoraggio</div>
@@ -954,6 +969,83 @@ async function loadOne(sym){
   }catch(e){console.warn(sym,e);cache[sym]=null;}
 }
 
+// ── OPEN TRADE WITH ENTRY SELECTOR ───────────────────────────────────────
+function confirmTrade(sym,dir,entryZone,stop,tp1,tp2,currentBias,currentCVD,marketPrice){
+  const existing=document.getElementById('tradeModal');
+  if(existing) existing.remove();
+  const modal=document.createElement('div');
+  modal.id='tradeModal';
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
+  modal.innerHTML=`
+    <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:14px;padding:20px;max-width:380px;width:100%">
+      <div style="font-size:14px;font-weight:700;margin-bottom:4px;color:${dir==='long'?'var(--long)':'var(--short)'}">
+        📌 ${sym} ${dir.toUpperCase()} — Come entri?
+      </div>
+      <div style="font-size:10px;color:var(--text3);margin-bottom:14px">Scegli il tipo di entrata per calcolare stop e TP correttamente</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">
+        <button onclick="window._selEntry('market')" id="btnMarket"
+          style="background:var(--bg3);border:2px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:11px;padding:11px;cursor:pointer;text-align:left">
+          <div style="font-weight:700">⚡ Entro a mercato ora</div>
+          <div style="font-size:9px;color:var(--text3);margin-top:2px">Entry: <strong style="color:var(--accent)">${fp(marketPrice)}</strong></div>
+        </button>
+        <button onclick="window._selEntry('zone')" id="btnZone"
+          style="background:var(--bg3);border:2px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:11px;padding:11px;cursor:pointer;text-align:left">
+          <div style="font-weight:700">🎯 Aspetto l'entry price</div>
+          <div style="font-size:9px;color:var(--text3);margin-top:2px">Entry: <strong style="color:var(--accent)">${fp(entryZone)}</strong></div>
+        </button>
+        <button onclick="window._selEntry('custom')" id="btnCustom"
+          style="background:var(--bg3);border:2px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:11px;padding:11px;cursor:pointer;text-align:left">
+          <div style="font-weight:700">✏️ Inserisco il prezzo manualmente</div>
+          <div style="font-size:9px;color:var(--text3);margin-top:2px">Utile se sei già entrato a un prezzo diverso</div>
+        </button>
+      </div>
+      <div id="customPriceRow" style="display:none;margin-bottom:12px">
+        <div style="font-size:9px;color:var(--text3);margin-bottom:4px">Prezzo di entry:</div>
+        <input id="customPriceInput" type="number" step="any" placeholder="${marketPrice}"
+          style="background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-family:inherit;font-size:12px;padding:8px 10px;width:100%;outline:none;box-sizing:border-box">
+      </div>
+      <div style="display:flex;gap:8px">
+        <button onclick="document.getElementById('tradeModal').remove()"
+          style="flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:7px;color:var(--text2);font-family:inherit;font-size:11px;padding:9px;cursor:pointer">Annulla</button>
+        <button onclick="window._confirmEntry()" id="confirmBtn"
+          style="flex:2;background:var(--accent);border:none;border-radius:7px;color:#fff;font-family:inherit;font-size:11px;padding:9px;cursor:pointer;font-weight:600;opacity:.4;pointer-events:none">
+          Conferma trade
+        </button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  let sel=null;
+  window._selEntry=function(type){
+    sel=type;
+    ['market','zone','custom'].forEach(t=>{
+      document.getElementById('btn'+t[0].toUpperCase()+t.slice(1)).style.border=t===type?'2px solid var(--accent)':'2px solid var(--border)';
+    });
+    document.getElementById('customPriceRow').style.display=type==='custom'?'':'none';
+    const cb=document.getElementById('confirmBtn');
+    cb.style.opacity='1';cb.style.pointerEvents='auto';
+  };
+  window._confirmEntry=function(){
+    let finalEntry;
+    if(sel==='market') finalEntry=marketPrice;
+    else if(sel==='zone') finalEntry=entryZone;
+    else{
+      const v=parseFloat(document.getElementById('customPriceInput').value);
+      if(!v||isNaN(v)){alert('Inserisci un prezzo valido');return;}
+      finalEntry=v;
+    }
+    const isL=dir==='long';
+    const sd=Math.abs(stop-entryZone);
+    const t1d=Math.abs(tp1-entryZone);
+    const t2d=tp2?Math.abs(tp2-entryZone):null;
+    const ns=isL?Math.round((finalEntry-sd)*10000)/10000:Math.round((finalEntry+sd)*10000)/10000;
+    const nt1=isL?Math.round((finalEntry+t1d)*10000)/10000:Math.round((finalEntry-t1d)*10000)/10000;
+    const nt2=t2d?(isL?Math.round((finalEntry+t2d)*10000)/10000:Math.round((finalEntry-t2d)*10000)/10000):null;
+    openTrade(sym,dir,finalEntry,ns,nt1,nt2||0,currentBias,currentCVD);
+    modal.remove();
+  };
+  modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
+}
+
 // ── TRADE MONITORING SYSTEM ───────────────────────────────────────────────
 const TRADES_KEY='sop_active_trades';
 
@@ -982,13 +1074,120 @@ function openTrade(sym,dir,entry,stop,tp1,tp2,currentBias,currentCVD){
   renderTrades([]);
 }
 
-function closeTrade(id,reason){
+function closeTrade(id, reason, closePrice=null){
   const trades=getTrades();
   const t=trades.find(t=>t.id===id);
-  if(t){t.closed=true;t.closeReason=reason;t.closedAt=Date.now();}
+  if(t){
+    t.closed=true;
+    t.closeReason=reason;
+    t.closedAt=Date.now();
+    t.closePrice=closePrice||null;
+    // Calculate P&L if we have close price
+    if(closePrice&&t.entry){
+      const isL=t.dir==='long';
+      t.pnlPct=Math.round(((isL?(closePrice-t.entry):(t.entry-closePrice))/t.entry*100)*100)/100;
+    }
+  }
   saveTrades(trades);
   renderTrades([]);
+  renderHistory();
 }
+
+const REASON_LABELS={
+  'stop':'🔴 Stop Loss',
+  'tp2':'🏆 TP2 raggiunto',
+  'tp1_bias_inverted':'⚠️ TP1 + Bias invertito',
+  'bias_inverted_24h':'⚠️ Bias invertito >24h',
+  'manual':'✋ Chiuso manuale',
+  'bias_inverted':'⚠️ Bias invertito',
+};
+
+function renderHistory(){
+  const section=document.getElementById('historySection');
+  const statsEl=document.getElementById('historyStats');
+  const tableEl=document.getElementById('historyTable');
+  if(!section) return;
+
+  const all=getTrades();
+  const closed=all.filter(t=>t.closed).sort((a,b)=>b.closedAt-a.closedAt);
+
+  if(!closed.length){
+    section.style.display='none';
+    return;
+  }
+  section.style.display='';
+
+  // Stats
+  const wins=closed.filter(t=>t.pnlPct>0);
+  const losses=closed.filter(t=>t.pnlPct<0);
+  const be=closed.filter(t=>t.pnlPct===0||t.pnlPct===null||t.pnlPct===undefined);
+  const withPnl=closed.filter(t=>t.pnlPct!==null&&t.pnlPct!==undefined);
+  const totalPnl=withPnl.reduce((a,t)=>a+t.pnlPct,0);
+  const wr=withPnl.length>0?Math.round(wins.length/withPnl.length*100):0;
+  const avgWin=wins.length>0?wins.reduce((a,t)=>a+t.pnlPct,0)/wins.length:0;
+  const avgLoss=losses.length>0?losses.reduce((a,t)=>a+t.pnlPct,0)/losses.length:0;
+
+  // Reason breakdown
+  const byReason={};
+  closed.forEach(t=>{
+    const r=t.closeReason||'manual';
+    byReason[r]=(byReason[r]||0)+1;
+  });
+
+  statsEl.innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px">
+      ${[
+        {l:'Trade totali',v:closed.length,c:'nt'},
+        {l:'Win rate',v:wr+'%',c:wr>=55?'up':wr>=40?'wn':'dn'},
+        {l:'P&L totale',v:(totalPnl>=0?'+':'')+totalPnl.toFixed(2)+'%',c:totalPnl>0?'up':totalPnl<0?'dn':'nt'},
+        {l:'Avg win',v:'+'+avgWin.toFixed(2)+'%',c:'up'},
+        {l:'Avg loss',v:avgLoss.toFixed(2)+'%',c:'dn'},
+        {l:'Win / Loss / BE',v:wins.length+' / '+losses.length+' / '+be.length,c:'nt'},
+      ].map(s=>`<div style="background:var(--bg3);border-radius:8px;padding:10px 12px">
+        <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">${s.l}</div>
+        <div style="font-size:18px;font-weight:700;color:${s.c==='up'?'var(--long)':s.c==='dn'?'var(--short)':s.c==='wn'?'var(--wait)':'var(--text2)'}">${s.v}</div>
+      </div>`).join('')}
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px">
+      ${Object.entries(byReason).map(([r,n])=>`
+        <div style="font-size:9px;padding:3px 8px;border-radius:20px;background:var(--bg4);color:var(--text3);border:1px solid var(--border)">
+          ${REASON_LABELS[r]||r}: <strong style="color:var(--text)">${n}</strong>
+        </div>`).join('')}
+    </div>`;
+
+  tableEl.innerHTML=`
+    <table style="width:100%;border-collapse:collapse;font-size:10px">
+      <thead><tr style="border-bottom:1px solid var(--border)">
+        <th style="padding:6px 8px;color:var(--text3);font-weight:500;text-align:left">Asset</th>
+        <th style="padding:6px 8px;color:var(--text3);font-weight:500;text-align:left">Dir</th>
+        <th style="padding:6px 8px;color:var(--text3);font-weight:500;text-align:right">Entry</th>
+        <th style="padding:6px 8px;color:var(--text3);font-weight:500;text-align:right">Close</th>
+        <th style="padding:6px 8px;color:var(--text3);font-weight:500;text-align:right">P&L</th>
+        <th style="padding:6px 8px;color:var(--text3);font-weight:500;text-align:left">Motivo</th>
+        <th style="padding:6px 8px;color:var(--text3);font-weight:500;text-align:right">Durata</th>
+        <th style="padding:6px 8px;color:var(--text3);font-weight:500;text-align:right">Data</th>
+      </tr></thead>
+      <tbody>
+        ${closed.map(t=>{
+          const pnl=t.pnlPct!==null&&t.pnlPct!==undefined;
+          const pnlColor=pnl&&t.pnlPct>0?'var(--long)':pnl&&t.pnlPct<0?'var(--short)':'var(--text3)';
+          const dur=t.closedAt&&t.openedAt?Math.round((t.closedAt-t.openedAt)/3600000*10)/10:null;
+          const closeDate=t.closedAt?new Date(t.closedAt).toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
+          return`<tr style="border-bottom:1px solid var(--border)" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background=''">
+            <td style="padding:7px 8px;font-weight:700;color:${t.dir==='long'?'var(--long)':'var(--short)'}">${t.sym}</td>
+            <td style="padding:7px 8px"><span style="font-size:8px;font-weight:700;padding:2px 6px;border-radius:10px;background:${t.dir==='long'?'var(--long-bg)':'var(--short-bg)'};color:${t.dir==='long'?'var(--long)':'var(--short)'}">${t.dir.toUpperCase()}</span></td>
+            <td style="padding:7px 8px;text-align:right;color:var(--text2)">${fp(t.entry)}</td>
+            <td style="padding:7px 8px;text-align:right;color:var(--text2)">${fp(t.closePrice)||'—'}</td>
+            <td style="padding:7px 8px;text-align:right;font-weight:700;color:${pnlColor}">${pnl?(t.pnlPct>=0?'+':'')+t.pnlPct.toFixed(2)+'%':'—'}</td>
+            <td style="padding:7px 8px;color:var(--text3);font-size:9px">${REASON_LABELS[t.closeReason]||t.closeReason||'—'}</td>
+            <td style="padding:7px 8px;text-align:right;color:var(--text3)">${dur?dur+'h':'—'}</td>
+            <td style="padding:7px 8px;text-align:right;color:var(--text3)">${closeDate}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>`;
+}
+
 
 function monitorTrades(allSignals){
   const trades=getTrades().filter(t=>!t.closed);
@@ -1014,14 +1213,14 @@ function monitorTrades(allSignals){
 
     // ── Stop → chiude subito sempre ──────────────────────────────────────
     if((isL&&price<=t.stop)||(!isL&&price>=t.stop)){
-      closeTrade(t.id,'stop');
+      closeTrade(t.id,'stop',price);
       sendTG(`📌 TRADE SEGUITO — 🔴 <b>${t.sym}</b> — STOP COLPITO\nStop: ${fp(t.stop)} | Prezzo: ${fp(price)}\nPosizione chiusa\nAperto: ${formatAgo(t.openedAt)}`);
       return;
     }
 
     // ── TP2 → chiude subito sempre ───────────────────────────────────────
     if(t.tp2&&((isL&&price>=t.tp2)||(!isL&&price<=t.tp2))){
-      closeTrade(t.id,'tp2');
+      closeTrade(t.id,'tp2',price);
       sendTG(`📌 TRADE SEGUITO — 🏆 <b>${t.sym}</b> — TP2 RAGGIUNTO!\nTP2: ${fp(t.tp2)} | Prezzo: ${fp(price)}\nTrade completato ✅\nAperto: ${formatAgo(t.openedAt)}`);
       return;
     }
@@ -1036,7 +1235,7 @@ function monitorTrades(allSignals){
     // ── Bias invertito + 24h → chiude ────────────────────────────────────
     const biasInverted=(isL&&sig.bias==='short')||(!isL&&sig.bias==='long');
     if(biasInverted&&sig.biasStable&&hoursOpen>=24){
-      closeTrade(t.id,'bias_inverted_24h');
+      closeTrade(t.id,'bias_inverted_24h',price);
       const pnlPct=((isL?(price-t.entry):(t.entry-price))/t.entry*100);
       sendTG(`📌 TRADE SEGUITO — ⚠️ <b>${t.sym}</b> — Trade chiuso (bias invertito >24h)\nPrezzo: ${fp(price)} | P&L: ${pnlPct>=0?'+':''}${pnlPct.toFixed(2)}%\nTP1 ${t.tp1Hit?'raggiunto ✅':'non raggiunto'}`);
       if(sig.strat&&sig.quality>=4) setTimeout(()=>sendTG(`${sig.bias==='long'?'🟢':'🔴'} <b>${t.sym}</b> — NUOVO SEGNALE ${sig.bias.toUpperCase()}\nEntry: ${fp(sig.strat?.entry)} | TP1: ${fp(sig.strat?.tp1)} | R/R ${sig.strat?.rr1}:1`),2000);
@@ -1185,7 +1384,7 @@ function renderTrades(allSignals){
             style="background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text2);font-family:inherit;font-size:10px;padding:4px 10px;text-decoration:none">
             📊 TV
           </a>
-          <button class="close-btn" onclick="closeTrade(${t.id},'manual');renderTrades([])">✕ Chiudi</button>
+          <button class="close-btn" onclick="closeTrade(${t.id},'manual',${price||0});renderTrades([])">✕ Chiudi</button>
         </div>
       </div>
     </div>`;
@@ -1230,8 +1429,8 @@ window.addEventListener('DOMContentLoaded',()=>{
   const {token,chat}=getTGConfig();
   if(token) document.getElementById('tgToken').value=token;
   if(chat)  document.getElementById('tgChat').value=chat;
-  // Show any existing open trades immediately
   renderTrades([]);
+  renderHistory();
 });
 
 // ── SIGNAL STATE MEMORY ───────────────────────────────────────────────────
@@ -1935,7 +2134,7 @@ function renderCard(s,mode){
             style="background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text2);font-family:inherit;font-size:10px;padding:5px 12px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:4px">
             📊 TradingView
           </a>
-          <button onclick="openTrade('${s.sym}','${bias}',${st.entry},${st.stop},${st.tp1},${st.tp2||0},'${s.bias}','${s.cvd.dir}')"
+          <button onclick="confirmTrade('${s.sym}','${bias}',${st.entry},${st.stop},${st.tp1},${st.tp2||0},'${s.bias}','${s.cvd.dir}',${s.price})"
             style="background:var(--accent);border:none;border-radius:6px;color:#fff;font-family:inherit;font-size:10px;padding:5px 14px;cursor:pointer;font-weight:600">
             📌 Segui trade
           </button>
