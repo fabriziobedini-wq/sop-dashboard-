@@ -992,107 +992,95 @@ function closeTrade(id,reason){
 
 function monitorTrades(allSignals){
   const trades=getTrades().filter(t=>!t.closed);
-  if(!trades.length) return;
+  if(!trades.length){renderTrades(allSignals);return;}
 
-  trades.forEach(t=>{
-    const sig=allSignals.find(s=>s.sym===t.sym);
-    if(!sig) return;
-    const price=sig.price;
-    const isL=t.dir==='long';
-
-    // ── TP1 check ────────────────────────────────────────────────────────
-    if(!t.tp1Hit&&((isL&&price>=t.tp1)||(!isL&&price<=t.tp1))){
-      t.tp1Hit=true;
-      saveTrades(getTrades().map(x=>x.id===t.id?{...x,tp1Hit:true}:x));
-      sendTG(`✅ <b>${t.sym}</b> — TP1 RAGGIUNTO!\nTP1: ${fp(t.tp1)} | Prezzo: ${fp(price)}\nCHIUDI 50% e sposta stop a breakeven\nTrade aperto: ${formatAgo(t.openedAt)}`);
-    }
-
-    // ── TP2 check → auto-close ────────────────────────────────────────────
-    if(t.tp2&&((isL&&price>=t.tp2)||(!isL&&price<=t.tp2))){
-      closeTrade(t.id,'tp2');
-      sendTG(`🏆 <b>${t.sym}</b> — TP2 RAGGIUNTO!\nTP2: ${fp(t.tp2)} | Prezzo: ${fp(price)}\nCHIUDI TUTTO — Trade completato ✅\nAperto: ${formatAgo(t.openedAt)}`);
-      return;
-    }
-
-    // ── Stop check → auto-close ───────────────────────────────────────────
-    if((isL&&price<=t.stop)||(!isL&&price>=t.stop)){
-      closeTrade(t.id,'stop');
-      sendTG(`🔴 <b>${t.sym}</b> — STOP COLPITO\nStop: ${fp(t.stop)} | Prezzo: ${fp(price)}\nPosizione chiusa automaticamente\nAperto: ${formatAgo(t.openedAt)}`);
-      return;
-    }
-
-    // ── Bias invertito ────────────────────────────────────────────────────
-    const biasInverted=(isL&&sig.bias==='short')||(!isL&&sig.bias==='long');
-    const notifKey='sop_notif_'+t.sym;
-    const notified=JSON.parse(localStorage.getItem(notifKey)||'{}');
-
-    if(biasInverted){
-      if(sig.biasStable){
-        // Bias invertito E confermato (>8h) → chiudi automaticamente
-        closeTrade(t.id,'bias_inverted');
-        const pnlPct=price&&t.entry?((isL?(price-t.entry):(t.entry-price))/t.entry*100):0;
-        sendTG(`⚠️ <b>${t.sym}</b> — BIAS INVERTITO (confermato) — trade chiuso\nEri ${t.dir.toUpperCase()}, bias ${sig.bias.toUpperCase()} stabile da ${sig.biasAge}\nPrezzo: ${fp(price)} | P&L: ${pnlPct>=0?'+':''}${pnlPct.toFixed(2)}%\nTP1 ${t.tp1Hit?'già raggiunto ✅':'non raggiunto'}`);
-        if(sig.strat&&sig.quality>=4){
-          setTimeout(()=>sendTG(`${sig.bias==='long'?'🟢':'🔴'} <b>${t.sym}</b> — NUOVO SEGNALE ${sig.bias.toUpperCase()}\nEntry: ${fp(sig.strat.entry)} | Stop: ${fp(sig.strat.stop)} | TP1: ${fp(sig.strat.tp1)}\nR/R ${sig.strat.rr1}:1 | Qualità ${'★'.repeat(sig.quality)}`),2000);
-        }
-        return;
-      } else {
-        // Bias invertito ma NON ancora confermato → notifica, lascia aperto
-        if(!notified['bias_inv_'+t.id]){
-          notified['bias_inv_'+t.id]=Date.now();
-          localStorage.setItem(notifKey,JSON.stringify(notified));
-          sendTG(`🟡 <b>${t.sym}</b> — Bias girato ${sig.bias.toUpperCase()} (in conferma — ${sig.biasAge})\nTrade ${t.dir.toUpperCase()} ancora aperto — attendi conferma bias\nSe confermato entro 8h il trade verrà chiuso automaticamente\nPrezzo: ${fp(price)} | TP1: ${fp(t.tp1)}`);
-        }
-      }
-    }
-
-    // ── Bias→WAIT → notifica ma tieni aperto ─────────────────────────────
-    if(sig.bias==='wait'&&t.openBias!=='wait'&&!notified['wait_'+t.id]){
-      notified['wait_'+t.id]=Date.now();
-      localStorage.setItem(notifKey,JSON.stringify(notified));
-      sendTG(`🟡 <b>${t.sym}</b> — Bias diventato WAIT\nSegnale indebolito — trade ancora aperto\nPorta stop a breakeven (${fp(t.entry)})\nPrezzo: ${fp(price)} | TP1: ${fp(t.tp1)}`);
-    }
-
-    // ── Pre-stop warning: price approaching stop ──────────────────────────
-    const stopDist=Math.abs(t.stop-t.entry);
-    const distToStop=Math.abs(price-t.stop);
-    const pctToStop=stopDist>0?distToStop/stopDist*100:100;
-
-    if(pctToStop<50&&!notified['prestop_'+t.id]){
-      notified['prestop_'+t.id]=Date.now();
-      localStorage.setItem(notifKey,JSON.stringify(notified));
-      sendTG(`⚠️ <b>${t.sym}</b> — PREZZO VICINO ALLO STOP\nStop: ${fp(t.stop)} | Prezzo: ${fp(price)}\nDistanza rimasta: ${pctToStop.toFixed(0)}% dello stop\nValuta se uscire manualmente ora`);
-    }
-    if(pctToStop>70&&notified['prestop_'+t.id]){
-      delete notified['prestop_'+t.id];
-      localStorage.setItem(notifKey,JSON.stringify(notified));
-    }
-
-    // ── Pre-TP1 warning: price approaching TP1 ───────────────────────────
-    if(!t.tp1Hit){
-      const tp1Dist=Math.abs(t.tp1-t.entry);
-      const distToTp1=Math.abs(price-t.tp1);
-      const pctToTp1=tp1Dist>0?Math.min(100,(1-distToTp1/tp1Dist)*100):0;
-
-      if(pctToTp1>=75&&!notified['pretp1_'+t.id]){
-        notified['pretp1_'+t.id]=Date.now();
-        localStorage.setItem(notifKey,JSON.stringify(notified));
-        sendTG(`🎯 <b>${t.sym}</b> — VICINO AL TP1!\nTP1: ${fp(t.tp1)} | Prezzo: ${fp(price)}\nRaggiunto il ${pctToTp1.toFixed(0)}% del percorso\nValuta se chiudere manualmente ora o aspettare il TP`);
-      }
-      if(pctToTp1<60&&notified['pretp1_'+t.id]){
-        delete notified['pretp1_'+t.id];
-        localStorage.setItem(notifKey,JSON.stringify(notified));
-      }
-    }
-    const cvdAgainst=(isL&&sig.cvd.dir==='down'&&t.openCVD==='up')||(!isL&&sig.cvd.dir==='up'&&t.openCVD==='down');
-    if(cvdAgainst&&!notified['cvd_trade_'+t.id]){
-      notified['cvd_trade_'+t.id]=Date.now();
-      localStorage.setItem(notifKey,JSON.stringify(notified));
-      sendTG(`🟡 <b>${t.sym}</b> — CVD girato contro\nEri ${t.dir.toUpperCase()}, CVD ora ${sig.cvd.dir==='up'?'Buy':'Sell'}\nAttenzione — pressione cambiata\nPrezzo: ${fp(price)} | TP1: ${fp(t.tp1)}`);
+  // Keep monitoring symbols even if they left the top-10 list
+  const extraSyms=trades.map(t=>t.sym).filter(s=>!allSignals.find(x=>x.sym===s));
+  const extendedSignals=[...allSignals];
+  extraSyms.forEach(sym=>{
+    if(cache[sym]&&cache[sym].ticker){
+      try{const c=compute(sym);if(c)extendedSignals.push(c);}catch(e){}
     }
   });
 
-  renderTrades(allSignals);
+  trades.forEach(t=>{
+    const sig=extendedSignals.find(s=>s.sym===t.sym);
+    if(!sig) return;
+    const price=sig.price;
+    const isL=t.dir==='long';
+    const notifKey='sop_notif_'+t.sym;
+    const notified=JSON.parse(localStorage.getItem(notifKey)||'{}');
+    const hoursOpen=(Date.now()-t.openedAt)/3600000;
+
+    // ── Stop → chiude subito sempre ──────────────────────────────────────
+    if((isL&&price<=t.stop)||(!isL&&price>=t.stop)){
+      closeTrade(t.id,'stop');
+      sendTG(`📌 TRADE SEGUITO — 🔴 <b>${t.sym}</b> — STOP COLPITO\nStop: ${fp(t.stop)} | Prezzo: ${fp(price)}\nPosizione chiusa\nAperto: ${formatAgo(t.openedAt)}`);
+      return;
+    }
+
+    // ── TP2 → chiude subito sempre ───────────────────────────────────────
+    if(t.tp2&&((isL&&price>=t.tp2)||(!isL&&price<=t.tp2))){
+      closeTrade(t.id,'tp2');
+      sendTG(`📌 TRADE SEGUITO — 🏆 <b>${t.sym}</b> — TP2 RAGGIUNTO!\nTP2: ${fp(t.tp2)} | Prezzo: ${fp(price)}\nTrade completato ✅\nAperto: ${formatAgo(t.openedAt)}`);
+      return;
+    }
+
+    // ── TP1 hit tracking ─────────────────────────────────────────────────
+    if(!t.tp1Hit&&((isL&&price>=t.tp1)||(!isL&&price<=t.tp1))){
+      saveTrades(getTrades().map(x=>x.id===t.id?{...x,tp1Hit:true,tp1HitAt:Date.now()}:x));
+      t.tp1Hit=true; t.tp1HitAt=Date.now();
+      sendTG(`📌 TRADE SEGUITO — ✅ <b>${t.sym}</b> — TP1 RAGGIUNTO!\nTP1: ${fp(t.tp1)} | Prezzo: ${fp(price)}\nChiudi 50% e sposta stop a breakeven\nTP2: ${fp(t.tp2)} ancora aperto — scheda rimane aperta`);
+    }
+
+    // ── Bias invertito + 24h → chiude ────────────────────────────────────
+    const biasInverted=(isL&&sig.bias==='short')||(!isL&&sig.bias==='long');
+    if(biasInverted&&sig.biasStable&&hoursOpen>=24){
+      closeTrade(t.id,'bias_inverted_24h');
+      const pnlPct=((isL?(price-t.entry):(t.entry-price))/t.entry*100);
+      sendTG(`📌 TRADE SEGUITO — ⚠️ <b>${t.sym}</b> — Trade chiuso (bias invertito >24h)\nPrezzo: ${fp(price)} | P&L: ${pnlPct>=0?'+':''}${pnlPct.toFixed(2)}%\nTP1 ${t.tp1Hit?'raggiunto ✅':'non raggiunto'}`);
+      if(sig.strat&&sig.quality>=4) setTimeout(()=>sendTG(`${sig.bias==='long'?'🟢':'🔴'} <b>${t.sym}</b> — NUOVO SEGNALE ${sig.bias.toUpperCase()}\nEntry: ${fp(sig.strat?.entry)} | TP1: ${fp(sig.strat?.tp1)} | R/R ${sig.strat?.rr1}:1`),2000);
+      return;
+    }
+
+    // ── Tutte le altre condizioni → notifica, lascia aperto ──────────────
+    if(biasInverted&&!notified['bias_inv_'+t.id]){
+      notified['bias_inv_'+t.id]=Date.now();
+      sendTG(`📌 TRADE SEGUITO — 🟡 <b>${t.sym}</b> — Bias girato ${sig.bias.toUpperCase()} (${sig.biasAge})\nTrade ancora aperto — chiusura auto tra ${hoursOpen<24?(24-hoursOpen).toFixed(0)+'h':'poco'} se bias confermato\nPrezzo: ${fp(price)}`);
+    }
+    if(sig.bias==='wait'&&!notified['wait_'+t.id]){
+      notified['wait_'+t.id]=Date.now();
+      sendTG(`📌 TRADE SEGUITO — 🟡 <b>${t.sym}</b> — Bias WAIT\nPorta stop a breakeven: ${fp(t.entry)}\nPrezzo: ${fp(price)} | TP1: ${fp(t.tp1)}`);
+    }
+    const cvdAgainst=(isL&&sig.cvd.dir==='down'&&t.openCVD==='up')||(!isL&&sig.cvd.dir==='up'&&t.openCVD==='down');
+    if(cvdAgainst&&!notified['cvd_'+t.id]){
+      notified['cvd_'+t.id]=Date.now();
+      sendTG(`📌 TRADE SEGUITO — 🟡 <b>${t.sym}</b> — CVD girato contro\nPrezzo: ${fp(price)} | TP1: ${fp(t.tp1)}`);
+    }
+
+    // ── Proximity warnings ────────────────────────────────────────────────
+    const stopDist=Math.abs(t.stop-t.entry);
+    const pctToStop=stopDist>0?Math.abs(price-t.stop)/stopDist*100:100;
+    if(pctToStop<50&&!notified['prestop_'+t.id]){
+      notified['prestop_'+t.id]=Date.now();
+      sendTG(`📌 TRADE SEGUITO — ⚠️ <b>${t.sym}</b> — VICINO ALLO STOP\nStop: ${fp(t.stop)} | ${pctToStop.toFixed(0)}% rimasto\nValuta uscita manuale`);
+    }
+    if(pctToStop>70) delete notified['prestop_'+t.id];
+
+    if(!t.tp1Hit){
+      const tp1Dist=Math.abs(t.tp1-t.entry);
+      const pctToTp1=tp1Dist>0?Math.min(100,(1-Math.abs(price-t.tp1)/tp1Dist)*100):0;
+      if(pctToTp1>=75&&!notified['pretp1_'+t.id]){
+        notified['pretp1_'+t.id]=Date.now();
+        sendTG(`📌 TRADE SEGUITO — 🎯 <b>${t.sym}</b> — VICINO AL TP1 (${pctToTp1.toFixed(0)}%)\nTP1: ${fp(t.tp1)} | Prezzo: ${fp(price)}`);
+      }
+      if(pctToTp1<60) delete notified['pretp1_'+t.id];
+    }
+
+    localStorage.setItem(notifKey,JSON.stringify(notified));
+  });
+
+  renderTrades(extendedSignals);
 }
 
 function renderTrades(allSignals){
