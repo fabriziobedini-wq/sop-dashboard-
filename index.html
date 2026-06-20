@@ -1040,7 +1040,8 @@ function confirmTrade(sym,dir,entryZone,stop,tp1,tp2,currentBias,currentCVD,mark
     const ns=isL?Math.round((finalEntry-sd)*10000)/10000:Math.round((finalEntry+sd)*10000)/10000;
     const nt1=isL?Math.round((finalEntry+t1d)*10000)/10000:Math.round((finalEntry-t1d)*10000)/10000;
     const nt2=t2d?(isL?Math.round((finalEntry+t2d)*10000)/10000:Math.round((finalEntry-t2d)*10000)/10000):null;
-    openTrade(sym,dir,finalEntry,ns,nt1,nt2||0,currentBias,currentCVD);
+    const isPending=sel==='zone'; // pending only if waiting for EP
+    openTrade(sym,dir,finalEntry,ns,nt1,nt2||0,currentBias,currentCVD,isPending);
     modal.remove();
   };
   modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
@@ -1056,9 +1057,8 @@ function saveTrades(trades){
   localStorage.setItem(TRADES_KEY,JSON.stringify(trades));
 }
 
-function openTrade(sym,dir,entry,stop,tp1,tp2,currentBias,currentCVD){
+function openTrade(sym,dir,entry,stop,tp1,tp2,currentBias,currentCVD,isPending=false){
   const trades=getTrades();
-  // Remove any existing open trade for same sym
   const filtered=trades.filter(t=>t.sym!==sym||t.closed);
   filtered.push({
     id:Date.now(),
@@ -1069,9 +1069,13 @@ function openTrade(sym,dir,entry,stop,tp1,tp2,currentBias,currentCVD){
     tp1Hit:false,
     closed:false,
     closeReason:null,
+    // pending = true means waiting for EP to be touched before monitoring starts
+    pending:isPending,
+    activatedAt:isPending?null:Date.now(),
   });
   saveTrades(filtered);
   renderTrades([]);
+  renderHistory();
 }
 
 function closeTrade(id, reason, closePrice=null){
@@ -1211,6 +1215,26 @@ function monitorTrades(allSignals){
     const notified=JSON.parse(localStorage.getItem(notifKey)||'{}');
     const hoursOpen=(Date.now()-t.openedAt)/3600000;
 
+    // ── PENDING: waiting for EP to be touched ────────────────────────────
+    if(t.pending){
+      const epTouched=isL?(price<=t.entry*1.005):(price>=t.entry*0.995);
+      if(epTouched){
+        // Activate trade
+        saveTrades(getTrades().map(x=>x.id===t.id?{...x,pending:false,activatedAt:Date.now()}:x));
+        t.pending=false; t.activatedAt=Date.now();
+        sendTG(`📌 TRADE SEGUITO — ⚡ <b>${t.sym}</b> — ENTRY RAGGIUNTA!\nEntry: ${fp(t.entry)} | Prezzo: ${fp(price)}\nTrade attivato — monitoraggio stop/TP iniziato`);
+      } else {
+        // Not yet activated — check if price passed TP without touching EP
+        const tpPassedWithoutEntry=isL?(price>=t.tp1):(price<=t.tp1);
+        if(tpPassedWithoutEntry&&!notified['tp_no_entry_'+t.id]){
+          notified['tp_no_entry_'+t.id]=Date.now();
+          localStorage.setItem(notifKey,JSON.stringify(notified));
+          sendTG(`📌 TRADE SEGUITO — ℹ️ <b>${t.sym}</b> — TP raggiunto ma EP non toccato\nEri in attesa di ${fp(t.entry)}\nIl prezzo è andato al TP senza passare per il tuo livello\nNon eri dentro — nessuna azione necessaria`);
+        }
+      }
+      return; // don't monitor stop/TP until activated
+    }
+
     // ── Stop → chiude subito sempre ──────────────────────────────────────
     if((isL&&price<=t.stop)||(!isL&&price>=t.stop)){
       closeTrade(t.id,'stop',price);
@@ -1309,12 +1333,12 @@ function renderTrades(allSignals){
     const statusColor=biasOk?'var(--long)':biasWait?'var(--wait)':'var(--short)';
     const statusLabel=biasOk?'✓ Bias confermato':biasWait?'⚠ Bias diventato WAIT':'⛔ Bias invertito';
 
-    return`<div class="trade-card ${t.dir}" id="trade-${t.id}">
+    return`<div class="trade-card ${t.dir}" id="trade-${t.id}" style="${t.pending?'opacity:0.75':''}">
       <div class="trade-card-header ${t.dir}">
         <div>
-          <div style="font-size:18px;font-weight:700;color:${isL?'var(--long)':'var(--short)'}">${t.sym} ${isL?'🟢 LONG':'🔴 SHORT'}</div>
-          <div style="font-size:9px;color:var(--text3);margin-top:3px">Aperto ${elapsed} · Entry: ${fp(t.entry)}</div>
-          <div style="font-size:10px;font-weight:700;color:${statusColor};margin-top:4px">${statusLabel}</div>
+          <div style="font-size:18px;font-weight:700;color:${isL?'var(--long)':'var(--short)'}">${t.sym} ${isL?'🟢 LONG':'🔴 SHORT'}${t.pending?' ⏳':''}</div>
+          <div style="font-size:9px;color:var(--text3);margin-top:3px">${t.pending?'⏳ In attesa EP: '+fp(t.entry)+' — monitoraggio sospeso':'Aperto '+elapsed+' · Entry: '+fp(t.entry)}</div>
+          <div style="font-size:10px;font-weight:700;color:${t.pending?'var(--wait)':statusColor};margin-top:4px">${t.pending?'Prezzo non ancora arrivato al livello di entry':statusLabel}</div>
         </div>
         <div class="trade-pnl" style="color:${pnlColor}">
           ${pnlPct>=0?'+':''}${pnlPct.toFixed(2)}%
