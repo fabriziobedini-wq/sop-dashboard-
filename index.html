@@ -855,13 +855,22 @@ async function loadAll(){
   document.getElementById('refreshBtn').disabled=true;
   document.getElementById('statusEl').textContent='Caricamento asset...';
 
-  // Load dynamic top assets first
+  // Load dynamic top assets
   await loadTopAssets();
 
+  // Add any symbols with active trades that aren't in the top list
+  const activeTrades=getTrades().filter(t=>!t.closed);
+  const tradeSyms=activeTrades.map(t=>t.sym).filter(s=>!ASSETS.includes(s));
+  if(tradeSyms.length>0){
+    ASSETS=[...ASSETS,...tradeSyms];
+    console.log('Added trade symbols to load:',tradeSyms);
+  }
+
   document.getElementById('statusEl').textContent='Caricamento dati...';
-  await Promise.allSettled(ASSETS.slice(0,6).map(loadOne));
+  const batch1=ASSETS.slice(0,6), batch2=ASSETS.slice(6);
+  await Promise.allSettled(batch1.map(loadOne));
   await new Promise(r=>setTimeout(r,300));
-  await Promise.allSettled(ASSETS.slice(6).map(loadOne));
+  await Promise.allSettled(batch2.map(loadOne));
   render();
   document.getElementById('statusEl').textContent='Aggiornato '+new Date().toLocaleTimeString('it-IT');
   document.getElementById('refreshBtn').disabled=false;
