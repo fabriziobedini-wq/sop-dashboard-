@@ -173,24 +173,13 @@ body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code',mo
 </head>
 <body>
 
-<!-- TOP BAR -->
 <div class="top">
   <div class="logo">SOP<span>.</span>strategy <small>v1</small></div>
   <div class="top-right">
-    <!-- TAB NAV -->
     <div style="display:flex;gap:2px;background:var(--bg3);border-radius:8px;padding:3px">
-      <button onclick="switchTab('dashboard')" id="tabDashboard"
-        style="background:var(--accent);border:none;border-radius:6px;color:#fff;font-family:inherit;font-size:11px;padding:5px 14px;cursor:pointer;font-weight:600">
-        📊 Dashboard
-      </button>
-      <button onclick="switchTab('history')" id="tabHistory"
-        style="background:transparent;border:none;border-radius:6px;color:var(--text3);font-family:inherit;font-size:11px;padding:5px 14px;cursor:pointer">
-        📋 Storico
-      </button>
-      <button onclick="switchTab('settings')" id="tabSettings"
-        style="background:transparent;border:none;border-radius:6px;color:var(--text3);font-family:inherit;font-size:11px;padding:5px 14px;cursor:pointer">
-        ⚙️
-      </button>
+      <button onclick="switchTab('dashboard')" id="tabDashboard" style="background:var(--accent);border:none;border-radius:6px;color:#fff;font-family:inherit;font-size:11px;padding:5px 14px;cursor:pointer;font-weight:600">📊 Dashboard</button>
+      <button onclick="switchTab('history')" id="tabHistory" style="background:transparent;border:none;border-radius:6px;color:var(--text3);font-family:inherit;font-size:11px;padding:5px 14px;cursor:pointer">📋 Storico</button>
+      <button onclick="switchTab('settings')" id="tabSettings" style="background:transparent;border:none;border-radius:6px;color:var(--text3);font-family:inherit;font-size:11px;padding:5px 14px;cursor:pointer">⚙️</button>
     </div>
     <div class="status" id="statusEl">Premi Aggiorna</div>
     <button class="btn" id="refreshBtn" onclick="loadAll()">↻ Aggiorna</button>
@@ -200,102 +189,76 @@ body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code',mo
 
 <div id="alertBanner" style="display:none;background:#1a0505;border-bottom:2px solid var(--short)"></div>
 
-<!-- SETTINGS TAB -->
+<!-- SETTINGS PANEL -->
 <div id="panelSettings" style="display:none;background:var(--bg2);border-bottom:1px solid var(--border);padding:20px">
-  <div style="max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:16px">
-
-    <!-- SEZIONE TELEGRAM -->
+  <div style="max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:14px">
     <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 16px">
-      <div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:8px">
-        📱 Telegram Bot
-        <span style="font-size:9px;font-weight:400;color:var(--text3)">Notifiche in tempo reale su telefono</span>
-      </div>
+      <div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:10px">📱 Telegram Bot</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-        <input id="tgToken" type="password" placeholder="Bot token (es. 7234567:AAF...)" style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:inherit;font-size:10px;padding:6px 10px;width:240px;outline:none">
-        <input id="tgChat" type="text" placeholder="Chat ID (es. 123456789)" style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:inherit;font-size:10px;padding:6px 10px;width:130px;outline:none">
+        <input id="tgToken" type="password" placeholder="Bot token" style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:inherit;font-size:10px;padding:6px 10px;width:240px;outline:none">
+        <input id="tgChat" type="text" placeholder="Chat ID" style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:inherit;font-size:10px;padding:6px 10px;width:130px;outline:none">
         <button onclick="saveTG()" style="background:var(--accent);border:none;border-radius:6px;color:#fff;font-family:inherit;font-size:10px;padding:6px 12px;cursor:pointer;font-weight:600">Salva</button>
         <button onclick="testTG()" style="background:var(--bg2);border:1px solid var(--border2);border-radius:6px;color:var(--text2);font-family:inherit;font-size:10px;padding:6px 12px;cursor:pointer">Test</button>
         <span id="tgStatus" style="font-size:10px;color:var(--text3)"></span>
       </div>
-      <div style="font-size:9px;color:var(--text3);margin-top:8px;line-height:1.6">
-        Come ottenerlo: <strong style="color:var(--text)">1.</strong> Cerca @BotFather su Telegram → /newbot → copia il token
-        &nbsp;|&nbsp; <strong style="color:var(--text)">2.</strong> Scrivi al bot → cerca il tuo Chat ID su @userinfobot
-      </div>
+      <div style="font-size:9px;color:var(--text3);margin-top:6px">@BotFather → /newbot → copia token · @userinfobot → chat ID</div>
     </div>
-
-    <!-- SEZIONE ALPHA VANTAGE -->
     <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 16px">
-      <div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:6px;display:flex;align-items:center;gap:8px">
-        📈 Alpha Vantage
-        <span style="font-size:9px;font-weight:400;color:var(--text3)">Earnings calendar RWA + news azioni</span>
-        <span style="font-size:8px;padding:2px 6px;border-radius:10px;background:#052010;color:var(--long);border:1px solid #0f4020">GRATUITA</span>
-      </div>
+      <div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:6px">📈 Alpha Vantage <span style="font-size:8px;padding:2px 6px;border-radius:10px;background:#052010;color:var(--long);border:1px solid #0f4020">GRATUITA</span></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-        <input id="avKey" type="password" placeholder="API Key (es. ABCDEF123456)" style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:inherit;font-size:10px;padding:6px 10px;width:280px;outline:none">
+        <input id="avKey" type="password" placeholder="API Key" style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:inherit;font-size:10px;padding:6px 10px;width:260px;outline:none">
         <button onclick="saveApiKey('av')" style="background:var(--accent);border:none;border-radius:6px;color:#fff;font-family:inherit;font-size:10px;padding:6px 12px;cursor:pointer;font-weight:600">Salva</button>
-        <button onclick="testApiKey('av')" style="background:var(--bg2);border:1px solid var(--border2);border-radius:6px;color:var(--text2);font-family:inherit;font-size:10px;padding:6px 12px;cursor:pointer">Test</button>
         <span id="avStatus" style="font-size:10px;color:var(--text3)"></span>
-        <a href="https://www.alphavantage.co/support/#api-key" target="_blank" style="font-size:9px;color:var(--accent)">→ Ottieni chiave gratuita</a>
+        <a href="https://www.alphavantage.co/support/#api-key" target="_blank" style="font-size:9px;color:var(--accent)">→ Ottieni chiave</a>
       </div>
-      <div style="font-size:9px;color:var(--text3);margin-top:6px;line-height:1.6">
-        Usata per: earnings calendar (TSLA, NVDA, AAPL...) · news su azioni RWA · 25 chiamate/giorno piano free
-      </div>
+      <div style="font-size:9px;color:var(--text3);margin-top:4px">Earnings calendar RWA (TSLA, NVDA, AAPL...) · 25 req/giorno</div>
     </div>
-
-    <!-- SEZIONE EIA -->
     <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 16px">
-      <div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:6px;display:flex;align-items:center;gap:8px">
-        🛢️ EIA (Energy Information Administration)
-        <span style="font-size:9px;font-weight:400;color:var(--text3)">Report inventari petrolio settimanali</span>
-        <span style="font-size:8px;padding:2px 6px;border-radius:10px;background:#052010;color:var(--long);border:1px solid #0f4020">GRATUITA</span>
-      </div>
+      <div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:6px">🛢️ EIA <span style="font-size:8px;padding:2px 6px;border-radius:10px;background:#052010;color:var(--long);border:1px solid #0f4020">GRATUITA</span></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-        <input id="eiaKey" type="password" placeholder="API Key EIA (registrazione rapida)" style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:inherit;font-size:10px;padding:6px 10px;width:280px;outline:none">
+        <input id="eiaKey" type="password" placeholder="API Key EIA" style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:inherit;font-size:10px;padding:6px 10px;width:260px;outline:none">
         <button onclick="saveApiKey('eia')" style="background:var(--accent);border:none;border-radius:6px;color:#fff;font-family:inherit;font-size:10px;padding:6px 12px;cursor:pointer;font-weight:600">Salva</button>
-        <button onclick="testApiKey('eia')" style="background:var(--bg2);border:1px solid var(--border2);border-radius:6px;color:var(--text2);font-family:inherit;font-size:10px;padding:6px 12px;cursor:pointer">Test</button>
         <span id="eiaStatus" style="font-size:10px;color:var(--text3)"></span>
-        <a href="https://www.eia.gov/opendata/register.php" target="_blank" style="font-size:9px;color:var(--accent)">→ Registrati gratis</a>
+        <a href="https://www.eia.gov/opendata/register.php" target="_blank" style="font-size:9px;color:var(--accent)">→ Registrati</a>
       </div>
-      <div style="font-size:9px;color:var(--text3);margin-top:6px;line-height:1.6">
-        Usata per: report EIA inventari petrolio (ogni mercoledì 16:30 ET) · dato fondamentale per CL e BZ · nessun limite chiamate
-      </div>
+      <div style="font-size:9px;color:var(--text3);margin-top:4px">Report inventari petrolio (mercoledì 16:30 ET) · CL, BZ</div>
     </div>
-
-    <!-- SEZIONE NEWSAPI -->
     <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 16px">
-      <div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:6px;display:flex;align-items:center;gap:8px">
-        📰 NewsAPI
-        <span style="font-size:9px;font-weight:400;color:var(--text3)">News macro commodity e geopolitica</span>
-        <span style="font-size:8px;padding:2px 6px;border-radius:10px;background:#1a1005;color:var(--wait);border:1px solid var(--wait-border)">100 req/giorno</span>
-      </div>
+      <div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:6px">📰 NewsAPI <span style="font-size:8px;padding:2px 6px;border-radius:10px;background:#1a1005;color:var(--wait);border:1px solid var(--wait-border)">100 req/giorno</span></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-        <input id="newsKey" type="password" placeholder="API Key NewsAPI" style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:inherit;font-size:10px;padding:6px 10px;width:280px;outline:none">
+        <input id="newsKey" type="password" placeholder="API Key NewsAPI" style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:inherit;font-size:10px;padding:6px 10px;width:260px;outline:none">
         <button onclick="saveApiKey('news')" style="background:var(--accent);border:none;border-radius:6px;color:#fff;font-family:inherit;font-size:10px;padding:6px 12px;cursor:pointer;font-weight:600">Salva</button>
-        <button onclick="testApiKey('news')" style="background:var(--bg2);border:1px solid var(--border2);border-radius:6px;color:var(--text2);font-family:inherit;font-size:10px;padding:6px 12px;cursor:pointer">Test</button>
         <span id="newsStatus" style="font-size:10px;color:var(--text3)"></span>
-        <a href="https://newsapi.org/register" target="_blank" style="font-size:9px;color:var(--accent)">→ Registrati gratis</a>
+        <a href="https://newsapi.org/register" target="_blank" style="font-size:9px;color:var(--accent)">→ Registrati</a>
       </div>
-      <div style="font-size:9px;color:var(--text3);margin-top:6px;line-height:1.6">
-        Usata per: news OPEC · geopolitica Medio Oriente per CL · notizie macro su XAU · 100 chiamate/giorno piano free
-      </div>
+      <div style="font-size:9px;color:var(--text3);margin-top:4px">News OPEC, geopolitica, macro commodity</div>
     </div>
-
-    <!-- STATO API -->
-    <div id="apiStatusBlock" style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 16px">
-      <div style="font-size:10px;font-weight:700;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.07em">Stato connessioni API</div>
-      <div style="display:flex;gap:12px;flex-wrap:wrap" id="apiStatusList">
-        <div style="font-size:9px;color:var(--text3)">Inserisci le chiavi API sopra per attivare le funzionalità avanzate</div>
-      </div>
-    </div>
-
   </div>
 </div>
 
-<!-- DASHBOARD TAB -->
+<!-- HISTORY PANEL -->
+<div id="panelHistory" style="display:none" class="wrap">
+  <div class="stitle">📋 Storico trade — performance metodo SOP</div>
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 16px">
+    <div id="historyStats"><div class="nodata">Nessun trade chiuso ancora</div></div>
+    <div id="historyTable" style="overflow-x:auto;margin-top:10px"></div>
+    <div style="margin-top:10px;text-align:right">
+      <button onclick="if(confirm('Cancellare tutto lo storico?')){saveTrades(getTrades().filter(function(t){return !t.closed}));renderHistory();}" style="background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text3);font-family:inherit;font-size:9px;padding:4px 10px;cursor:pointer">🗑 Cancella storico</button>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD PANEL -->
 <div id="panelDashboard" class="wrap">
 
-  <!-- 1. SEMAFORO MACRO -->
-  <div id="macroBlock" style="display:none;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 18px">
+  <!-- TRADE ATTIVI IN MONITORAGGIO -->
+  <div id="tradesSection" style="display:none">
+    <div class="stitle">📌 Trade in monitoraggio</div>
+    <div class="strategy-grid" id="tradesGrid"></div>
+  </div>
+
+  <!-- MACRO SEMAPHORE -->
+  <div id="macroBlock" style="display:none;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 18px;margin-bottom:4px">
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
       <div style="display:flex;align-items:center;gap:12px">
         <div id="macroLight" style="width:16px;height:16px;border-radius:50%;flex-shrink:0"></div>
@@ -304,20 +267,14 @@ body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code',mo
           <div id="macroSub" style="font-size:10px;color:var(--text3);margin-top:2px"></div>
         </div>
       </div>
-      <div style="display:flex;gap:12px;flex-wrap:wrap" id="macroPills"></div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap" id="macroPills"></div>
     </div>
     <div id="macroAssets" style="font-size:9px;color:var(--text3);margin-top:8px"></div>
   </div>
 
-  <!-- 2. TRADE IN MONITORAGGIO -->
-  <div id="tradesSection" style="display:none">
-    <div class="stitle">📌 Trade in monitoraggio</div>
-    <div class="strategy-grid" id="tradesGrid"></div>
-  </div>
-
-  <!-- 3. OVERVIEW -->
+  <!-- OVERVIEW -->
   <div>
-    <div class="stitle">Market overview</div>
+    <div class="stitle">Market overview — 15 Jun 2026</div>
     <div class="overview">
       <div class="ov"><div class="ov-label">Bias LONG</div><div class="ov-val up" id="ovL">—</div><div class="ov-sub">asset con segnale long</div></div>
       <div class="ov"><div class="ov-label">Bias SHORT</div><div class="ov-val dn" id="ovS">—</div><div class="ov-sub">asset con segnale short</div></div>
@@ -326,42 +283,46 @@ body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code',mo
     </div>
   </div>
 
-  <!-- 4. RANKING -->
+  <!-- RANKING -->
   <div class="card">
     <div class="stitle">Ranking — chi merita attenzione ora</div>
     <div id="rankingBox"><div class="nodata">Premi Aggiorna per caricare i dati live</div></div>
   </div>
 
-  <!-- 5. SETUP OPERATIVI (attivi + in osservazione unificati) -->
+  <!-- STRATEGY CARDS (only actionable) -->
   <div id="strategySection" style="display:none">
-    <div class="stitle" id="strategyTitle">Setup operativi</div>
+    <div class="stitle" id="strategyTitle">Setup operativi attivi</div>
     <div class="strategy-grid" id="strategyGrid"></div>
   </div>
 
-  <!-- 6. SEGNALE INDECISO -->
-  <div id="waitSection" style="display:none">
-    <div class="stitle">Segnale indeciso — dati di monitoraggio</div>
-    <div class="strategy-grid" id="waitGrid"></div>
+  <!-- WATCH LIST -->
+  <div id="watchSection" style="display:none">
+    <div class="stitle">In osservazione — bias definito, aspetta il livello</div>
+    <div class="strategy-grid" id="watchGrid"></div>
   </div>
 
-</div>
-
-<!-- HISTORY TAB -->
-<div id="panelHistory" style="display:none" class="wrap">
-  <div id="historySection">
-    <div class="stitle">📋 Storico trade — performance metodo SOP</div>
+  <!-- STORICO TRADE -->
+  <div id="historySection" style="display:none">
+    <div class="stitle">📊 Storico trade — performance metodo SOP</div>
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 16px">
-      <div id="historyStats"><div class="nodata">Nessun trade chiuso ancora</div></div>
-      <div id="historyTable" style="overflow-x:auto;margin-top:10px"></div>
+      <div id="historyStats"></div>
+      <div id="historyTable" style="overflow-x:auto"></div>
       <div style="margin-top:10px;text-align:right">
-        <button onclick="if(confirm('Cancellare tutto lo storico?')){saveTrades(getTrades().filter(t=>!t.closed));renderHistory();}"
+        <button onclick="if(confirm('Cancellare tutto lo storico?')){localStorage.setItem('sop_active_trades',JSON.stringify(getTrades().filter(t=>!t.closed)));renderHistory();}" 
           style="background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text3);font-family:inherit;font-size:9px;padding:4px 10px;cursor:pointer">
           🗑 Cancella storico
         </button>
       </div>
     </div>
   </div>
-</div>
+
+  <!-- WAIT INFO -->
+  <div id="waitSection" style="display:none">
+    <div class="stitle">Segnale indeciso — dati di monitoraggio</div>
+    <div class="strategy-grid" id="waitGrid"></div>
+  </div>
+
+</div><!-- end panelDashboard -->
 
 <script>
 'use strict';
@@ -373,161 +334,29 @@ let ASSETS=[...ASSETS_FALLBACK];
 // Always include BTC and ETH as macro anchors regardless of OI rank
 const MACRO_ASSETS=['BTC','ETH','SOL'];
 
-// ── EARNINGS & NEWS FOR NON-CRYPTO ASSETS ────────────────────────────────
-const fundamentalCache={};
-
-async function loadFundamentals(sym, assetType){
-  if(assetType==='crypto') return null;
-  const cacheKey=sym+'_'+assetType;
-  const cached=fundamentalCache[cacheKey];
-  if(cached&&(Date.now()-cached.ts)<3600000) return cached.data; // 1h cache
-
-  const keys=getApiKeys();
-  let data={earnings:null, news:[], eiaReport:null};
-
-  try{
-    // EARNINGS for RWA stocks (Alpha Vantage)
-    if(assetType==='rwa'&&keys.av){
-      const r=await fetch(`https://www.alphavantage.co/query?function=EARNINGS_CALENDAR&symbol=${sym}&horizon=3month&apikey=${keys.av}`);
-      const text=await r.text();
-      // Parse CSV response
-      const lines=text.split('\n').filter(l=>l.trim());
-      if(lines.length>1){
-        const headers=lines[0].split(',');
-        const rows=lines.slice(1).map(l=>{
-          const vals=l.split(',');
-          const obj={};
-          headers.forEach((h,i)=>obj[h.trim()]=vals[i]?.trim());
-          return obj;
-        }).filter(r=>r.reportDate);
-        // Find next earnings
-        const now=new Date();
-        const next=rows.find(r=>new Date(r.reportDate)>=now);
-        if(next){
-          const daysUntil=Math.round((new Date(next.reportDate)-now)/86400000);
-          data.earnings={date:next.reportDate, daysUntil, estimate:next.estimate};
-        }
-      }
-    }
-
-    // EIA report for oil (CL, BZ)
-    if((sym==='CL'||sym==='BZ')&&keys.eia){
-      const r=await fetch(`https://api.eia.gov/v2/petroleum/sum/sndw/data/?api_key=${keys.eia}&frequency=weekly&data[0]=value&sort[0][column]=period&sort[0][direction]=desc&length=2`);
-      const d=await r.json();
-      if(d.response?.data?.length>=2){
-        const latest=d.response.data[0];
-        const prev=d.response.data[1];
-        const change=latest.value-prev.value;
-        data.eiaReport={
-          period:latest.period,
-          value:latest.value,
-          change:Math.round(change*10)/10,
-          unit:'Mb'
-        };
-      }
-    }
-
-    // NEWS for commodities and RWA (NewsAPI)
-    if(assetType!=='crypto'&&keys.news){
-      const queries={
-        CL:'crude oil WTI OPEC',BZ:'brent crude oil',NATGAS:'natural gas LNG',
-        XAU:'gold price fed',XAG:'silver price',
-        TSLA:'Tesla earnings',NVDA:'NVIDIA earnings AI',AAPL:'Apple earnings',
-        default:sym+' stock news'
-      };
-      const q=queries[sym]||queries.default;
-      const r=await fetch(`https://newsapi.org/v2/everything?q=${encodeURIComponent(q)}&sortBy=publishedAt&pageSize=3&language=en&apiKey=${keys.news}`);
-      const d=await r.json();
-      if(d.status==='ok'&&d.articles){
-        data.news=d.articles.slice(0,3).map(a=>({
-          title:a.title,
-          source:a.source.name,
-          url:a.url,
-          ago:Math.round((Date.now()-new Date(a.publishedAt))/3600000)+'h fa'
-        }));
-      }
-    }
-  }catch(e){
-    console.warn('Fundamentals error for',sym,e);
-  }
-
-  fundamentalCache[cacheKey]={data,ts:Date.now()};
-  return data;
-}
-
-// Cache for async card updates
-const fundamentalsStore={};
-
-async function loadAllFundamentals(signals){
-  const nonCrypto=signals.filter(s=>s.assetInfo?.type!=='crypto');
-  await Promise.allSettled(nonCrypto.map(async s=>{
-    const data=await loadFundamentals(s.sym, s.assetInfo.type);
-    if(data) fundamentalsStore[s.sym]=data;
-  }));
-  // Re-render cards with fundamentals
-  nonCrypto.forEach(s=>{
-    const el=document.getElementById('card-'+s.sym);
-    if(el&&fundamentalsStore[s.sym]){
-      const fundEl=el.querySelector('.fundamentals-block');
-      if(fundEl) fundEl.innerHTML=renderFundamentals(s.sym, s.assetInfo);
+// ── TAB NAVIGATION ────────────────────────────────────────────────────────
+function switchTab(tab){
+  ['dashboard','history','settings'].forEach(function(t){
+    var panel=document.getElementById('panel'+t.charAt(0).toUpperCase()+t.slice(1));
+    var btn=document.getElementById('tab'+t.charAt(0).toUpperCase()+t.slice(1));
+    if(panel) panel.style.display=t===tab?'':'none';
+    if(btn){
+      btn.style.background=t===tab?'var(--accent)':'transparent';
+      btn.style.color=t===tab?'#fff':'var(--text3)';
     }
   });
+  var sp=document.getElementById('panelSettings');
+  if(sp) sp.style.display=tab==='settings'?'':'none';
+  if(tab==='history') renderHistory();
 }
 
-function renderFundamentals(sym, assetInfo){
-  const data=fundamentalsStore[sym];
-  if(!data) return '';
-  let html='';
-
-  // Earnings warning
-  if(data.earnings){
-    const urgent=data.earnings.daysUntil<=2;
-    html+=`<div style="padding:6px 10px;background:${urgent?'var(--short-bg)':'var(--bg4)'};border-radius:6px;border:1px solid ${urgent?'var(--short-border)':'var(--border)'};margin-bottom:6px">
-      <div style="font-size:9px;font-weight:700;color:${urgent?'var(--short)':'var(--wait)'}">
-        ${urgent?'🚨':'📅'} Trimestrale: ${data.earnings.date} (${data.earnings.daysUntil} giorni)
-        ${urgent?'— NON OPERARE nelle prossime 48h':''}
-      </div>
-      ${data.earnings.estimate?`<div style="font-size:8px;color:var(--text3);margin-top:2px">EPS stimato: ${data.earnings.estimate}</div>`:''}
-    </div>`;
-  }
-
-  // EIA report
-  if(data.eiaReport){
-    const bull=data.eiaReport.change<0; // draw down = bullish for oil
-    html+=`<div style="padding:6px 10px;background:var(--bg4);border-radius:6px;border:1px solid var(--border);margin-bottom:6px">
-      <div style="font-size:9px;font-weight:700;color:var(--text)">🛢️ EIA Inventari — ${data.eiaReport.period}</div>
-      <div style="font-size:9px;color:${bull?'var(--long)':'var(--short)'}">
-        ${data.eiaReport.change>=0?'+':''}${data.eiaReport.change} ${data.eiaReport.unit}
-        ${bull?'↓ Draw (bullish)':'↑ Build (bearish)'}
-      </div>
-    </div>`;
-  }
-
-  // News
-  if(data.news?.length>0){
-    html+=`<div style="padding:6px 10px;background:var(--bg4);border-radius:6px;border:1px solid var(--border)">
-      <div style="font-size:9px;font-weight:700;color:var(--text3);margin-bottom:4px">📰 News recenti</div>
-      ${data.news.map(n=>`
-        <div style="margin-bottom:4px;padding-bottom:4px;border-bottom:1px solid var(--border)">
-          <a href="${n.url}" target="_blank" style="font-size:9px;color:var(--text);text-decoration:none;line-height:1.3;display:block">${n.title?.slice(0,80)}${n.title?.length>80?'...':''}</a>
-          <div style="font-size:8px;color:var(--text3);margin-top:1px">${n.source} · ${n.ago}</div>
-        </div>`).join('')}
-    </div>`;
-  }
-
-  return html;
-}
-
-
-const ASSET_TYPES={
+// ── ASSET CLASSIFICATION ──────────────────────────────────────────────────
+var ASSET_TYPES={
   CL:{type:'commodity',label:'Petrolio WTI',icon:'🛢️',atrMult:2.0},
   BZ:{type:'commodity',label:'Brent Crude',icon:'🛢️',atrMult:2.0},
   NATGAS:{type:'commodity',label:'Gas Naturale',icon:'🔥',atrMult:2.5},
   XAU:{type:'metal',label:'Oro',icon:'🥇',atrMult:1.8},
   XAG:{type:'metal',label:'Argento',icon:'🥈',atrMult:2.0},
-  XPT:{type:'metal',label:'Platino',icon:'⚪',atrMult:2.0},
-  XPD:{type:'metal',label:'Palladio',icon:'⚪',atrMult:2.0},
-  COPPER:{type:'metal',label:'Rame',icon:'🟤',atrMult:1.8},
   AAPL:{type:'rwa',label:'Apple',icon:'📱',atrMult:1.8},
   TSLA:{type:'rwa',label:'Tesla',icon:'🚗',atrMult:2.0},
   NVDA:{type:'rwa',label:'NVIDIA',icon:'💻',atrMult:2.0},
@@ -535,7 +364,6 @@ const ASSET_TYPES={
   GOOGL:{type:'rwa',label:'Google',icon:'🔍',atrMult:1.8},
   MSFT:{type:'rwa',label:'Microsoft',icon:'🪟',atrMult:1.8},
   META:{type:'rwa',label:'Meta',icon:'👤',atrMult:2.0},
-  NFLX:{type:'rwa',label:'Netflix',icon:'🎬',atrMult:2.0},
   COIN:{type:'rwa',label:'Coinbase',icon:'🏦',atrMult:2.0},
   MSTR:{type:'rwa',label:'MicroStrategy',icon:'🏦',atrMult:2.5},
   SPX:{type:'index',label:'S&P 500',icon:'📊',atrMult:1.5},
@@ -543,81 +371,109 @@ const ASSET_TYPES={
   SOXL:{type:'index',label:'Semicon ETF',icon:'📊',atrMult:2.0},
   SPCX:{type:'index',label:'Space ETF',icon:'🚀',atrMult:2.0},
 };
-
 function getAssetType(sym){
   return ASSET_TYPES[sym]||{type:'crypto',label:sym,icon:'🔵',atrMult:1.5};
 }
-
 function getAssetBadge(sym){
-  const t=getAssetType(sym);
-  const cols={crypto:'#3b82f6',commodity:'#f59e0b',metal:'#9ca3af',rwa:'#22c55e',index:'#a78bfa'};
-  const bgs={crypto:'#1e3a5f22',commodity:'#1c120722',metal:'#1a1a1a22',rwa:'#05201022',index:'#1a0d2e22'};
-  return`<span style="font-size:8px;font-weight:700;padding:2px 6px;border-radius:10px;background:${bgs[t.type]||bgs.crypto};color:${cols[t.type]||cols.crypto};border:1px solid ${cols[t.type]||cols.crypto}66">${t.icon} ${t.type.toUpperCase()}</span>`;
+  var t=getAssetType(sym);
+  var cols={crypto:'#3b82f6',commodity:'#f59e0b',metal:'#9ca3af',rwa:'#22c55e',index:'#a78bfa'};
+  var c=cols[t.type]||cols.crypto;
+  return '<span style="font-size:8px;font-weight:700;padding:2px 6px;border-radius:10px;background:'+c+'22;color:'+c+';border:1px solid '+c+'66">'+t.icon+' '+t.type.toUpperCase()+'</span>';
 }
+
+// ── MARKET REGIME ─────────────────────────────────────────────────────────
+function classifyRegime(oiCurrent,vol24h){
+  if(!oiCurrent||!vol24h||vol24h===0) return{type:'unknown',label:'—',icon:'—',color:'var(--text3)',ratio:0};
+  var ratio=oiCurrent/(vol24h/24);
+  if(ratio>=3) return{type:'structural',label:'Strutturale',icon:'🏗️',color:'var(--long)',ratio:Math.round(ratio)};
+  if(ratio>=1) return{type:'mixed',label:'Misto',icon:'⚖️',color:'var(--wait)',ratio:Math.round(ratio)};
+  return{type:'momentum',label:'Momentum',icon:'⚡',color:'var(--short)',ratio:Math.round(ratio*10)/10};
+}
+
+// ── CONSECUTIVE SL DETECTOR ───────────────────────────────────────────────
+function getConsecutiveSL(sym){
+  var closed=getTrades().filter(function(t){return t.closed&&t.sym===sym;})
+    .sort(function(a,b){return b.closedAt-a.closedAt;});
+  var count=0;
+  for(var i=0;i<closed.length;i++){
+    if(closed[i].closeReason==='stop') count++;
+    else break;
+  }
+  return count;
+}
+function getSLWarning(sym){
+  var n=getConsecutiveSL(sym);
+  if(n>=3) return{level:'danger',msg:'🚫 '+n+' SL consecutivi — non operare su questo asset',forceWait:true};
+  if(n>=2) return{level:'warning',msg:'⚠️ 2 SL consecutivi — usa size minima',forceWait:false};
+  return null;
+}
+
+// ── API KEY MANAGEMENT ────────────────────────────────────────────────────
+function getApiKeys(){
+  return{
+    av:localStorage.getItem('api_alphavantage')||'',
+    eia:localStorage.getItem('api_eia')||'',
+    news:localStorage.getItem('api_news')||'',
+  };
+}
+function saveApiKey(type){
+  var ids={av:'avKey',eia:'eiaKey',news:'newsKey'};
+  var lsKeys={av:'api_alphavantage',eia:'api_eia',news:'api_news'};
+  var statusIds={av:'avStatus',eia:'eiaStatus',news:'newsStatus'};
+  var val=document.getElementById(ids[type])&&document.getElementById(ids[type]).value.trim();
+  if(!val){if(document.getElementById(statusIds[type]))document.getElementById(statusIds[type]).textContent='Chiave vuota';return;}
+  localStorage.setItem(lsKeys[type],val);
+  if(document.getElementById(statusIds[type])){
+    document.getElementById(statusIds[type]).textContent='✓ Salvata';
+    setTimeout(function(){var el=document.getElementById(statusIds[type]);if(el)el.textContent='';},2000);
+  }
+}
+function loadSavedApiKeys(){
+  var keys=getApiKeys();
+  if(document.getElementById('avKey'))   document.getElementById('avKey').value=keys.av;
+  if(document.getElementById('eiaKey'))  document.getElementById('eiaKey').value=keys.eia;
+  if(document.getElementById('newsKey')) document.getElementById('newsKey').value=keys.news;
+}
+
+// ── TELEGRAM LINKS HELPER ─────────────────────────────────────────────────
+function tgLinks(sym){
+  var dashboard='https://fabriziobedini-wq.github.io/sop-dashboard-/';
+  var tv='https://www.tradingview.com/chart/?symbol=BINANCE:'+sym+'USDT.P&interval=60';
+  return '\n\n<a href="'+dashboard+'">🌐 Dashboard</a>  |  <a href="'+tv+'">📊 TradingView '+sym+'</a>';
+}
+
+
 
 async function loadTopAssets(){
   try{
-    // Step 1: get all tickers for basic filtering
+    // Get all futures tickers sorted by quoteVolume (proxy for activity)
     const tickers=await bnGet('/fapi/v1/ticker/24hr');
     if(!tickers||!Array.isArray(tickers)) return;
 
-    // Exclude stablecoins, leveraged tokens, commodities, indices, RWA stocks
-    // (these are kept in ASSET_TYPES for manual tracking but excluded from auto top-10)
-    const excluded=[
-      'USDC','BUSD','TUSD','FDUSD','USDP','DAI','USDT','USDE','PYUSD',
-      'UP','DOWN','BULL','BEAR','LONG','SHORT','3L','3S',
-      'CL','BZ','NATGAS','XAU','XAG','XPT','XPD','COPPER',
-      'SPX','NDX','DJI','FTSE','NKY','DAX',
-      'SOXL','SPCX','AMZN','AAPL','TSLA','NVDA','META','GOOGL','MSFT','NFLX','COIN','MSTR',
-    ];
-
-    // Build candidate list — USDT perp, crypto only, minimum $20M volume
-    const candidates=tickers
+    // Filter: USDT pairs only, exclude stablecoins and leveraged tokens
+    const excluded=['USDC','BUSD','TUSD','FDUSD','USDP','DAI','USDT','UP','DOWN','BULL','BEAR'];
+    const usdt=tickers
       .filter(t=>t.symbol.endsWith('USDT'))
       .map(t=>({
         sym:t.symbol.replace('USDT',''),
         vol:parseFloat(t.quoteVolume)||0,
-        price:parseFloat(t.lastPrice)||0,
-        count:parseInt(t.count)||0,
+        oi:parseFloat(t.openInterest)||0
       }))
-      .filter(t=>{
-        if(excluded.some(ex=>t.sym===ex||t.sym.startsWith(ex))) return false;
-        if(t.price>15000&&t.sym!=='BTC') return false; // exclude non-BTC high price
-        if(t.vol<20000000) return false; // min $20M volume
-        return true;
-      });
+      .filter(t=>!excluded.some(ex=>t.sym.includes(ex)))
+      .filter(t=>t.vol>50000000); // minimum $50M daily volume
 
-    // Step 2: get OI for top 30 candidates by volume (to find true OI leaders)
-    const top30=candidates.sort((a,b)=>b.vol-a.vol).slice(0,30);
+    // Get OI for top candidates to rank properly
+    const oiData=await bnGet('/futures/data/openInterestHist',{symbol:'BTCUSDT',period:'1d',limit:'1'}).catch(()=>null);
 
-    // Fetch OI for each candidate in parallel (limit to avoid rate limit)
-    const oiResults=await Promise.allSettled(
-      top30.map(t=>bnGet('/futures/data/openInterestHist',{
-        symbol:t.sym+'USDT',period:'1d',limit:'1'
-      }).then(r=>({sym:t.sym,oi:r&&r[0]?parseFloat(r[0].sumOpenInterestValue):0}))
-        .catch(()=>({sym:t.sym,oi:0})))
-    );
+    // Sort by volume (best proxy for liquidity without extra API calls)
+    usdt.sort((a,b)=>b.vol-a.vol);
 
-    // Build OI map
-    const oiMap={};
-    oiResults.forEach(r=>{if(r.status==='fulfilled')oiMap[r.value.sym]=r.value.oi;});
-
-    // Sort candidates by OI (primary) then volume (secondary)
-    top30.forEach(t=>{t.oi=oiMap[t.sym]||0;});
-    top30.sort((a,b)=>{
-      // If OI available, use it as primary sort
-      if(a.oi>0&&b.oi>0) return b.oi-a.oi;
-      if(a.oi>0) return -1;
-      if(b.oi>0) return 1;
-      return b.vol-a.vol;
-    });
-
-    // Take top 12, always include BTC/ETH/SOL as macro anchors
-    const top=top30.slice(0,15).map(t=>t.sym);
+    // Take top 12, ensure BTC/ETH/SOL are always included
+    const top=usdt.slice(0,15).map(t=>t.sym);
     const final=[...new Set([...MACRO_ASSETS,...top])].slice(0,12);
 
     ASSETS=final;
-    console.log('Dynamic assets by OI:',ASSETS);
+    console.log('Dynamic assets loaded:',ASSETS);
   }catch(e){
     console.warn('Dynamic asset load failed, using fallback:',e);
     ASSETS=ASSETS_FALLBACK;
@@ -927,16 +783,6 @@ function calcSolidity(bias, oiDelta, frVal, cvdData, lsR, savedState, biasAge){
 
 // Intraday: high strength + price near level + high volume ratio
 // Swing: bias clear + good R/R + price needs to travel to level
-// ── MARKET REGIME: Strutturale vs Momentum ───────────────────────────────
-function classifyRegime(oiCurrent, vol24h){
-  if(!oiCurrent||!vol24h||vol24h===0) return{type:'unknown',label:'—',icon:'—',color:'var(--text3)',ratio:0};
-  const hourlyVol=vol24h/24;
-  const ratio=oiCurrent/hourlyVol;
-  if(ratio>=3) return{type:'structural',label:'Strutturale',icon:'🏗️',color:'var(--long)',ratio:Math.round(ratio)};
-  if(ratio>=1) return{type:'mixed',label:'Misto',icon:'⚖️',color:'var(--wait)',ratio:Math.round(ratio)};
-  return{type:'momentum',label:'Momentum',icon:'⚡',color:'var(--short)',ratio:Math.round(ratio*10)/10};
-}
-
 function classifyTimeframe(str,volRatio,distEntry,rr1,atr,price){
   // Strong signal + price already at level + elevated volume = intraday
   if(str>=4&&distEntry<2&&volRatio>1.3) return'intraday';
@@ -965,7 +811,7 @@ function suggestRisk(rr1,str,atEntry,volRatio){
 }
 
 // ── ENTRY STRATEGY ────────────────────────────────────────────────────────
-function calcStrategy(bias,price,atr,zones,sr,pivots,wPivots,str=3,volRatio=1,atrMult=1.5){
+function calcStrategy(bias,price,atr,zones,sr,pivots,wPivots,str=3,volRatio=1){
   if(bias==='wait'||!price||!atr)return null;
   const isL=bias==='long';
 
@@ -1026,9 +872,9 @@ function calcStrategy(bias,price,atr,zones,sr,pivots,wPivots,str=3,volRatio=1,at
     entryZone={price:entry,source:'Fallback ATR',zone:null};
   }
 
-  // VALIDATION: stop minimum = atrMult × ATR or 1.5% — whichever is larger
-  // atrMult varies by asset type: crypto=1.5, commodity=2.0, RWA=1.8
-  const minStopDist=Math.max(atr*atrMult, entry*0.015);
+  // VALIDATION: stop must be on correct side and minimum 1×ATR from entry
+  // This prevents stops that are too tight to survive normal market noise
+  const minStopDist=Math.max(atr*1.0, entry*0.015); // 1×ATR or 1.5% — whichever is larger
   const stopDist=Math.abs(stop-entry);
   if(stopDist<minStopDist){
     stop=isL
@@ -1192,9 +1038,6 @@ async function loadAll(){
   render();
   document.getElementById('statusEl').textContent='Aggiornato '+new Date().toLocaleTimeString('it-IT');
   document.getElementById('refreshBtn').disabled=false;
-  // Load fundamentals for non-crypto assets in background
-  const allSignals=ASSETS.map(s=>cache[s]?compute(s):null).filter(Boolean);
-  loadAllFundamentals(allSignals);
 }
 
 function renderMacro(all){
@@ -1377,25 +1220,7 @@ function confirmTrade(sym,dir,entryZone,stop,tp1,tp2,currentBias,currentCVD,mark
   modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
 }
 
-// ── TAB NAVIGATION ────────────────────────────────────────────────────────
-function switchTab(tab){
-  const tabs=['dashboard','history','settings'];
-  tabs.forEach(t=>{
-    const panel=document.getElementById('panel'+t.charAt(0).toUpperCase()+t.slice(1));
-    const btn=document.getElementById('tab'+t.charAt(0).toUpperCase()+t.slice(1));
-    if(panel) panel.style.display=t===tab?'':'none';
-    if(btn){
-      btn.style.background=t===tab?'var(--accent)':'transparent';
-      btn.style.color=t===tab?'#fff':'var(--text3)';
-    }
-  });
-  // Settings panel toggle
-  const sp=document.getElementById('panelSettings');
-  if(sp) sp.style.display=tab==='settings'?'':'none';
-  if(tab==='history') renderHistory();
-}
-
-
+// ── TRADE MONITORING SYSTEM ───────────────────────────────────────────────
 const TRADES_KEY='sop_active_trades';
 
 function getTrades(){
@@ -1453,31 +1278,6 @@ const REASON_LABELS={
   'manual':'✋ Chiuso manuale',
   'bias_inverted':'⚠️ Bias invertito',
 };
-
-// ── CONSECUTIVE SL DETECTOR ───────────────────────────────────────────────
-// Se un asset prende 2 SL consecutivi → warning + qualità abbassata
-function getConsecutiveSL(sym){
-  const closed=getTrades()
-    .filter(t=>t.closed&&t.sym===sym)
-    .sort((a,b)=>b.closedAt-a.closedAt); // più recenti prima
-
-  if(closed.length<2) return 0;
-
-  // Conta SL consecutivi partendo dall'ultimo trade
-  let count=0;
-  for(const t of closed){
-    if(t.closeReason==='stop') count++;
-    else break; // appena c'è un non-SL si interrompe la serie
-  }
-  return count;
-}
-
-function getSLWarning(sym){
-  const n=getConsecutiveSL(sym);
-  if(n>=3) return{level:'danger',msg:`🚫 ${n} SL consecutivi — asset problematico, non operare`,forceWait:true};
-  if(n>=2) return{level:'warning',msg:`⚠️ 2 SL consecutivi — usa size minima e verifica manualmente`,forceWait:false};
-  return null;
-}
 
 function renderHistory(){
   const section=document.getElementById('historySection');
@@ -1595,14 +1395,14 @@ function monitorTrades(allSignals){
         // Activate trade
         saveTrades(getTrades().map(x=>x.id===t.id?{...x,pending:false,activatedAt:Date.now()}:x));
         t.pending=false; t.activatedAt=Date.now();
-        sendTG(`📌 TRADE SEGUITO — ⚡ <b>${t.sym}</b> — ENTRY RAGGIUNTA!\nEntry: ${fp(t.entry)} | Prezzo: ${fp(price)}\nTrade attivato — monitoraggio stop/TP iniziato${tgLinks(t.sym)}`);
+        sendTG(`📌 TRADE SEGUITO — ⚡ <b>${t.sym}</b> — ENTRY RAGGIUNTA!\nEntry: ${fp(t.entry)} | Prezzo: ${fp(price)}\nTrade attivato — monitoraggio stop/TP iniziato`);
       } else {
         // Not yet activated — check if price passed TP without touching EP
         const tpPassedWithoutEntry=isL?(price>=t.tp1):(price<=t.tp1);
         if(tpPassedWithoutEntry&&!notified['tp_no_entry_'+t.id]){
           notified['tp_no_entry_'+t.id]=Date.now();
           localStorage.setItem(notifKey,JSON.stringify(notified));
-          sendTG(`📌 TRADE SEGUITO — ℹ️ <b>${t.sym}</b> — TP raggiunto ma EP non toccato\nEri in attesa di ${fp(t.entry)}\nIl prezzo è andato al TP senza passare per il tuo livello\nNon eri dentro — nessuna azione necessaria${tgLinks(t.sym)}`);
+          sendTG(`📌 TRADE SEGUITO — ℹ️ <b>${t.sym}</b> — TP raggiunto ma EP non toccato\nEri in attesa di ${fp(t.entry)}\nIl prezzo è andato al TP senza passare per il tuo livello\nNon eri dentro — nessuna azione necessaria`);
         }
       }
       return; // don't monitor stop/TP until activated
@@ -1611,14 +1411,14 @@ function monitorTrades(allSignals){
     // ── Stop → chiude subito sempre ──────────────────────────────────────
     if((isL&&price<=t.stop)||(!isL&&price>=t.stop)){
       closeTrade(t.id,'stop',price);
-      sendTG(`📌 TRADE SEGUITO — 🔴 <b>${t.sym}</b> — STOP COLPITO\nStop: ${fp(t.stop)} | Prezzo: ${fp(price)}\nPosizione chiusa\nAperto: ${formatAgo(t.openedAt)}${tgLinks(t.sym)}`);
+      sendTG(`📌 TRADE SEGUITO — 🔴 <b>${t.sym}</b> — STOP COLPITO\nStop: ${fp(t.stop)} | Prezzo: ${fp(price)}\nPosizione chiusa${tgLinks(t.sym)}`);
       return;
     }
 
     // ── TP2 → chiude subito sempre ───────────────────────────────────────
     if(t.tp2&&((isL&&price>=t.tp2)||(!isL&&price<=t.tp2))){
       closeTrade(t.id,'tp2',price);
-      sendTG(`📌 TRADE SEGUITO — 🏆 <b>${t.sym}</b> — TP2 RAGGIUNTO!\nTP2: ${fp(t.tp2)} | Prezzo: ${fp(price)}\nTrade completato ✅\nAperto: ${formatAgo(t.openedAt)}${tgLinks(t.sym)}`);
+      sendTG(`📌 TRADE SEGUITO — 🏆 <b>${t.sym}</b> — TP2 RAGGIUNTO!\nTP2: ${fp(t.tp2)} | Prezzo: ${fp(price)}\nTrade completato ✅${tgLinks(t.sym)}`);
       return;
     }
 
@@ -1626,7 +1426,7 @@ function monitorTrades(allSignals){
     if(!t.tp1Hit&&((isL&&price>=t.tp1)||(!isL&&price<=t.tp1))){
       saveTrades(getTrades().map(x=>x.id===t.id?{...x,tp1Hit:true,tp1HitAt:Date.now()}:x));
       t.tp1Hit=true; t.tp1HitAt=Date.now();
-      sendTG(`📌 TRADE SEGUITO — ✅ <b>${t.sym}</b> — TP1 RAGGIUNTO!\nTP1: ${fp(t.tp1)} | Prezzo: ${fp(price)}\nChiudi 50% e sposta stop a breakeven\nTP2: ${fp(t.tp2)} ancora aperto — scheda rimane aperta${tgLinks(t.sym)}`);
+      sendTG(`📌 TRADE SEGUITO — ✅ <b>${t.sym}</b> — TP1 RAGGIUNTO!\nTP1: ${fp(t.tp1)} | Prezzo: ${fp(price)}\nChiudi 50% e sposta stop a breakeven${tgLinks(t.sym)}\nTP2: ${fp(t.tp2)} ancora aperto — scheda rimane aperta`);
     }
 
     // ── Bias invertito + 24h → chiude ────────────────────────────────────
@@ -1634,7 +1434,7 @@ function monitorTrades(allSignals){
     if(biasInverted&&sig.biasStable&&hoursOpen>=24){
       closeTrade(t.id,'bias_inverted_24h',price);
       const pnlPct=((isL?(price-t.entry):(t.entry-price))/t.entry*100);
-      sendTG(`📌 TRADE SEGUITO — ⚠️ <b>${t.sym}</b> — Trade chiuso (bias invertito >24h)\nPrezzo: ${fp(price)} | P&L: ${pnlPct>=0?'+':''}${pnlPct.toFixed(2)}%\nTP1 ${t.tp1Hit?'raggiunto ✅':'non raggiunto'}${tgLinks(t.sym)}`);
+      sendTG(`📌 TRADE SEGUITO — ⚠️ <b>${t.sym}</b> — Trade chiuso (bias invertito >24h)\nPrezzo: ${fp(price)} | P&L: ${pnlPct>=0?'+':''}${pnlPct.toFixed(2)}%\nTP1 ${t.tp1Hit?'raggiunto ✅':'non raggiunto'}`);
       if(sig.strat&&sig.quality>=4) setTimeout(()=>sendTG(`${sig.bias==='long'?'🟢':'🔴'} <b>${t.sym}</b> — NUOVO SEGNALE ${sig.bias.toUpperCase()}\nEntry: ${fp(sig.strat?.entry)} | TP1: ${fp(sig.strat?.tp1)} | R/R ${sig.strat?.rr1}:1`),2000);
       return;
     }
@@ -1642,16 +1442,16 @@ function monitorTrades(allSignals){
     // ── Tutte le altre condizioni → notifica, lascia aperto ──────────────
     if(biasInverted&&!notified['bias_inv_'+t.id]){
       notified['bias_inv_'+t.id]=Date.now();
-      sendTG(`📌 TRADE SEGUITO — 🟡 <b>${t.sym}</b> — Bias girato ${sig.bias.toUpperCase()} (${sig.biasAge})\nTrade ancora aperto — chiusura auto tra ${hoursOpen<24?(24-hoursOpen).toFixed(0)+'h':'poco'} se bias confermato\nPrezzo: ${fp(price)}${tgLinks(t.sym)}`);
+      sendTG(`📌 TRADE SEGUITO — 🟡 <b>${t.sym}</b> — Bias girato ${sig.bias.toUpperCase()} (${sig.biasAge})\nTrade ancora aperto — chiusura auto tra ${hoursOpen<24?(24-hoursOpen).toFixed(0)+'h':'poco'} se bias confermato\nPrezzo: ${fp(price)}`);
     }
     if(sig.bias==='wait'&&!notified['wait_'+t.id]){
       notified['wait_'+t.id]=Date.now();
-      sendTG(`📌 TRADE SEGUITO — 🟡 <b>${t.sym}</b> — Bias WAIT\nPorta stop a breakeven: ${fp(t.entry)}\nPrezzo: ${fp(price)} | TP1: ${fp(t.tp1)}${tgLinks(t.sym)}`);
+      sendTG(`📌 TRADE SEGUITO — 🟡 <b>${t.sym}</b> — Bias WAIT\nPorta stop a breakeven: ${fp(t.entry)}\nPrezzo: ${fp(price)} | TP1: ${fp(t.tp1)}`);
     }
     const cvdAgainst=(isL&&sig.cvd.dir==='down'&&t.openCVD==='up')||(!isL&&sig.cvd.dir==='up'&&t.openCVD==='down');
     if(cvdAgainst&&!notified['cvd_'+t.id]){
       notified['cvd_'+t.id]=Date.now();
-      sendTG(`📌 TRADE SEGUITO — 🟡 <b>${t.sym}</b> — CVD girato contro\nPrezzo: ${fp(price)} | TP1: ${fp(t.tp1)}${tgLinks(t.sym)}`);
+      sendTG(`📌 TRADE SEGUITO — 🟡 <b>${t.sym}</b> — CVD girato contro\nPrezzo: ${fp(price)} | TP1: ${fp(t.tp1)}`);
     }
 
     // ── Proximity warnings ────────────────────────────────────────────────
@@ -1659,7 +1459,7 @@ function monitorTrades(allSignals){
     const pctToStop=stopDist>0?Math.abs(price-t.stop)/stopDist*100:100;
     if(pctToStop<50&&!notified['prestop_'+t.id]){
       notified['prestop_'+t.id]=Date.now();
-      sendTG(`📌 TRADE SEGUITO — ⚠️ <b>${t.sym}</b> — VICINO ALLO STOP\nStop: ${fp(t.stop)} | ${pctToStop.toFixed(0)}% rimasto\nValuta uscita manuale${tgLinks(t.sym)}`);
+      sendTG(`📌 TRADE SEGUITO — ⚠️ <b>${t.sym}</b> — VICINO ALLO STOP\nStop: ${fp(t.stop)} | ${pctToStop.toFixed(0)}% rimasto\nValuta uscita manuale`);
     }
     if(pctToStop>70) delete notified['prestop_'+t.id];
 
@@ -1668,7 +1468,7 @@ function monitorTrades(allSignals){
       const pctToTp1=tp1Dist>0?Math.min(100,(1-Math.abs(price-t.tp1)/tp1Dist)*100):0;
       if(pctToTp1>=75&&!notified['pretp1_'+t.id]){
         notified['pretp1_'+t.id]=Date.now();
-        sendTG(`📌 TRADE SEGUITO — 🎯 <b>${t.sym}</b> — VICINO AL TP1 (${pctToTp1.toFixed(0)}%)\nTP1: ${fp(t.tp1)} | Prezzo: ${fp(price)}${tgLinks(t.sym)}`);
+        sendTG(`📌 TRADE SEGUITO — 🎯 <b>${t.sym}</b> — VICINO AL TP1 (${pctToTp1.toFixed(0)}%)\nTP1: ${fp(t.tp1)} | Prezzo: ${fp(price)}`);
       }
       if(pctToTp1<60) delete notified['pretp1_'+t.id];
     }
@@ -1789,71 +1589,6 @@ function renderTrades(allSignals){
 }
 
 
-// ── API KEY MANAGEMENT ────────────────────────────────────────────────────
-function getApiKeys(){
-  return{
-    av:   localStorage.getItem('api_alphavantage')||'',
-    eia:  localStorage.getItem('api_eia')||'',
-    news: localStorage.getItem('api_news')||'',
-  };
-}
-function saveApiKey(type){
-  const ids={av:'avKey',eia:'eiaKey',news:'newsKey'};
-  const lsKeys={av:'api_alphavantage',eia:'api_eia',news:'api_news'};
-  const statusIds={av:'avStatus',eia:'eiaStatus',news:'newsStatus'};
-  const val=document.getElementById(ids[type])?.value?.trim();
-  if(!val){document.getElementById(statusIds[type]).textContent='Chiave vuota';return;}
-  localStorage.setItem(lsKeys[type],val);
-  document.getElementById(statusIds[type]).textContent='✓ Salvata';
-  setTimeout(()=>{if(document.getElementById(statusIds[type]))document.getElementById(statusIds[type]).textContent='';},2000);
-  updateApiStatus();
-}
-async function testApiKey(type){
-  const keys=getApiKeys();
-  const statusIds={av:'avStatus',eia:'eiaStatus',news:'newsStatus'};
-  const el=document.getElementById(statusIds[type]);
-  if(!el) return;
-  el.textContent='Test...';
-  try{
-    if(type==='av'){
-      const r=await fetch(`https://www.alphavantage.co/query?function=EARNINGS_CALENDAR&horizon=3month&apikey=${keys.av}`);
-      el.textContent=r.ok?'✅ OK':'❌ Errore '+r.status;
-    }else if(type==='eia'){
-      const r=await fetch(`https://api.eia.gov/v2/petroleum/sum/sndw/data/?api_key=${keys.eia}&length=1`);
-      const d=await r.json();
-      el.textContent=d.response?.data?'✅ OK':'❌ Chiave non valida';
-    }else if(type==='news'){
-      const r=await fetch(`https://newsapi.org/v2/top-headlines?category=business&pageSize=1&apiKey=${keys.news}`);
-      const d=await r.json();
-      el.textContent=d.status==='ok'?'✅ OK':'❌ '+d.message;
-    }
-  }catch(e){el.textContent='❌ '+e.message;}
-  setTimeout(()=>{if(document.getElementById(statusIds[type]))document.getElementById(statusIds[type]).textContent='';},4000);
-}
-function updateApiStatus(){
-  const keys=getApiKeys();
-  const el=document.getElementById('apiStatusList');
-  if(!el) return;
-  const items=[
-    {name:'Telegram',key:localStorage.getItem('tg_token'),icon:'📱'},
-    {name:'Alpha Vantage',key:keys.av,icon:'📈'},
-    {name:'EIA',key:keys.eia,icon:'🛢️'},
-    {name:'NewsAPI',key:keys.news,icon:'📰'},
-  ];
-  el.innerHTML=items.map(i=>`<div style="display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;background:var(--bg4);border:1px solid var(--border)">
-    <span>${i.icon}</span>
-    <span style="font-size:9px;color:${i.key?'var(--long)':'var(--text3)'}">${i.name}</span>
-    <span style="font-size:9px;font-weight:700;color:${i.key?'var(--long)':'var(--short)'}">${i.key?'✓':'✗'}</span>
-  </div>`).join('');
-}
-function loadSavedApiKeys(){
-  const keys=getApiKeys();
-  if(document.getElementById('avKey'))   document.getElementById('avKey').value=keys.av;
-  if(document.getElementById('eiaKey'))  document.getElementById('eiaKey').value=keys.eia;
-  if(document.getElementById('newsKey')) document.getElementById('newsKey').value=keys.news;
-  updateApiStatus();
-}
-
 function getTGConfig(){
   return{
     token: localStorage.getItem('tg_token')||'',
@@ -1880,13 +1615,6 @@ async function sendTG(msg){
     });
   }catch(e){console.warn('TG error:',e);}
 }
-
-// Helper: genera i link inline per ogni notifica trade
-function tgLinks(sym){
-  const dashboard='https://fabriziobedini-wq.github.io/sop-dashboard-/';
-  const tv=`https://www.tradingview.com/chart/?symbol=BINANCE:${sym}USDT.P&interval=60`;
-  return`\n\n<a href="${dashboard}">🌐 Dashboard</a>  |  <a href="${tv}">📊 TradingView ${sym}</a>`;
-}
 async function testTG(){
   document.getElementById('tgStatus').textContent='Invio...';
   await sendTG('✅ <b>SOP Strategy</b> — test notifica funzionante!\n'+new Date().toLocaleString('it-IT'));
@@ -1896,8 +1624,8 @@ async function testTG(){
 // Load saved TG config on startup
 window.addEventListener('DOMContentLoaded',()=>{
   const {token,chat}=getTGConfig();
-  if(token) document.getElementById('tgToken').value=token;
-  if(chat)  document.getElementById('tgChat').value=chat;
+  if(token&&document.getElementById('tgToken')) document.getElementById('tgToken').value=token;
+  if(chat&&document.getElementById('tgChat'))   document.getElementById('tgChat').value=chat;
   loadSavedApiKeys();
   switchTab('dashboard');
   renderTrades([]);
@@ -2080,9 +1808,6 @@ function compute(sym){
     liqTotal=liqLong+liqShort;
   }
 
-  // Asset type for stop multiplier
-  const assetInfo=getAssetType(sym);
-
   // Levels — must be computed BEFORE bias override
   const pivots=calcPivots(d.k1d);
   const wPivots=calcWeeklyPivots(d.k1w);
@@ -2153,14 +1878,7 @@ function compute(sym){
   const qualityColor=quality>=5?'var(--long)':quality>=4?'#4ade80':quality>=3?'var(--wait)':'var(--short)';
 
   // Strategy — only if quality >= 3
-  const strat=quality>=3?calcStrategy(bias,price,atr,zones,sr,pivots,wPivots,str,volRatio,assetInfo.atrMult||1.5):null;
-
-  // Market regime
-  const regime=classifyRegime(oiCurrent, vol24h);
-
-  // Momentum assets get quality capped at 3 — SOP less reliable
-  let qualityFinal=quality;
-  if(regime.type==='momentum'&&quality>3) qualityFinal=3;
+  const strat=quality>=3?calcStrategy(bias,price,atr,zones,sr,pivots,wPivots,str,volRatio):null;
 
   // Save signal state and compute alerts
   const savedState=saveSignalState(sym,bias,frVal,cvd.dir,strat?.entry||price,oiDelta,liqOI);
@@ -2174,23 +1892,18 @@ function compute(sym){
 
   // Structural solidity
   const solidity=calcSolidity(bias,oiDelta,frVal,cvd,lsR,savedState,biasAge);
-
-  // ── CONSECUTIVE SL CHECK ─────────────────────────────────────────────────
+  const regime=classifyRegime(oiCurrent,vol24h);
+  const assetInfo=getAssetType(sym);
   const slWarning=getSLWarning(sym);
-  let zoneConflictFinal=zoneConflict;
-  if(slWarning?.forceWait&&bias!=='wait'){
-    bias='wait';
-    zoneConflictFinal=slWarning.msg;
-  }
 
-  // If bias is Fragile (level 1) → downgrade strat to watch-only
-  const stratFinal=solidity.level>=2&&!slWarning?.forceWait?strat:strat?{...strat,
-    statusLabel: slWarning?.forceWait?'🚫 ASSET PROBLEMATICO — non operare':'⚠ BIAS FRAGILE — monitoraggio',
+  // If bias is Fragile (level 1) → downgrade strat to watch-only, no operative signal
+  const stratFinal=solidity.level>=2?strat:strat?{...strat,
+    statusLabel:'⚠ BIAS FRAGILE — monitoraggio',
     statusColor:'var(--short)',
     atEntry:false,isRetest:false,momentumStrong:false,watch:true
   }:null;
 
-  return{sym,price,priceChg,vol24h,volRatio,oiDelta,oiCurrent,frVal,cvd,lsR,atr,bias,str,oiVolSpot,oiVolSpotStatus,liqOI,quality,qualityLabel,qualityColor,qualityDetails,zoneConflict,pivots,wPivots,zones,sr,strat:stratFinal,alerts,hoursActive,nearZone:zones.nearZone,biasStable,biasAge,solidity,assetInfo,slWarning,regime};
+  return{sym,price,priceChg,vol24h,volRatio,oiDelta,oiCurrent,frVal,cvd,lsR,atr,bias,str,oiVolSpot,oiVolSpotStatus,liqOI,quality,qualityLabel,qualityColor,qualityDetails,zoneConflict,pivots,wPivots,zones,sr,strat:stratFinal,alerts,hoursActive,nearZone:zones.nearZone,biasStable,biasAge,solidity,regime,assetInfo,slWarning};
 }
 
 // ── RENDER ────────────────────────────────────────────────────────────────
@@ -2310,12 +2023,11 @@ function render(){
               style="color:${s.bias==='long'?'var(--long)':s.bias==='short'?'var(--short)':'var(--text2)'};text-decoration:none">
               ${s.sym} 📊
             </a>
-            <div style="margin-top:2px">${getAssetBadge(s.sym)}</div>
           </td>
           <td><span class="tag ${s.bias}">${s.bias.toUpperCase()}</span></td>
           <td style="font-size:10px;font-weight:700;color:${s.solidity.color}">${s.solidity.icon} ${s.solidity.label}</td>
-          <td style="font-size:10px;font-weight:700;color:${s.regime?.color||'var(--text3)'}">${s.regime?.icon||'—'} <span style="font-size:9px">${s.regime?.label||'—'}</span></td>
-          <td style="color:${s.qualityColor};font-size:11px;letter-spacing:1px">${stars}</td>
+          <td style="font-size:10px;font-weight:700;color:${s.regime?s.regime.color:'var(--text3)'}">${s.regime?s.regime.icon+' '+s.regime.label:'—'}</td>
+          <td style="color:${s.qualityColor};font-size:11px;letter-spacing:1px">${getAssetBadge(s.sym)} ${stars}</td>
           <td style="font-weight:700;color:${s.priceChg>=0?'var(--long)':'var(--short)'}">${fpp(s.priceChg)}</td>
           <td>
             <div style="display:flex;align-items:center;gap:5px">
@@ -2333,18 +2045,24 @@ function render(){
       }).join('')}</tbody>
     </table>`;
 
-  // Strategy cards — all bias != wait in one unified section
+  // Strategy cards — active = at zone, retest, or strong momentum
   const actionable=all.filter(s=>s.bias!=='wait'&&s.strat);
   const active=actionable.filter(s=>s.strat.atEntry||s.strat.isRetest||(s.strat.momentumStrong&&s.strat.momentumRR>=1.5));
-  const watching=actionable.filter(s=>!s.strat.atEntry&&!s.strat.isRetest&&!(s.strat.momentumStrong&&s.strat.momentumRR>=1.5));
-  const allSetup=[...active,...watching];
+  const watch=actionable.filter(s=>!s.strat.atEntry&&!s.strat.isRetest&&!(s.strat.momentumStrong&&s.strat.momentumRR>=1.5));
 
-  if(allSetup.length>0){
+  if(active.length>0){
     document.getElementById('strategySection').style.display='';
-    document.getElementById('strategyTitle').textContent='Setup operativi — '+allSetup.length+' asset';
-    document.getElementById('strategyGrid').innerHTML=allSetup.map(s=>renderCard(s,active.includes(s)?'active':'watch')).join('');
+    document.getElementById('strategyTitle').textContent='Setup operativi — '+active.length+' asset (prezzo vicino al livello)';
+    document.getElementById('strategyGrid').innerHTML=active.map(s=>renderCard(s,'active')).join('');
   }else{
     document.getElementById('strategySection').style.display='none';
+  }
+
+  if(watch.length>0){
+    document.getElementById('watchSection').style.display='';
+    document.getElementById('watchGrid').innerHTML=watch.map(s=>renderCard(s,'watch')).join('');
+  }else{
+    document.getElementById('watchSection').style.display='none';
   }
 
   // WAIT section — show info cards for WAIT assets too
@@ -2379,9 +2097,6 @@ function renderWaitCard(s){
         <div class="scard-chg ${s.priceChg>=0?'up':'dn'}">${fpp(s.priceChg)}</div>
       </div>
     </div>
-    \${s.slWarning?`<div style="padding:8px 16px;background:\${s.slWarning.level==='danger'?'var(--short-bg)':'var(--wait-bg)'};border-bottom:1px solid \${s.slWarning.level==='danger'?'var(--short-border)':'var(--wait-border)'}">
-      <div style="font-size:10px;font-weight:700;color:\${s.slWarning.level==='danger'?'var(--short)':'var(--wait)'}">\${s.slWarning.msg}</div>
-    </div>`:''}
     <div class="scard-signals">
       <div class="sig-item"><div class="sig-label">OI delta</div><div class="sig-val ${s.oiDelta>1?'up':s.oiDelta<-1?'dn':'nt'}">${s.oiDelta>=0?'+':''}${s.oiDelta.toFixed(1)}%</div></div>
       <div class="sig-item"><div class="sig-label">Funding</div><div class="sig-val ${s.frVal>0.05?'dn':s.frVal<-0.005?'up':'nt'}">${s.frVal.toFixed(4)}%</div></div>
@@ -2477,20 +2192,13 @@ function renderCard(s,mode){
         <div style="display:flex;gap:6px;align-items:center;margin-top:4px;flex-wrap:wrap">
           <div class="scard-bias ${cardClass}">${isL?'🟢 LONG':'🔴 SHORT'}</div>
           <div style="font-size:9px;font-weight:700;padding:3px 8px;border-radius:20px;background:${st.tf==='intraday'?'#1a1a2e':'#0d1a0d'};color:${st.tf==='intraday'?'#818cf8':'#4ade80'};border:1px solid ${st.tf==='intraday'?'#2a2a50':'#0f4020'}">${st.tf==='intraday'?'⚡ INTRADAY':'📅 SWING 1-3g'}</div>
-          ${getAssetBadge(s.sym)}
           <div style="font-size:9px;padding:3px 9px;border-radius:20px;background:var(--bg4);color:${s.biasStable?'var(--long)':'var(--wait)'};border:1px solid ${s.biasStable?'var(--long-border)':'var(--wait-border)'}">
             ${s.biasStable?'✓':'⚠'} bias da ${s.biasAge} ${s.biasStable?'— stabile':'— in conferma'}
           </div>
           <div style="font-size:9px;font-weight:700;padding:3px 9px;border-radius:20px;background:var(--bg4);color:${s.solidity.color};border:1px solid ${s.solidity.color}44">
             ${s.solidity.icon} ${s.solidity.label}
           </div>
-          <div style="font-size:9px;font-weight:700;padding:3px 9px;border-radius:20px;background:var(--bg4);color:${s.regime?.color||'var(--text3)'};border:1px solid ${s.regime?.color||'var(--border)'}44"
-            title="OI/Volume orario: ${s.regime?.ratio}x — ${s.regime?.type==='structural'?'Leva strutturale, SOP affidabile':s.regime?.type==='momentum'?'Speculazione intraday, SOP meno affidabile':'Regime misto'}">
-            ${s.regime?.icon||'—'} ${s.regime?.label||'—'}
-          </div>
         </div>
-        ${s.assetInfo.type!=='crypto'?`<div style="font-size:9px;color:var(--wait);margin-top:5px">⚠️ ${s.assetInfo.label} — stop calcolato con ATR ×${s.assetInfo.atrMult} · ${s.assetInfo.type==='commodity'?'verifica news macro prima di entrare':s.assetInfo.type==='rwa'?'verifica trimestrali e mercato azionario':'verifica orari di mercato'}</div>`:''}
-        ${s.assetInfo.type!=='crypto'?`<div class="fundamentals-block" style="margin-top:8px">${renderFundamentals(s.sym,s.assetInfo)}</div>`:''}
       </div>
       <div class="scard-right">
         <div class="scard-price">${fp(s.price)}</div>
