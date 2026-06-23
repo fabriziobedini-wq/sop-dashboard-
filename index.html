@@ -173,9 +173,25 @@ body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code',mo
 </head>
 <body>
 
+<!-- TOP BAR -->
 <div class="top">
   <div class="logo">SOP<span>.</span>strategy <small>v1</small></div>
   <div class="top-right">
+    <!-- TAB NAV -->
+    <div style="display:flex;gap:2px;background:var(--bg3);border-radius:8px;padding:3px">
+      <button onclick="switchTab('dashboard')" id="tabDashboard"
+        style="background:var(--accent);border:none;border-radius:6px;color:#fff;font-family:inherit;font-size:11px;padding:5px 14px;cursor:pointer;font-weight:600">
+        📊 Dashboard
+      </button>
+      <button onclick="switchTab('history')" id="tabHistory"
+        style="background:transparent;border:none;border-radius:6px;color:var(--text3);font-family:inherit;font-size:11px;padding:5px 14px;cursor:pointer">
+        📋 Storico
+      </button>
+      <button onclick="switchTab('settings')" id="tabSettings"
+        style="background:transparent;border:none;border-radius:6px;color:var(--text3);font-family:inherit;font-size:11px;padding:5px 14px;cursor:pointer">
+        ⚙️
+      </button>
+    </div>
     <div class="status" id="statusEl">Premi Aggiorna</div>
     <button class="btn" id="refreshBtn" onclick="loadAll()">↻ Aggiorna</button>
     <div class="clock" id="clock"></div>
@@ -184,27 +200,25 @@ body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code',mo
 
 <div id="alertBanner" style="display:none;background:#1a0505;border-bottom:2px solid var(--short)"></div>
 
-<!-- TELEGRAM CONFIG -->
-<div id="tgBar" style="background:var(--bg2);border-bottom:1px solid var(--border);padding:8px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-  <span style="font-size:10px;color:var(--text3)">📱 Telegram alerts:</span>
-  <input id="tgToken" type="password" placeholder="Bot token (es. 123456:ABC...)" style="background:var(--bg3);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:inherit;font-size:10px;padding:4px 8px;width:220px;outline:none">
-  <input id="tgChat" type="text" placeholder="Chat ID (es. 123456789)" style="background:var(--bg3);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:inherit;font-size:10px;padding:4px 8px;width:130px;outline:none">
-  <button onclick="saveTG()" style="background:var(--bg3);border:1px solid var(--border2);border-radius:5px;color:var(--text2);font-family:inherit;font-size:10px;padding:4px 10px;cursor:pointer">Salva</button>
-  <button onclick="testTG()" style="background:var(--bg3);border:1px solid var(--border2);border-radius:5px;color:var(--text2);font-family:inherit;font-size:10px;padding:4px 10px;cursor:pointer">Test</button>
-  <span id="tgStatus" style="font-size:10px;color:var(--text3)"></span>
-  <span style="font-size:9px;color:var(--text3);margin-left:auto">Come ottenerlo: cerca @BotFather su Telegram → /newbot → copia token. Poi scrivi al bot e cerca il tuo chat ID su @userinfobot</span>
+<!-- SETTINGS TAB -->
+<div id="panelSettings" style="display:none;background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 20px">
+  <div style="font-size:11px;font-weight:700;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.07em">⚙️ Impostazioni</div>
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+    <span style="font-size:10px;color:var(--text3)">📱 Telegram:</span>
+    <input id="tgToken" type="password" placeholder="Bot token" style="background:var(--bg3);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:inherit;font-size:10px;padding:4px 8px;width:200px;outline:none">
+    <input id="tgChat" type="text" placeholder="Chat ID" style="background:var(--bg3);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:inherit;font-size:10px;padding:4px 8px;width:110px;outline:none">
+    <button onclick="saveTG()" style="background:var(--bg3);border:1px solid var(--border2);border-radius:5px;color:var(--text2);font-family:inherit;font-size:10px;padding:4px 10px;cursor:pointer">Salva</button>
+    <button onclick="testTG()" style="background:var(--bg3);border:1px solid var(--border2);border-radius:5px;color:var(--text2);font-family:inherit;font-size:10px;padding:4px 10px;cursor:pointer">Test</button>
+    <span id="tgStatus" style="font-size:10px;color:var(--text3)"></span>
+    <span style="font-size:9px;color:var(--text3);margin-left:auto">@BotFather → /newbot → token · @userinfobot → chat ID</span>
+  </div>
 </div>
 
-<div class="wrap">
+<!-- DASHBOARD TAB -->
+<div id="panelDashboard" class="wrap">
 
-  <!-- TRADE ATTIVI IN MONITORAGGIO -->
-  <div id="tradesSection" style="display:none">
-    <div class="stitle">📌 Trade in monitoraggio</div>
-    <div class="strategy-grid" id="tradesGrid"></div>
-  </div>
-
-  <!-- MACRO SEMAPHORE -->
-  <div id="macroBlock" style="display:none;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 18px;margin-bottom:4px">
+  <!-- 1. SEMAFORO MACRO -->
+  <div id="macroBlock" style="display:none;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 18px">
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
       <div style="display:flex;align-items:center;gap:12px">
         <div id="macroLight" style="width:16px;height:16px;border-radius:50%;flex-shrink:0"></div>
@@ -213,14 +227,20 @@ body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code',mo
           <div id="macroSub" style="font-size:10px;color:var(--text3);margin-top:2px"></div>
         </div>
       </div>
-      <div style="display:flex;gap:16px;flex-wrap:wrap" id="macroPills"></div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap" id="macroPills"></div>
     </div>
     <div id="macroAssets" style="font-size:9px;color:var(--text3);margin-top:8px"></div>
   </div>
 
-  <!-- OVERVIEW -->
+  <!-- 2. TRADE IN MONITORAGGIO -->
+  <div id="tradesSection" style="display:none">
+    <div class="stitle">📌 Trade in monitoraggio</div>
+    <div class="strategy-grid" id="tradesGrid"></div>
+  </div>
+
+  <!-- 3. OVERVIEW -->
   <div>
-    <div class="stitle">Market overview — 15 Jun 2026</div>
+    <div class="stitle">Market overview</div>
     <div class="overview">
       <div class="ov"><div class="ov-label">Bias LONG</div><div class="ov-val up" id="ovL">—</div><div class="ov-sub">asset con segnale long</div></div>
       <div class="ov"><div class="ov-label">Bias SHORT</div><div class="ov-val dn" id="ovS">—</div><div class="ov-sub">asset con segnale short</div></div>
@@ -229,45 +249,41 @@ body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code',mo
     </div>
   </div>
 
-  <!-- RANKING -->
+  <!-- 4. RANKING -->
   <div class="card">
     <div class="stitle">Ranking — chi merita attenzione ora</div>
     <div id="rankingBox"><div class="nodata">Premi Aggiorna per caricare i dati live</div></div>
   </div>
 
-  <!-- STRATEGY CARDS (only actionable) -->
+  <!-- 5. SETUP OPERATIVI (attivi + in osservazione unificati) -->
   <div id="strategySection" style="display:none">
-    <div class="stitle" id="strategyTitle">Setup operativi attivi</div>
+    <div class="stitle" id="strategyTitle">Setup operativi</div>
     <div class="strategy-grid" id="strategyGrid"></div>
   </div>
 
-  <!-- WATCH LIST -->
-  <div id="watchSection" style="display:none">
-    <div class="stitle">In osservazione — bias definito, aspetta il livello</div>
-    <div class="strategy-grid" id="watchGrid"></div>
+  <!-- 6. SEGNALE INDECISO -->
+  <div id="waitSection" style="display:none">
+    <div class="stitle">Segnale indeciso — dati di monitoraggio</div>
+    <div class="strategy-grid" id="waitGrid"></div>
   </div>
 
-  <!-- STORICO TRADE -->
-  <div id="historySection" style="display:none">
-    <div class="stitle">📊 Storico trade — performance metodo SOP</div>
+</div>
+
+<!-- HISTORY TAB -->
+<div id="panelHistory" style="display:none" class="wrap">
+  <div id="historySection">
+    <div class="stitle">📋 Storico trade — performance metodo SOP</div>
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 16px">
-      <div id="historyStats"></div>
-      <div id="historyTable" style="overflow-x:auto"></div>
+      <div id="historyStats"><div class="nodata">Nessun trade chiuso ancora</div></div>
+      <div id="historyTable" style="overflow-x:auto;margin-top:10px"></div>
       <div style="margin-top:10px;text-align:right">
-        <button onclick="if(confirm('Cancellare tutto lo storico?')){localStorage.setItem('sop_active_trades',JSON.stringify(getTrades().filter(t=>!t.closed)));renderHistory();}" 
+        <button onclick="if(confirm('Cancellare tutto lo storico?')){saveTrades(getTrades().filter(t=>!t.closed));renderHistory();}"
           style="background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text3);font-family:inherit;font-size:9px;padding:4px 10px;cursor:pointer">
           🗑 Cancella storico
         </button>
       </div>
     </div>
   </div>
-
-  <!-- WAIT INFO -->
-  <div id="waitSection" style="display:none">
-    <div class="stitle">Segnale indeciso — dati di monitoraggio</div>
-    <div class="strategy-grid" id="waitGrid"></div>
-  </div>
-
 </div>
 
 <script>
@@ -286,17 +302,37 @@ async function loadTopAssets(){
     const tickers=await bnGet('/fapi/v1/ticker/24hr');
     if(!tickers||!Array.isArray(tickers)) return;
 
-    // Filter: USDT pairs only, exclude stablecoins and leveraged tokens
-    const excluded=['USDC','BUSD','TUSD','FDUSD','USDP','DAI','USDT','UP','DOWN','BULL','BEAR'];
+    // Exclude stablecoins, leveraged tokens, AND commodity/index futures
+    const excluded=[
+      // Stablecoins
+      'USDC','BUSD','TUSD','FDUSD','USDP','DAI','USDT','USDE','PYUSD',
+      // Leveraged tokens
+      'UP','DOWN','BULL','BEAR','LONG','SHORT','3L','3S',
+      // Commodities & metals on Binance Futures (NOT crypto)
+      'CL','XAU','XAG','XPT','XPD','BRENT','NG','HG','ZC','ZW','ZS',
+      // Stock indices
+      'SPX','NDX','DJI','FTSE','NKY','DAX',
+      // Other non-crypto
+      'SOXL','SPCX','AMZN','AAPL','TSLA','NVDA',
+    ];
+
     const usdt=tickers
       .filter(t=>t.symbol.endsWith('USDT'))
       .map(t=>({
         sym:t.symbol.replace('USDT',''),
         vol:parseFloat(t.quoteVolume)||0,
-        oi:parseFloat(t.openInterest)||0
+        price:parseFloat(t.lastPrice)||0,
       }))
-      .filter(t=>!excluded.some(ex=>t.sym.includes(ex)))
-      .filter(t=>t.vol>50000000); // minimum $50M daily volume
+      .filter(t=>{
+        // Exclude by name
+        if(excluded.some(ex=>t.sym===ex||t.sym.startsWith(ex))) return false;
+        // Exclude if price > $10,000 (likely commodity or index, not typical crypto)
+        // BTC exception
+        if(t.price>10000&&t.sym!=='BTC') return false;
+        // Minimum volume $50M/day
+        if(t.vol<50000000) return false;
+        return true;
+      });
 
     // Get OI for top candidates to rank properly
     const oiData=await bnGet('/futures/data/openInterestHist',{symbol:'BTCUSDT',period:'1d',limit:'1'}).catch(()=>null);
@@ -1056,7 +1092,25 @@ function confirmTrade(sym,dir,entryZone,stop,tp1,tp2,currentBias,currentCVD,mark
   modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
 }
 
-// ── TRADE MONITORING SYSTEM ───────────────────────────────────────────────
+// ── TAB NAVIGATION ────────────────────────────────────────────────────────
+function switchTab(tab){
+  const tabs=['dashboard','history','settings'];
+  tabs.forEach(t=>{
+    const panel=document.getElementById('panel'+t.charAt(0).toUpperCase()+t.slice(1));
+    const btn=document.getElementById('tab'+t.charAt(0).toUpperCase()+t.slice(1));
+    if(panel) panel.style.display=t===tab?'':'none';
+    if(btn){
+      btn.style.background=t===tab?'var(--accent)':'transparent';
+      btn.style.color=t===tab?'#fff':'var(--text3)';
+    }
+  });
+  // Settings panel toggle
+  const sp=document.getElementById('panelSettings');
+  if(sp) sp.style.display=tab==='settings'?'':'none';
+  if(tab==='history') renderHistory();
+}
+
+
 const TRADES_KEY='sop_active_trades';
 
 function getTrades(){
@@ -1231,14 +1285,14 @@ function monitorTrades(allSignals){
         // Activate trade
         saveTrades(getTrades().map(x=>x.id===t.id?{...x,pending:false,activatedAt:Date.now()}:x));
         t.pending=false; t.activatedAt=Date.now();
-        sendTG(`📌 TRADE SEGUITO — ⚡ <b>${t.sym}</b> — ENTRY RAGGIUNTA!\nEntry: ${fp(t.entry)} | Prezzo: ${fp(price)}\nTrade attivato — monitoraggio stop/TP iniziato`);
+        sendTG(`📌 TRADE SEGUITO — ⚡ <b>${t.sym}</b> — ENTRY RAGGIUNTA!\nEntry: ${fp(t.entry)} | Prezzo: ${fp(price)}\nTrade attivato — monitoraggio stop/TP iniziato${tgLinks(t.sym)}`);
       } else {
         // Not yet activated — check if price passed TP without touching EP
         const tpPassedWithoutEntry=isL?(price>=t.tp1):(price<=t.tp1);
         if(tpPassedWithoutEntry&&!notified['tp_no_entry_'+t.id]){
           notified['tp_no_entry_'+t.id]=Date.now();
           localStorage.setItem(notifKey,JSON.stringify(notified));
-          sendTG(`📌 TRADE SEGUITO — ℹ️ <b>${t.sym}</b> — TP raggiunto ma EP non toccato\nEri in attesa di ${fp(t.entry)}\nIl prezzo è andato al TP senza passare per il tuo livello\nNon eri dentro — nessuna azione necessaria`);
+          sendTG(`📌 TRADE SEGUITO — ℹ️ <b>${t.sym}</b> — TP raggiunto ma EP non toccato\nEri in attesa di ${fp(t.entry)}\nIl prezzo è andato al TP senza passare per il tuo livello\nNon eri dentro — nessuna azione necessaria${tgLinks(t.sym)}`);
         }
       }
       return; // don't monitor stop/TP until activated
@@ -1247,14 +1301,14 @@ function monitorTrades(allSignals){
     // ── Stop → chiude subito sempre ──────────────────────────────────────
     if((isL&&price<=t.stop)||(!isL&&price>=t.stop)){
       closeTrade(t.id,'stop',price);
-      sendTG(`📌 TRADE SEGUITO — 🔴 <b>${t.sym}</b> — STOP COLPITO\nStop: ${fp(t.stop)} | Prezzo: ${fp(price)}\nPosizione chiusa\nAperto: ${formatAgo(t.openedAt)}`);
+      sendTG(`📌 TRADE SEGUITO — 🔴 <b>${t.sym}</b> — STOP COLPITO\nStop: ${fp(t.stop)} | Prezzo: ${fp(price)}\nPosizione chiusa\nAperto: ${formatAgo(t.openedAt)}${tgLinks(t.sym)}`);
       return;
     }
 
     // ── TP2 → chiude subito sempre ───────────────────────────────────────
     if(t.tp2&&((isL&&price>=t.tp2)||(!isL&&price<=t.tp2))){
       closeTrade(t.id,'tp2',price);
-      sendTG(`📌 TRADE SEGUITO — 🏆 <b>${t.sym}</b> — TP2 RAGGIUNTO!\nTP2: ${fp(t.tp2)} | Prezzo: ${fp(price)}\nTrade completato ✅\nAperto: ${formatAgo(t.openedAt)}`);
+      sendTG(`📌 TRADE SEGUITO — 🏆 <b>${t.sym}</b> — TP2 RAGGIUNTO!\nTP2: ${fp(t.tp2)} | Prezzo: ${fp(price)}\nTrade completato ✅\nAperto: ${formatAgo(t.openedAt)}${tgLinks(t.sym)}`);
       return;
     }
 
@@ -1262,7 +1316,7 @@ function monitorTrades(allSignals){
     if(!t.tp1Hit&&((isL&&price>=t.tp1)||(!isL&&price<=t.tp1))){
       saveTrades(getTrades().map(x=>x.id===t.id?{...x,tp1Hit:true,tp1HitAt:Date.now()}:x));
       t.tp1Hit=true; t.tp1HitAt=Date.now();
-      sendTG(`📌 TRADE SEGUITO — ✅ <b>${t.sym}</b> — TP1 RAGGIUNTO!\nTP1: ${fp(t.tp1)} | Prezzo: ${fp(price)}\nChiudi 50% e sposta stop a breakeven\nTP2: ${fp(t.tp2)} ancora aperto — scheda rimane aperta`);
+      sendTG(`📌 TRADE SEGUITO — ✅ <b>${t.sym}</b> — TP1 RAGGIUNTO!\nTP1: ${fp(t.tp1)} | Prezzo: ${fp(price)}\nChiudi 50% e sposta stop a breakeven\nTP2: ${fp(t.tp2)} ancora aperto — scheda rimane aperta${tgLinks(t.sym)}`);
     }
 
     // ── Bias invertito + 24h → chiude ────────────────────────────────────
@@ -1270,7 +1324,7 @@ function monitorTrades(allSignals){
     if(biasInverted&&sig.biasStable&&hoursOpen>=24){
       closeTrade(t.id,'bias_inverted_24h',price);
       const pnlPct=((isL?(price-t.entry):(t.entry-price))/t.entry*100);
-      sendTG(`📌 TRADE SEGUITO — ⚠️ <b>${t.sym}</b> — Trade chiuso (bias invertito >24h)\nPrezzo: ${fp(price)} | P&L: ${pnlPct>=0?'+':''}${pnlPct.toFixed(2)}%\nTP1 ${t.tp1Hit?'raggiunto ✅':'non raggiunto'}`);
+      sendTG(`📌 TRADE SEGUITO — ⚠️ <b>${t.sym}</b> — Trade chiuso (bias invertito >24h)\nPrezzo: ${fp(price)} | P&L: ${pnlPct>=0?'+':''}${pnlPct.toFixed(2)}%\nTP1 ${t.tp1Hit?'raggiunto ✅':'non raggiunto'}${tgLinks(t.sym)}`);
       if(sig.strat&&sig.quality>=4) setTimeout(()=>sendTG(`${sig.bias==='long'?'🟢':'🔴'} <b>${t.sym}</b> — NUOVO SEGNALE ${sig.bias.toUpperCase()}\nEntry: ${fp(sig.strat?.entry)} | TP1: ${fp(sig.strat?.tp1)} | R/R ${sig.strat?.rr1}:1`),2000);
       return;
     }
@@ -1278,16 +1332,16 @@ function monitorTrades(allSignals){
     // ── Tutte le altre condizioni → notifica, lascia aperto ──────────────
     if(biasInverted&&!notified['bias_inv_'+t.id]){
       notified['bias_inv_'+t.id]=Date.now();
-      sendTG(`📌 TRADE SEGUITO — 🟡 <b>${t.sym}</b> — Bias girato ${sig.bias.toUpperCase()} (${sig.biasAge})\nTrade ancora aperto — chiusura auto tra ${hoursOpen<24?(24-hoursOpen).toFixed(0)+'h':'poco'} se bias confermato\nPrezzo: ${fp(price)}`);
+      sendTG(`📌 TRADE SEGUITO — 🟡 <b>${t.sym}</b> — Bias girato ${sig.bias.toUpperCase()} (${sig.biasAge})\nTrade ancora aperto — chiusura auto tra ${hoursOpen<24?(24-hoursOpen).toFixed(0)+'h':'poco'} se bias confermato\nPrezzo: ${fp(price)}${tgLinks(t.sym)}`);
     }
     if(sig.bias==='wait'&&!notified['wait_'+t.id]){
       notified['wait_'+t.id]=Date.now();
-      sendTG(`📌 TRADE SEGUITO — 🟡 <b>${t.sym}</b> — Bias WAIT\nPorta stop a breakeven: ${fp(t.entry)}\nPrezzo: ${fp(price)} | TP1: ${fp(t.tp1)}`);
+      sendTG(`📌 TRADE SEGUITO — 🟡 <b>${t.sym}</b> — Bias WAIT\nPorta stop a breakeven: ${fp(t.entry)}\nPrezzo: ${fp(price)} | TP1: ${fp(t.tp1)}${tgLinks(t.sym)}`);
     }
     const cvdAgainst=(isL&&sig.cvd.dir==='down'&&t.openCVD==='up')||(!isL&&sig.cvd.dir==='up'&&t.openCVD==='down');
     if(cvdAgainst&&!notified['cvd_'+t.id]){
       notified['cvd_'+t.id]=Date.now();
-      sendTG(`📌 TRADE SEGUITO — 🟡 <b>${t.sym}</b> — CVD girato contro\nPrezzo: ${fp(price)} | TP1: ${fp(t.tp1)}`);
+      sendTG(`📌 TRADE SEGUITO — 🟡 <b>${t.sym}</b> — CVD girato contro\nPrezzo: ${fp(price)} | TP1: ${fp(t.tp1)}${tgLinks(t.sym)}`);
     }
 
     // ── Proximity warnings ────────────────────────────────────────────────
@@ -1295,7 +1349,7 @@ function monitorTrades(allSignals){
     const pctToStop=stopDist>0?Math.abs(price-t.stop)/stopDist*100:100;
     if(pctToStop<50&&!notified['prestop_'+t.id]){
       notified['prestop_'+t.id]=Date.now();
-      sendTG(`📌 TRADE SEGUITO — ⚠️ <b>${t.sym}</b> — VICINO ALLO STOP\nStop: ${fp(t.stop)} | ${pctToStop.toFixed(0)}% rimasto\nValuta uscita manuale`);
+      sendTG(`📌 TRADE SEGUITO — ⚠️ <b>${t.sym}</b> — VICINO ALLO STOP\nStop: ${fp(t.stop)} | ${pctToStop.toFixed(0)}% rimasto\nValuta uscita manuale${tgLinks(t.sym)}`);
     }
     if(pctToStop>70) delete notified['prestop_'+t.id];
 
@@ -1304,7 +1358,7 @@ function monitorTrades(allSignals){
       const pctToTp1=tp1Dist>0?Math.min(100,(1-Math.abs(price-t.tp1)/tp1Dist)*100):0;
       if(pctToTp1>=75&&!notified['pretp1_'+t.id]){
         notified['pretp1_'+t.id]=Date.now();
-        sendTG(`📌 TRADE SEGUITO — 🎯 <b>${t.sym}</b> — VICINO AL TP1 (${pctToTp1.toFixed(0)}%)\nTP1: ${fp(t.tp1)} | Prezzo: ${fp(price)}`);
+        sendTG(`📌 TRADE SEGUITO — 🎯 <b>${t.sym}</b> — VICINO AL TP1 (${pctToTp1.toFixed(0)}%)\nTP1: ${fp(t.tp1)} | Prezzo: ${fp(price)}${tgLinks(t.sym)}`);
       }
       if(pctToTp1<60) delete notified['pretp1_'+t.id];
     }
@@ -1451,6 +1505,13 @@ async function sendTG(msg){
     });
   }catch(e){console.warn('TG error:',e);}
 }
+
+// Helper: genera i link inline per ogni notifica trade
+function tgLinks(sym){
+  const dashboard='https://fabriziobedini-wq.github.io/sop-dashboard-/';
+  const tv=`https://www.tradingview.com/chart/?symbol=BINANCE:${sym}USDT.P&interval=60`;
+  return`\n\n<a href="${dashboard}">🌐 Dashboard</a>  |  <a href="${tv}">📊 TradingView ${sym}</a>`;
+}
 async function testTG(){
   document.getElementById('tgStatus').textContent='Invio...';
   await sendTG('✅ <b>SOP Strategy</b> — test notifica funzionante!\n'+new Date().toLocaleString('it-IT'));
@@ -1462,6 +1523,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   const {token,chat}=getTGConfig();
   if(token) document.getElementById('tgToken').value=token;
   if(chat)  document.getElementById('tgChat').value=chat;
+  switchTab('dashboard');
   renderTrades([]);
   renderHistory();
 });
@@ -1875,24 +1937,18 @@ function render(){
       }).join('')}</tbody>
     </table>`;
 
-  // Strategy cards — active = at zone, retest, or strong momentum
+  // Strategy cards — all bias != wait in one unified section
   const actionable=all.filter(s=>s.bias!=='wait'&&s.strat);
   const active=actionable.filter(s=>s.strat.atEntry||s.strat.isRetest||(s.strat.momentumStrong&&s.strat.momentumRR>=1.5));
-  const watch=actionable.filter(s=>!s.strat.atEntry&&!s.strat.isRetest&&!(s.strat.momentumStrong&&s.strat.momentumRR>=1.5));
+  const watching=actionable.filter(s=>!s.strat.atEntry&&!s.strat.isRetest&&!(s.strat.momentumStrong&&s.strat.momentumRR>=1.5));
+  const allSetup=[...active,...watching];
 
-  if(active.length>0){
+  if(allSetup.length>0){
     document.getElementById('strategySection').style.display='';
-    document.getElementById('strategyTitle').textContent='Setup operativi — '+active.length+' asset (prezzo vicino al livello)';
-    document.getElementById('strategyGrid').innerHTML=active.map(s=>renderCard(s,'active')).join('');
+    document.getElementById('strategyTitle').textContent='Setup operativi — '+allSetup.length+' asset';
+    document.getElementById('strategyGrid').innerHTML=allSetup.map(s=>renderCard(s,active.includes(s)?'active':'watch')).join('');
   }else{
     document.getElementById('strategySection').style.display='none';
-  }
-
-  if(watch.length>0){
-    document.getElementById('watchSection').style.display='';
-    document.getElementById('watchGrid').innerHTML=watch.map(s=>renderCard(s,'watch')).join('');
-  }else{
-    document.getElementById('watchSection').style.display='none';
   }
 
   // WAIT section — show info cards for WAIT assets too
