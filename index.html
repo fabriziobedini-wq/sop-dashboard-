@@ -1214,7 +1214,8 @@ function confirmTrade(sym,dir,entryZone,stop,tp1,tp2,currentBias,currentCVD,mark
     const nt1=isL?Math.round((finalEntry+t1d)*10000)/10000:Math.round((finalEntry-t1d)*10000)/10000;
     const nt2=t2d?(isL?Math.round((finalEntry+t2d)*10000)/10000:Math.round((finalEntry-t2d)*10000)/10000):null;
     const isPending=sel==='zone'; // pending only if waiting for EP
-    openTrade(sym,dir,finalEntry,ns,nt1,nt2||0,currentBias,currentCVD,isPending);
+    const entryType=sel==='market'?'mercato':sel==='zone'?'EP (in attesa)':'manuale';
+    openTrade(sym,dir,finalEntry,ns,nt1,nt2||0,currentBias,currentCVD,isPending,entryType);
     modal.remove();
   };
   modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
@@ -1230,7 +1231,7 @@ function saveTrades(trades){
   localStorage.setItem(TRADES_KEY,JSON.stringify(trades));
 }
 
-function openTrade(sym,dir,entry,stop,tp1,tp2,currentBias,currentCVD,isPending=false){
+function openTrade(sym,dir,entry,stop,tp1,tp2,currentBias,currentCVD,isPending=false,entryType='mercato'){
   const trades=getTrades();
   const filtered=trades.filter(t=>t.sym!==sym||t.closed);
   filtered.push({
@@ -1242,7 +1243,7 @@ function openTrade(sym,dir,entry,stop,tp1,tp2,currentBias,currentCVD,isPending=f
     tp1Hit:false,
     closed:false,
     closeReason:null,
-    // pending = true means waiting for EP to be touched before monitoring starts
+    entryType,           // 'mercato' | 'EP (in attesa)' | 'manuale'
     pending:isPending,
     activatedAt:isPending?null:Date.now(),
   });
@@ -1259,8 +1260,11 @@ function closeTrade(id, reason, closePrice=null){
     t.closeReason=reason;
     t.closedAt=Date.now();
     t.closePrice=closePrice||null;
-    // Calculate P&L if we have close price
-    if(closePrice&&t.entry){
+    // If trade was still pending (EP never touched) → no P&L
+    if(t.pending){
+      t.pnlPct=null;
+      t.neverEntered=true;
+    } else if(closePrice&&t.entry){
       const isL=t.dir==='long';
       t.pnlPct=Math.round(((isL?(closePrice-t.entry):(t.entry-closePrice))/t.entry*100)*100)/100;
     }
@@ -1295,10 +1299,12 @@ function renderHistory(){
   section.style.display='';
 
   // Stats
-  const wins=closed.filter(t=>t.pnlPct>0);
-  const losses=closed.filter(t=>t.pnlPct<0);
-  const be=closed.filter(t=>t.pnlPct===0||t.pnlPct===null||t.pnlPct===undefined);
-  const withPnl=closed.filter(t=>t.pnlPct!==null&&t.pnlPct!==undefined);
+  const entered=closed.filter(t=>!t.neverEntered); // only trades where EP was actually touched
+  const wins=entered.filter(t=>t.pnlPct>0);
+  const losses=entered.filter(t=>t.pnlPct<0);
+  const be=entered.filter(t=>t.pnlPct===0);
+  const withPnl=entered.filter(t=>t.pnlPct!==null&&t.pnlPct!==undefined);
+  const notEntered=closed.filter(t=>t.neverEntered);
   const totalPnl=withPnl.reduce((a,t)=>a+t.pnlPct,0);
   const wr=withPnl.length>0?Math.round(wins.length/withPnl.length*100):0;
   const avgWin=wins.length>0?wins.reduce((a,t)=>a+t.pnlPct,0)/wins.length:0;
@@ -1320,6 +1326,7 @@ function renderHistory(){
         {l:'Avg win',v:'+'+avgWin.toFixed(2)+'%',c:'up'},
         {l:'Avg loss',v:avgLoss.toFixed(2)+'%',c:'dn'},
         {l:'Win / Loss / BE',v:wins.length+' / '+losses.length+' / '+be.length,c:'nt'},
+        {l:'Non entrati (EP mancato)',v:notEntered.length,c:'nt'},
       ].map(s=>`<div style="background:var(--bg3);border-radius:8px;padding:10px 12px">
         <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">${s.l}</div>
         <div style="font-size:18px;font-weight:700;color:${s.c==='up'?'var(--long)':s.c==='dn'?'var(--short)':s.c==='wn'?'var(--wait)':'var(--text2)'}">${s.v}</div>
@@ -1337,6 +1344,7 @@ function renderHistory(){
       <thead><tr style="border-bottom:1px solid var(--border)">
         <th style="padding:6px 8px;color:var(--text3);font-weight:500;text-align:left">Asset</th>
         <th style="padding:6px 8px;color:var(--text3);font-weight:500;text-align:left">Dir</th>
+        <th style="padding:6px 8px;color:var(--text3);font-weight:500;text-align:left">Tipo entry</th>
         <th style="padding:6px 8px;color:var(--text3);font-weight:500;text-align:right">Entry</th>
         <th style="padding:6px 8px;color:var(--text3);font-weight:500;text-align:right">Close</th>
         <th style="padding:6px 8px;color:var(--text3);font-weight:500;text-align:right">P&L</th>
@@ -1346,16 +1354,19 @@ function renderHistory(){
       </tr></thead>
       <tbody>
         ${closed.map(t=>{
-          const pnl=t.pnlPct!==null&&t.pnlPct!==undefined;
+          const pnl=!t.neverEntered&&t.pnlPct!==null&&t.pnlPct!==undefined;
           const pnlColor=pnl&&t.pnlPct>0?'var(--long)':pnl&&t.pnlPct<0?'var(--short)':'var(--text3)';
           const dur=t.closedAt&&t.openedAt?Math.round((t.closedAt-t.openedAt)/3600000*10)/10:null;
           const closeDate=t.closedAt?new Date(t.closedAt).toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
-          return`<tr style="border-bottom:1px solid var(--border)" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background=''">
+          const entryLabel=t.neverEntered?'❌ EP non toccato':t.entryType==='mercato'?'⚡ Mercato':t.entryType==='manuale'?'✏️ Manuale':'🎯 EP';
+          const entryColor=t.neverEntered?'var(--text3)':t.entryType==='mercato'?'var(--long)':'var(--accent)';
+          return`<tr style="border-bottom:1px solid var(--border);${t.neverEntered?'opacity:0.5':''}" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background=''">
             <td style="padding:7px 8px;font-weight:700;color:${t.dir==='long'?'var(--long)':'var(--short)'}">${t.sym}</td>
             <td style="padding:7px 8px"><span style="font-size:8px;font-weight:700;padding:2px 6px;border-radius:10px;background:${t.dir==='long'?'var(--long-bg)':'var(--short-bg)'};color:${t.dir==='long'?'var(--long)':'var(--short)'}">${t.dir.toUpperCase()}</span></td>
+            <td style="padding:7px 8px;font-size:9px;font-weight:700;color:${entryColor}">${entryLabel}</td>
             <td style="padding:7px 8px;text-align:right;color:var(--text2)">${fp(t.entry)}</td>
             <td style="padding:7px 8px;text-align:right;color:var(--text2)">${fp(t.closePrice)||'—'}</td>
-            <td style="padding:7px 8px;text-align:right;font-weight:700;color:${pnlColor}">${pnl?(t.pnlPct>=0?'+':'')+t.pnlPct.toFixed(2)+'%':'—'}</td>
+            <td style="padding:7px 8px;text-align:right;font-weight:700;color:${pnlColor}">${t.neverEntered?'<span style="color:var(--text3);font-size:9px">Non entrato</span>':pnl?(t.pnlPct>=0?'+':'')+t.pnlPct.toFixed(2)+'%':'—'}</td>
             <td style="padding:7px 8px;color:var(--text3);font-size:9px">${REASON_LABELS[t.closeReason]||t.closeReason||'—'}</td>
             <td style="padding:7px 8px;text-align:right;color:var(--text3)">${dur?dur+'h':'—'}</td>
             <td style="padding:7px 8px;text-align:right;color:var(--text3)">${closeDate}</td>
