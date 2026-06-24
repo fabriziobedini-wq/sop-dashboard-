@@ -57,12 +57,14 @@ def get_oi_history(sym):
 
 def get_top_assets():
     tickers = bn_get('/fapi/v1/ticker/24hr')
-    if not tickers: return ASSETS_FALLBACK
+    if not tickers or not isinstance(tickers, list): return ASSETS_FALLBACK
+    # Make sure we have dicts, not strings
+    if not isinstance(tickers[0], dict): return ASSETS_FALLBACK
     excluded = {'USDC','BUSD','TUSD','FDUSD','USDP','DAI','USDT','USDE',
                 'UP','DOWN','BULL','BEAR','LONG','SHORT',
                 'CL','XAU','XAG','SPX','NDX','SOXL','SPCX',
                 'AAPL','TSLA','NVDA','AMZN','GOOGL','MSFT','META','COIN','MSTR'}
-    usdt = [t for t in tickers if t['symbol'].endswith('USDT')]
+    usdt = [t for t in tickers if isinstance(t, dict) and t.get('symbol','').endswith('USDT')]
     filtered = []
     for t in usdt:
         sym = t['symbol'].replace('USDT','')
@@ -73,6 +75,7 @@ def get_top_assets():
         if price > 15000 and sym != 'BTC': continue
         if vol < 20000000: continue
         filtered.append({'sym': sym, 'vol': vol})
+    if not filtered: return ASSETS_FALLBACK
     filtered.sort(key=lambda x: -x['vol'])
     top = [t['sym'] for t in filtered[:15]]
     macro = ['BTC','ETH','SOL']
