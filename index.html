@@ -233,6 +233,24 @@ body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code',mo
       </div>
       <div style="font-size:9px;color:var(--text3);margin-top:4px">News OPEC, geopolitica, macro commodity</div>
     </div>
+
+    <!-- SYNC TRADE TRA DISPOSITIVI -->
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 16px">
+      <div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:6px">🔄 Sincronizza trade tra dispositivi</div>
+      <div style="font-size:9px;color:var(--text3);margin-bottom:12px;line-height:1.6">
+        I trade seguiti sono salvati localmente nel browser. Usa esporta/importa per sincronizzare tra PC diversi.
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button onclick="exportTrades()" style="background:var(--accent);border:none;border-radius:6px;color:#fff;font-family:inherit;font-size:10px;padding:8px 16px;cursor:pointer;font-weight:600">
+          📤 Esporta trade
+        </button>
+        <button onclick="importTrades()" style="background:var(--bg2);border:1px solid var(--border2);border-radius:6px;color:var(--text2);font-family:inherit;font-size:10px;padding:8px 16px;cursor:pointer">
+          📥 Importa trade
+        </button>
+      </div>
+      <div id="syncStatus" style="font-size:10px;color:var(--text3);margin-top:8px"></div>
+    </div>
+
   </div>
 </div>
 
@@ -334,7 +352,55 @@ let ASSETS=[...ASSETS_FALLBACK];
 // Always include BTC and ETH as macro anchors regardless of OI rank
 const MACRO_ASSETS=['BTC','ETH','SOL'];
 
-// ── TAB NAVIGATION ────────────────────────────────────────────────────────
+// ── TRADE SYNC EXPORT/IMPORT ──────────────────────────────────────────────
+function exportTrades(){
+  const trades=getTrades();
+  const json=JSON.stringify(trades, null, 2);
+  const blob=new Blob([json], {type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  const date=new Date().toISOString().slice(0,10);
+  a.href=url;
+  a.download='sop_trades_'+date+'.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  const el=document.getElementById('syncStatus');
+  if(el) el.textContent='✓ Esportati '+trades.length+' trade — trasferisci il file sull\'altro PC e importalo';
+}
+
+function importTrades(){
+  const input=document.createElement('input');
+  input.type='file';
+  input.accept='.json';
+  input.onchange=function(e){
+    const file=e.target.files[0];
+    if(!file) return;
+    const reader=new FileReader();
+    reader.onload=function(ev){
+      try{
+        const imported=JSON.parse(ev.target.result);
+        if(!Array.isArray(imported)) throw new Error('Formato non valido');
+        // Merge: keep existing trades, add imported ones that don't exist
+        const existing=getTrades();
+        const existingIds=new Set(existing.map(t=>t.id));
+        const newTrades=imported.filter(t=>!existingIds.has(t.id));
+        const merged=[...existing, ...newTrades];
+        saveTrades(merged);
+        renderTrades([]);
+        renderHistory();
+        const el=document.getElementById('syncStatus');
+        if(el) el.textContent='✓ Importati '+newTrades.length+' nuovi trade ('+merged.length+' totali)';
+      }catch(err){
+        const el=document.getElementById('syncStatus');
+        if(el) el.textContent='❌ Errore: '+err.message;
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+
 function switchTab(tab){
   ['dashboard','history','settings'].forEach(function(t){
     var panel=document.getElementById('panel'+t.charAt(0).toUpperCase()+t.slice(1));
