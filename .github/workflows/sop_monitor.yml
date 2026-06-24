@@ -1,0 +1,45 @@
+name: SOP Strategy Monitor
+
+on:
+  schedule:
+    # Every 5 minutes
+    - cron: '*/5 * * * *'
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Restore state from cache
+        uses: actions/cache@v4
+        with:
+          path: sop_state.json
+          key: sop-state-${{ github.run_id }}
+          restore-keys: |
+            sop-state-
+
+      - name: Run SOP monitor
+        env:
+          TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          TG_CHAT: ${{ secrets.TG_CHAT }}
+        run: python sop_monitor.py
+
+      - name: Save state
+        uses: actions/cache@v4
+        with:
+          path: sop_state.json
+          key: sop-state-${{ github.run_id }}
