@@ -448,6 +448,67 @@ function getAssetBadge(sym){
 }
 
 // ── MARKET REGIME ─────────────────────────────────────────────────────────
+// ── PRICE ACTION DETECTION ────────────────────────────────────────────────
+function detectPinBar(klines,direction){
+  if(!klines||klines.length<3) return null;
+  const k=klines[klines.length-2];
+  const body=Math.abs(k.c-k.o),range=k.h-k.l;
+  if(range===0) return null;
+  const up=k.h-Math.max(k.c,k.o),dn=Math.min(k.c,k.o)-k.l;
+  if(direction==='long'&&dn>=body*2&&body/range<0.35&&up<dn*0.5)
+    return{pattern:'Pin Bar Bullish',strength:dn>=body*3?'forte':'moderata'};
+  if(direction==='short'&&up>=body*2&&body/range<0.35&&dn<up*0.5)
+    return{pattern:'Pin Bar Bearish',strength:up>=body*3?'forte':'moderata'};
+  return null;
+}
+function detectEngulfing(klines,direction){
+  if(!klines||klines.length<3) return null;
+  const p=klines[klines.length-3],c=klines[klines.length-2];
+  const pt=Math.max(p.c,p.o),pb=Math.min(p.c,p.o);
+  const ct=Math.max(c.c,c.o),cb=Math.min(c.c,c.o);
+  if(direction==='long'&&p.c<p.o&&c.c>c.o&&cb<pb&&ct>pt)
+    return{pattern:'Engulfing Bullish',strength:p.v>0&&c.v/p.v>1.5?'forte':'moderata'};
+  if(direction==='short'&&p.c>p.o&&c.c<c.o&&ct>pt&&cb<pb)
+    return{pattern:'Engulfing Bearish',strength:p.v>0&&c.v/p.v>1.5?'forte':'moderata'};
+  return null;
+}
+function detectEMABounce(klines,direction){
+  if(!klines||klines.length<60) return null;
+  const cl=klines.map(k=>k.c);
+  const atr=calcATR(klines);
+  let e20=cl.slice(0,20).reduce((a,b)=>a+b)/20;
+  for(let i=20;i<cl.length;i++) e20=cl[i]*(2/21)+e20*(1-2/21);
+  let e50=cl.slice(0,50).reduce((a,b)=>a+b)/50;
+  for(let i=50;i<cl.length;i++) e50=cl[i]*(2/51)+e50*(1-2/51);
+  const tol=atr*0.3,prev=klines[klines.length-2];
+  if(direction==='long'){
+    if(Math.abs(prev.l-e20)<tol&&prev.c>e20) return{pattern:'Bounce EMA20',strength:'forte',level:+e20.toFixed(4)};
+    if(Math.abs(prev.l-e50)<tol&&prev.c>e50) return{pattern:'Bounce EMA50',strength:'forte',level:+e50.toFixed(4)};
+  } else {
+    if(Math.abs(prev.h-e20)<tol&&prev.c<e20) return{pattern:'Rejection EMA20',strength:'forte',level:+e20.toFixed(4)};
+    if(Math.abs(prev.h-e50)<tol&&prev.c<e50) return{pattern:'Rejection EMA50',strength:'forte',level:+e50.toFixed(4)};
+  }
+  return null;
+}
+function detectVolumeSpike(klines,lb=20){
+  if(!klines||klines.length<lb+1) return false;
+  const avg=klines.slice(-lb-1,-1).reduce((a,k)=>a+k.v,0)/lb;
+  return klines[klines.length-2].v>avg*1.5;
+}
+function detectPA(klines4h,direction){
+  const pattern=detectPinBar(klines4h,direction)||detectEngulfing(klines4h,direction)||detectEMABounce(klines4h,direction)||null;
+  return{pattern,volSpike:detectVolumeSpike(klines4h),timeframe:'4h'};
+}
+function calcPAScore(pa,solidity,regime){
+  let s=0;
+  const sol=solidity?.label||solidity||'';
+  if(sol==='Solido'||sol==='solido') s+=2; else if(sol==='Moderato'||sol==='moderato') s+=1;
+  if(pa?.pattern?.strength==='forte') s+=2; else if(pa?.pattern?.strength==='moderata') s+=1;
+  if(pa?.volSpike) s+=1;
+  if(regime?.type==='structural') s+=1;
+  return s;
+}
+
 function classifyRegime(oiCurrent,vol24h){
   if(!oiCurrent||!vol24h||vol24h===0) return{type:'unknown',label:'—',icon:'—',color:'var(--text3)',ratio:0};
   var ratio=oiCurrent/(vol24h/24);
@@ -1973,6 +2034,10 @@ function compute(sym){
   const assetInfo=getAssetType(sym);
   const slWarning=getSLWarning(sym);
 
+  // Price action detection on 4h klines
+  const pa=bias!=='wait'?detectPA(d.k4h,bias):null;
+  const paScore=pa?calcPAScore(pa,solidity,regime):0;
+
   // If bias is Fragile (level 1) → downgrade strat to watch-only, no operative signal
   const stratFinal=solidity.level>=2?strat:strat?{...strat,
     statusLabel:'⚠ BIAS FRAGILE — monitoraggio',
@@ -2081,12 +2146,14 @@ function render(){
       <thead><tr>
         <th>#</th><th>Asset</th><th>Bias</th><th>Solidità</th><th>Regime</th><th>Qualità ★</th>
         <th>Perf 24h</th><th>RS vs BTC</th>
-        <th>OI Delta</th><th>OI/Vol</th><th>CVD</th><th>Setup</th>
+        <th>OI Delta</th><th>OI/Vol</th><th>CVD</th><th>Setup SOP</th><th>Pattern PA</th>
       </tr></thead>
       <tbody>${all.map((s,i)=>{
         const stars='★'.repeat(s.quality)+'☆'.repeat(5-s.quality);
         const setupLabel=s.strat?s.strat.statusLabel:'—';
         const setupColor=s.strat?s.strat.statusColor:'var(--text3)';
+        const paLabel=s.pa&&s.pa.pattern?('⭐'.repeat(Math.min(s.paScore,5))+' '+s.pa.pattern.pattern):'—';
+        const paColor=s.paScore>=5?'var(--long)':s.paScore>=3?'var(--wait)':'var(--text3)';
         const oivColor=s.oiVolSpot>2?'var(--short)':s.oiVolSpot>1?'var(--wait)':'var(--long)';
         const rsColor=s.rsBTC>2?'var(--long)':s.rsBTC<-2?'var(--short)':'var(--text2)';
         const rsLabel=(s.rsBTC>=0?'+':'')+s.rsBTC.toFixed(1)+'%'+(s.rsStrong?' ↑↑':s.rsWeak?' ↓↓':'');
@@ -2118,6 +2185,7 @@ function render(){
           <td style="color:${oivColor}">${s.oiVolSpot!==null?s.oiVolSpot+'x':'—'}</td>
           <td style="color:${s.cvd.dir==='up'?'var(--long)':s.cvd.dir==='down'?'var(--short)':'var(--text3)'}">${s.cvd.dir==='up'?'↑ Buy':s.cvd.dir==='down'?'↓ Sell':'Flat'}</td>
           <td style="font-size:10px;font-weight:700;color:${setupColor}">${setupLabel}</td>
+          <td style="font-size:9px;font-weight:700;color:${paColor}">${paLabel}</td>
         </tr>`;
       }).join('')}</tbody>
     </table>`;
@@ -2338,6 +2406,20 @@ function renderCard(s,mode){
 
     <div class="scard-body">
       <div class="strategy-title ${cardClass}" style="color:${st.statusColor}">${st.statusLabel}</div>
+
+      ${s.pa&&s.pa.pattern?`<div style="margin-bottom:10px;padding:8px 12px;background:${s.paScore>=5?'#052010':s.paScore>=3?'#1a1005':'var(--bg4)'};border-radius:8px;border:1px solid ${s.paScore>=5?'#0f4020':s.paScore>=3?'var(--wait-border)':'var(--border)'}">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span style="font-size:10px;font-weight:700;color:${s.paScore>=5?'var(--long)':s.paScore>=3?'var(--wait)':'var(--text3)'}">
+            ${'⭐'.repeat(Math.min(s.paScore,5))} ${s.pa.pattern.pattern}
+          </span>
+          <span style="font-size:9px;padding:2px 7px;border-radius:10px;background:${s.pa.pattern.strength==='forte'?'var(--long-bg)':'var(--bg3)'};color:${s.pa.pattern.strength==='forte'?'var(--long)':'var(--text3)'}">
+            ${s.pa.pattern.strength}
+          </span>
+          <span style="font-size:9px;color:var(--text3)">${s.pa.timeframe}</span>
+          ${s.pa.volSpike?'<span style="font-size:9px;color:var(--long)">📊 Volume spike</span>':''}
+        </div>
+        ${s.paScore>=4?'<div style="font-size:9px;color:var(--long);margin-top:4px;font-weight:600">✅ Segnale v2 confermato — setup ad alta probabilità</div>':s.paScore>=2?'<div style="font-size:9px;color:var(--wait);margin-top:4px">⚠️ Pattern presente ma segnale debole</div>':''}
+      </div>`:''}
 
       ${st.momentumStrong&&st.momentumRR>=1.5?`
       <div style="background:#1a1005;border:1px solid var(--wait-border);border-radius:8px;padding:10px 12px;margin-bottom:10px">
