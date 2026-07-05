@@ -1624,9 +1624,19 @@ function renderTrades(allSignals){
   if(!trades.length){section.style.display='none';return;}
   section.style.display='';
 
-  grid.innerHTML=trades.map(t=>{
+  // Update last known price for each trade from live signals
+  if(allSignals.length>0){
+    const updated=getTrades().map(t=>{
+      const sig=allSignals.find(s=>s.sym===t.sym);
+      if(sig&&!t.closed) return{...t, lastPrice:sig.price};
+      return t;
+    });
+    saveTrades(updated);
+  }
+
+  grid.innerHTML=getTrades().filter(t=>!t.closed).map(t=>{
     const sig=allSignals.find(s=>s.sym===t.sym);
-    const price=sig?.price||0;
+    const price=sig?.price||t.lastPrice||0; // use live price or last known
     const isL=t.dir==='long';
     const pnlPct=price&&t.entry?((isL?(price-t.entry):(t.entry-price))/t.entry*100):0;
     const pnlColor=pnlPct>0?'var(--long)':pnlPct<0?'var(--short)':'var(--text2)';
