@@ -14,7 +14,10 @@ STATE_FILE = 'sop_state.json'
 BINANCE_BASE = 'https://fapi.binance.com'
 DASHBOARD_URL = 'https://fabriziobedini-wq.github.io/sop-dashboard-/'
 
-ASSETS_FALLBACK = ['BTC','ETH','SOL','BNB','XRP','DOGE','ADA','AVAX','LINK','DOT']
+# Whitelist fissa: top 10 crypto per MARKET CAP (non per volume/OI).
+# Aggiorna manualmente ogni 1-3 mesi. Ultimo aggiornamento: 08/07/2026
+# (fonte: CoinMarketCap, esclusi stablecoin)
+ASSETS_FALLBACK = ['BTC','ETH','BNB','XRP','SOL','TRX','HYPE','DOGE','LEO','ZEC']
 
 # ── TELEGRAM ──────────────────────────────────────────────────────────────
 def send_tg(msg):
@@ -61,29 +64,31 @@ def get_oi_history(sym):
     return data if isinstance(data, list) else []
 
 def get_top_assets():
+    """
+    Universo tradabile: SOLO i top 10 per market cap (whitelist ASSETS_FALLBACK),
+    filtrati sui simboli effettivamente disponibili come perpetual USDT su Binance.
+
+    PRIMA (versione precedente): selezionava i top 15 per volume 24h su Binance
+    con soglia minima di 20M$. Questo permetteva l'ingresso di altcoin a bassa
+    capitalizzazione ma volume speculativo alto (es. LAB, TAIKO) — causa delle
+    due perdite catastrofiche nel backtest (-65,52% e -34,32%): volume alto
+    non equivale a liquidità profonda, e lo stop ATR-based veniva sfondato da
+    gap improvvisi su questi asset.
+    """
     tickers = bn_get('/fapi/v1/ticker/24hr')
-    if not tickers or not isinstance(tickers, list): return ASSETS_FALLBACK
-    if not isinstance(tickers[0], dict): return ASSETS_FALLBACK
-    excluded = {'USDC','BUSD','TUSD','FDUSD','USDP','DAI','USDT','USDE',
-                'UP','DOWN','BULL','BEAR','LONG','SHORT',
-                'CL','XAU','XAG','SPX','NDX','SOXL','SPCX',
-                'AAPL','TSLA','NVDA','AMZN','GOOGL','MSFT','META','COIN','MSTR'}
-    filtered = []
-    for t in tickers:
-        if not isinstance(t, dict): continue
-        sym = t.get('symbol','').replace('USDT','')
-        if not t.get('symbol','').endswith('USDT'): continue
-        if sym in excluded or any(sym.startswith(e) for e in excluded): continue
-        vol = float(t.get('quoteVolume', 0))
-        price = float(t.get('lastPrice', 0))
-        if price > 15000 and sym != 'BTC': continue
-        if vol < 20000000: continue
-        filtered.append({'sym': sym, 'vol': vol})
-    if not filtered: return ASSETS_FALLBACK
-    filtered.sort(key=lambda x: -x['vol'])
-    top = [t['sym'] for t in filtered[:15]]
-    final = list(dict.fromkeys(['BTC','ETH','SOL'] + top))[:12]
-    return final
+    if not tickers or not isinstance(tickers, list):
+        return ASSETS_FALLBACK.copy()
+    if not isinstance(tickers[0], dict):
+        return ASSETS_FALLBACK.copy()
+
+    available = {
+        t.get('symbol', '').replace('USDT', '')
+        for t in tickers
+        if isinstance(t, dict) and t.get('symbol', '').endswith('USDT')
+    }
+
+    final = [s for s in ASSETS_FALLBACK if s in available]
+    return final if final else ASSETS_FALLBACK.copy()
 
 # ── INDICATORS ────────────────────────────────────────────────────────────
 def calc_ema(values, period):
@@ -523,3 +528,4 @@ def run():
 
 if __name__ == '__main__':
     run()
+
