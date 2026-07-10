@@ -930,7 +930,7 @@ function suggestRisk(rr1,str,atEntry,volRatio){
 }
 
 // ── ENTRY STRATEGY ────────────────────────────────────────────────────────
-function calcStrategy(bias,price,atr,zones,sr,pivots,wPivots,str=3,volRatio=1){
+function calcStrategy(bias,price,atr,zones,sr,pivots,wPivots,str=3,volRatio=1,klines=null){
   if(bias==='wait'||!price||!atr)return null;
   const isL=bias==='long';
 
@@ -1055,10 +1055,20 @@ function calcStrategy(bias,price,atr,zones,sr,pivots,wPivots,str=3,volRatio=1){
   // AND has NOT already bounced significantly from it
   const atEntry = distFromZone < 1.5 && !alreadyBounced;
 
-  // "Retest in corso": price bounced and is now returning to the zone
+  // "Retest in corso": price bounced AND sta davvero muovendosi in questo
+  // momento verso la zona (non solo vicinanza statica). Le ultime 3 candele
+  // chiuse devono muoversi nella direzione del retest — altrimenti "pronto"
+  // descriveva solo una distanza percentuale, non un pullback reale in atto.
+  const recentCandles = klines && klines.length>=4 ? klines.slice(-4,-1) : [];
+  const recentCloses = recentCandles.map(k=>+k[4]);
+  const movingTowardEntry = recentCloses.length>=2
+    ? (isL ? recentCloses[recentCloses.length-1] < recentCloses[0]
+           : recentCloses[recentCloses.length-1] > recentCloses[0])
+    : true; // dati insufficienti — fallback permissivo, non blocca
+
   const isRetest = isL
-    ? (price <= entry * 1.03 && price >= entry * 0.995) // returning to demand
-    : (price >= entry * 0.97 && price <= entry * 1.005); // returning to supply
+    ? (price <= entry * 1.03 && price >= entry * 0.995 && movingTowardEntry) // returning to demand
+    : (price >= entry * 0.97 && price <= entry * 1.005 && movingTowardEntry); // returning to supply
 
   // "In osservazione": price needs to travel to the zone OR already bounced
   const watch = distFromZone > 3 || alreadyBounced;
@@ -2018,7 +2028,7 @@ function compute(sym){
   const qualityColor=quality>=5?'var(--long)':quality>=4?'#4ade80':quality>=3?'var(--wait)':'var(--short)';
 
   // Strategy — only if quality >= 3
-  const strat=quality>=3?calcStrategy(bias,price,atr,zones,sr,pivots,wPivots,str,volRatio):null;
+  const strat=quality>=3?calcStrategy(bias,price,atr,zones,sr,pivots,wPivots,str,volRatio,d.k4h):null;
 
   // Save signal state and compute alerts
   const savedState=saveSignalState(sym,bias,frVal,cvd.dir,strat?.entry||price,oiDelta,liqOI);
