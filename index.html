@@ -518,6 +518,48 @@ function classifyRegime(oiCurrent,vol24h){
   return{type:'momentum',label:'Momentum',icon:'⚡',color:'var(--short)',ratio:Math.round(ratio*10)/10};
 }
 
+// ── FASE DEL FLUSSO DI DENARO ──────────────────────────────────────────────
+// Distingue QUANDO nel ciclo di flusso ti trovi, non solo la direzione:
+// Accumulo    → OI sale, prezzo ancora fermo, CVD allineato — capitale nuovo
+//               che entra prima che il prezzo si muova. Fase più fragile da
+//               leggere (pochi dati) ma quella con più margine se confermata.
+// Conferma    → OI sale insieme al prezzo, CVD allineato, funding non estremo.
+//               Il movimento è già iniziato — probabilità buona, ma parte del
+//               guadagno "facile" è già passata.
+// Squeeze     → prezzo si muove ma OI scende — chiusura posizioni opposte,
+//               non nuova convinzione. Movimento fragile, può esaurirsi di colpo.
+// Esaurimento → prezzo già esteso E funding estremo nella direzione affollata —
+//               rischio di inversione violenta massimo.
+// Nessuna fase è una garanzia: sposta le probabilità, non le determina.
+function classifyPhase(bias,oiDelta,priceChg,cvdDir,frVal){
+  if(!bias||bias==='wait') return null;
+  const isL=bias==='long';
+  const alignedCVD=isL?cvdDir==='up':cvdDir==='down';
+  const movingWithBias=isL?priceChg>0:priceChg<0;
+  const extendedMove=Math.abs(priceChg)>5;
+  const fundingCrowded=isL?frVal>0.06:frVal<-0.04;
+  const fundingHigh=isL?frVal>0.03:frVal<-0.02;
+
+  if(movingWithBias&&extendedMove&&fundingCrowded){
+    return{key:'esaurimento',label:'🔴 Esaurimento',color:'var(--short)',
+      desc:'Prezzo già esteso e funding estremo — rischio di inversione alto, evita ingressi nuovi'};
+  }
+  if(movingWithBias&&oiDelta<-1){
+    return{key:'squeeze',label:'🟡 Squeeze',color:'var(--wait)',
+      desc:'OI in calo mentre il prezzo si muove — copertura di posizioni opposte, non nuova convinzione'};
+  }
+  if(oiDelta>1&&Math.abs(priceChg)<1&&alignedCVD){
+    return{key:'accumulo',label:'🟣 Accumulo',color:'#818cf8',
+      desc:'Capitale nuovo in ingresso, prezzo non ancora mosso — fase più fragile da leggere ma più conveniente'};
+  }
+  if(oiDelta>1&&movingWithBias&&alignedCVD&&!fundingHigh){
+    return{key:'conferma',label:'🔵 Conferma',color:'var(--long)',
+      desc:'Movimento confermato da più segnali insieme — parte del percorso è già avvenuta'};
+  }
+  return{key:'neutro',label:'⚪ Neutro',color:'var(--text3)',
+    desc:'Nessuna fase chiara identificata al momento'};
+}
+
 // ── CONSECUTIVE SL DETECTOR ───────────────────────────────────────────────
 function getConsecutiveSL(sym){
   var closed=getTrades().filter(function(t){return t.closed&&t.sym===sym;})
@@ -1375,6 +1417,7 @@ function openTrade(sym,dir,entry,stop,tp1,tp2,currentBias,currentCVD,isPending=f
     entryType,           // 'mercato' | 'EP (in attesa)' | 'manuale'
     pending:isPending,
     activatedAt:isPending?null:Date.now(),
+    breakevenSet:false,  // true quando lo stop è stato spostato a breakeven anticipato
   });
   saveTrades(filtered);
   renderTrades([]);
@@ -1560,6 +1603,22 @@ function monitorTrades(allSignals){
       closeTrade(t.id,'tp2',price);
       sendTG(`📌 TRADE SEGUITO — 🏆 <b>${t.sym}</b> — TP2 RAGGIUNTO!\nTP2: ${fp(t.tp2)} | Prezzo: ${fp(price)}\nTrade completato ✅${tgLinks(t.sym)}`);
       return;
+    }
+
+    // ── BREAKEVEN ANTICIPATO (45% verso TP1) ──────────────────────────────
+    // Sposta lo stop a breakeven molto prima di TP1, non solo dopo.
+    // Toglie la pressione psicologica di chiudere in anticipo un trade in
+    // profitto ("disposition effect" confermato dallo storico): una volta
+    // a breakeven, il rischio peggiore è zero, non una perdita — niente
+    // più motivo reale per uscire presto "perché è in profitto da troppo".
+    if(!t.breakevenSet&&!t.tp1Hit&&t.tp1){
+      const tp1Dist=Math.abs(t.tp1-t.entry);
+      const pctToTp1=tp1Dist>0?(1-Math.abs(price-t.tp1)/tp1Dist)*100:0;
+      if(pctToTp1>=45){
+        saveTrades(getTrades().map(x=>x.id===t.id?{...x,stop:t.entry,breakevenSet:true}:x));
+        t.stop=t.entry; t.breakevenSet=true;
+        sendTG(`📌 TRADE SEGUITO — 🔒 <b>${t.sym}</b> — STOP SPOSTATO A BREAKEVEN\nSei al ${pctToTp1.toFixed(0)}% del percorso verso TP1 (prezzo ${fp(price)})\nStop ora a: ${fp(t.entry)} — da qui non puoi più chiudere in perdita\nLascialo correre, TP1 a ${fp(t.tp1)}`);
+      }
     }
 
     // ── TP1 hit tracking ─────────────────────────────────────────────────
@@ -2046,6 +2105,22 @@ function compute(sym){
   const assetInfo=getAssetType(sym);
   const slWarning=getSLWarning(sym);
 
+  // ── SQUEEZE DETECTOR ───────────────────────────────────────────────────
+  // Prezzo si muove nella direzione del bias ma OI in calo = probabile
+  // chiusura di posizioni opposte (short covering o long liquidation),
+  // non nuova convinzione direzionale. Il movimento è più fragile e
+  // reversibile di quanto sembri — a differenza di prezzo+OI in salita
+  // insieme, che indica soldi nuovi che entrano.
+  let squeezeWarning=null;
+  if(bias==='long'&&priceChg>0&&oiDelta<-1){
+    squeezeWarning='⚠️ Possibile short-covering: prezzo su ma OI in calo ('+oiDelta.toFixed(1)+'%) — pochi compratori nuovi, movimento fragile';
+  } else if(bias==='short'&&priceChg<0&&oiDelta<-1){
+    squeezeWarning='⚠️ Possibile chiusura long: prezzo giù ma OI in calo ('+oiDelta.toFixed(1)+'%) — pochi venditori nuovi, movimento fragile';
+  }
+
+  // Fase del flusso di denaro (Accumulo/Conferma/Squeeze/Esaurimento)
+  const phase=classifyPhase(bias,oiDelta,priceChg,cvd.dir,frVal);
+
   // Price action detection on 4h klines
   const pa=bias!=='wait'?detectPA(d.k4h,bias):null;
   const paScore=pa?calcPAScore(pa,solidity,regime):0;
@@ -2057,7 +2132,7 @@ function compute(sym){
     atEntry:false,isRetest:false,momentumStrong:false,watch:true
   }:null;
 
-  return{sym,price,priceChg,vol24h,volRatio,oiDelta,oiCurrent,frVal,cvd,lsR,atr,bias,str,oiVolSpot,oiVolSpotStatus,liqOI,quality,qualityLabel,qualityColor,qualityDetails,zoneConflict,pivots,wPivots,zones,sr,strat:stratFinal,alerts,hoursActive,nearZone:zones.nearZone,biasStable,biasAge,solidity,regime,assetInfo,slWarning};
+  return{sym,price,priceChg,vol24h,volRatio,oiDelta,oiCurrent,frVal,cvd,lsR,atr,bias,str,oiVolSpot,oiVolSpotStatus,liqOI,quality,qualityLabel,qualityColor,qualityDetails,zoneConflict,pivots,wPivots,zones,sr,strat:stratFinal,alerts,hoursActive,nearZone:zones.nearZone,biasStable,biasAge,solidity,regime,assetInfo,slWarning,squeezeWarning,phase};
 }
 
 // ── RENDER ────────────────────────────────────────────────────────────────
@@ -2156,7 +2231,7 @@ function render(){
   document.getElementById('rankingBox').innerHTML=`
     <table class="ranking-table">
       <thead><tr>
-        <th>#</th><th>Asset</th><th>Bias</th><th>Solidità</th><th>Regime</th><th>Qualità ★</th>
+        <th>#</th><th>Asset</th><th>Bias</th><th>Solidità</th><th>Regime</th><th>Fase</th><th>Qualità ★</th>
         <th>Perf 24h</th><th>RS vs BTC</th>
         <th>OI Delta</th><th>OI/Vol</th><th>CVD</th><th>Setup SOP</th><th>Pattern PA</th>
       </tr></thead>
@@ -2183,6 +2258,7 @@ function render(){
           <td><span class="tag ${s.bias}">${s.bias.toUpperCase()}</span></td>
           <td style="font-size:10px;font-weight:700;color:${s.solidity.color}">${s.solidity.icon} ${s.solidity.label}</td>
           <td style="font-size:10px;font-weight:700;color:${s.regime?s.regime.color:'var(--text3)'}">${s.regime?s.regime.icon+' '+s.regime.label:'—'}</td>
+          <td style="font-size:10px;font-weight:700;color:${s.phase?s.phase.color:'var(--text3)'}" title="${s.phase?s.phase.desc:''}">${s.phase?s.phase.label:'—'}</td>
           <td style="color:${s.qualityColor};font-size:11px;letter-spacing:1px">${getAssetBadge(s.sym)} ${stars}</td>
           <td style="font-weight:700;color:${s.priceChg>=0?'var(--long)':'var(--short)'}">${fpp(s.priceChg)}</td>
           <td>
@@ -2355,6 +2431,9 @@ function renderCard(s,mode){
           <div style="font-size:9px;font-weight:700;padding:3px 9px;border-radius:20px;background:var(--bg4);color:${s.solidity.color};border:1px solid ${s.solidity.color}44">
             ${s.solidity.icon} ${s.solidity.label}
           </div>
+          ${s.phase?`<div style="font-size:9px;font-weight:700;padding:3px 9px;border-radius:20px;background:var(--bg4);color:${s.phase.color};border:1px solid ${s.phase.color}44" title="${s.phase.desc}">
+            ${s.phase.label}
+          </div>`:''}
         </div>
       </div>
       <div class="scard-right">
@@ -2390,6 +2469,7 @@ function renderCard(s,mode){
       ${s.quality<3?`<div style="margin-top:8px;font-size:10px;color:var(--short);font-weight:600">⛔ Segnale insufficiente — non operare su questo asset ora</div>`:''}
       ${s.zoneConflict?`<div style="margin-top:7px;padding:7px 10px;background:#1a0505;border-radius:6px;border:1px solid var(--short-border);font-size:10px;font-weight:600;color:var(--short)">${s.zoneConflict}</div>`:''}
       ${s.oiVolSpot>2?`<div style="margin-top:6px;font-size:9px;color:var(--wait)">⚠ Mercato gonfiato di futures (OI/Vol spot ${s.oiVolSpot}x) — usa size ridotta</div>`:''}
+      ${s.squeezeWarning?`<div style="margin-top:6px;padding:7px 10px;background:#1a1005;border-radius:6px;border:1px solid var(--wait-border);font-size:9px;font-weight:600;color:var(--wait)">${s.squeezeWarning}</div>`:''}
 
       <!-- CONDITION CHANGE LOG -->
       <div style="margin-top:8px;padding:8px 10px;background:var(--bg2);border-radius:6px;border:1px solid var(--border)">
