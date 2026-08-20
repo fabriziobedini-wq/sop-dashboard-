@@ -11,6 +11,7 @@ from datetime import datetime, timezone
 TG_TOKEN = os.environ.get('TG_TOKEN', '')
 TG_CHAT  = os.environ.get('TG_CHAT', '')
 STATE_FILE = 'sop_state.json'
+TRADES_FILE = 'open_trades.json'
 BINANCE_BASE = 'https://fapi.binance.com'
 DASHBOARD_URL = 'https://fabriziobedini-wq.github.io/sop-dashboard-/'
 
@@ -455,6 +456,111 @@ def signal_key(sig):
     price_rounded = round(sig['price'] / sig['entry'] * 100)
     return f"{sig['sym']}_{sig['direction']}_{sig['pattern']}_{sig['timeframe']}_{price_rounded}"
 
+# ── OPEN TRADES MONITOR ──────────────────────────────────────────────────
+# Monitora stop/TP/breakeven dei trade aperti, INDIPENDENTEMENTE dal browser.
+# Risolve il buco strutturale: il dashboard controlla gli stop solo mentre
+# la pagina è aperta nel browser — se il tab è chiuso, un gap di prezzo può
+# scavalcare lo stop teorico prima che il sistema se ne accorga (probabile
+# causa di ZEC -14,56% e HYPE -11,42% nello storico). Questo controllo gira
+# ogni 15 minuti via GitHub Actions, sempre, a prescindere da browser aperti.
+#
+# LIMITE ATTUALE: open_trades.json va aggiornato MANUALMENTE quando apri o
+# chiudi un trade — usa "📤 Esporta trade" nel dashboard (Settings), poi
+# carica il file su GitHub con lo stesso nome. Non è automatico perché
+# collegare scrittura automatica dal browser al repo richiederebbe un
+# token GitHub con permessi di scrittura esposto nel codice pubblico della
+# pagina — un rischio di sicurezza reale (chiunque potrebbe rubarlo e
+# modificare lo script che gira con i tuoi secret Telegram). Meglio un
+# passaggio manuale in più che un token scrivibile esposto pubblicamente.
+def load_open_trades():
+    try:
+        with open(TRADES_FILE) as f:
+            return json.load(f)
+    except Exception:
+        return []
+
+def monitor_open_trades(state):
+    trades = load_open_trades()
+    if not trades:
+        return
+
+    sent = state.get('trade_notif', {})
+
+    for t in trades:
+        if t.get('closed') or t.get('pending'):
+            continue
+
+        sym = t.get('sym')
+        direction = t.get('dir')
+        entry = t.get('entry')
+        stop = t.get('stop')
+        tp1 = t.get('tp1')
+        tp2 = t.get('tp2')
+        tid = t.get('id')
+        if not sym or direction is None or stop is None or entry is None or tid is None:
+            continue
+
+        is_long = direction == 'long'
+        ticker = get_ticker(sym)
+        if not ticker:
+            continue
+        try:
+            price = float(ticker['lastPrice'])
+        except Exception:
+            continue
+
+        key = f'trade_{tid}'
+
+        # Stop loss
+        hit_stop = (is_long and price <= stop) or (not is_long and price >= stop)
+        if hit_stop:
+            if not sent.get(key + '_stop'):
+                send_tg(
+                    f"📌 TRADE SEGUITO (backend) — 🔴 <b>{sym}</b> — STOP COLPITO\n"
+                    f"Stop: {stop} | Prezzo: {price}\n"
+                    f"⚠️ Rilevato dal backend (attivo anche a browser chiuso) — "
+                    f"chiudi il trade nel dashboard se non l'hai già fatto"
+                )
+                sent[key + '_stop'] = time.time()
+            continue
+
+        # TP2
+        if tp2 and ((is_long and price >= tp2) or (not is_long and price <= tp2)):
+            if not sent.get(key + '_tp2'):
+                send_tg(
+                    f"📌 TRADE SEGUITO (backend) — 🏆 <b>{sym}</b> — TP2 RAGGIUNTO!\n"
+                    f"TP2: {tp2} | Prezzo: {price}"
+                )
+                sent[key + '_tp2'] = time.time()
+            continue
+
+        # Breakeven anticipato — 45% del percorso verso TP1
+        if tp1 and not t.get('tp1Hit') and not sent.get(key + '_be'):
+            tp1_dist = abs(tp1 - entry)
+            if tp1_dist > 0:
+                pct_to_tp1 = (1 - abs(price - tp1) / tp1_dist) * 100
+                if pct_to_tp1 >= 45:
+                    send_tg(
+                        f"📌 TRADE SEGUITO (backend) — 🔒 <b>{sym}</b> — STOP A BREAKEVEN CONSIGLIATO\n"
+                        f"Sei al {pct_to_tp1:.0f}% verso TP1 (prezzo {price})\n"
+                        f"Sposta lo stop a {entry} nel dashboard — da lì non puoi più chiudere in perdita"
+                    )
+                    sent[key + '_be'] = time.time()
+
+        # TP1
+        if tp1 and not t.get('tp1Hit') and not sent.get(key + '_tp1'):
+            hit_tp1 = (is_long and price >= tp1) or (not is_long and price <= tp1)
+            if hit_tp1:
+                send_tg(
+                    f"📌 TRADE SEGUITO (backend) — ✅ <b>{sym}</b> — TP1 RAGGIUNTO!\n"
+                    f"TP1: {tp1} | Prezzo: {price}\n"
+                    f"Chiudi 50% e sposta stop a breakeven"
+                )
+                sent[key + '_tp1'] = time.time()
+
+    state['trade_notif'] = sent
+
+
 # ── MAIN ──────────────────────────────────────────────────────────────────
 def run():
     now = datetime.now(timezone.utc).strftime('%H:%M UTC')
@@ -519,6 +625,14 @@ def run():
     if not signals_found:
         print('No new signals this run')
 
+    # Step 5: monitor open trades (stop/TP1/TP2/breakeven) — gira sempre,
+    # anche a browser chiuso, a differenza del controllo nel dashboard
+    print('Checking open trades...')
+    try:
+        monitor_open_trades(state)
+    except Exception as e:
+        print(f'Trade monitor error: {e}')
+
     # Update state
     state['sent_signals'] = sent_signals
     state['last_run'] = now
@@ -528,4 +642,3 @@ def run():
 
 if __name__ == '__main__':
     run()
-
