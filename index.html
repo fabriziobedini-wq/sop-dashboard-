@@ -578,6 +578,46 @@ function getSLWarning(sym){
   return null;
 }
 
+// ── CONSECUTIVE LOSSES BY DIRECTION (intero libro trade) ───────────────────
+// getConsecutiveSL guarda un asset alla volta. Questo guarda l'intero
+// storico recente per direzione (long/short) su TUTTI gli asset insieme —
+// cattura pattern come "4 short su asset diversi, tutti persi in 48h",
+// che nessuna regola per singolo asset può vedere.
+function getConsecutiveLossesByDirection(dir,windowHours=72){
+  var cutoff=Date.now()-windowHours*3600000;
+  var closed=getTrades()
+    .filter(function(t){return t.closed&&t.dir===dir&&t.closedAt>cutoff&&!t.neverEntered&&t.pnlPct!==null&&t.pnlPct!==undefined;})
+    .sort(function(a,b){return b.closedAt-a.closedAt;});
+  var count=0;
+  for(var i=0;i<closed.length;i++){
+    if(closed[i].pnlPct<0) count++;
+    else break;
+  }
+  return count;
+}
+
+// ── STABILITÀ DEL SEMAFORO MACRO ────────────────────────────────────────
+// Il bias di ogni singolo asset ha già un filtro di stabilità (8h prima
+// di accettare un cambio, salvo segnale molto forte). Il semaforo macro
+// complessivo (renderMacro) invece veniva ricalcolato da zero ad ogni
+// refresh senza nessuna memoria — poteva cambiare bandiera all'istante su
+// un flip di BTC che si rivelava un whipsaw poche ore dopo, dando il via
+// libera a entrare a mercato su segnali che si ribaltavano subito dopo.
+// Questa funzione traccia da quando lo stato macro attuale è iniziato.
+function getMacroStability(macroState){
+  var key='sop_macro_state';
+  var now=Date.now();
+  var ex=JSON.parse(localStorage.getItem(key)||'null');
+  var state={
+    macroState:macroState,
+    at:(!ex||ex.macroState!==macroState)?now:ex.at,
+  };
+  localStorage.setItem(key,JSON.stringify(state));
+  var hoursStable=(now-state.at)/3600000;
+  return{hoursStable:hoursStable,stable:hoursStable>=4};
+}
+
+
 // ── API KEY MANAGEMENT ────────────────────────────────────────────────────
 function getApiKeys(){
   return{
@@ -737,6 +777,27 @@ function calcWeeklyPivots(k1w){
 // Method 1: CVD per price band (matches ChartPrime logic)
 //   Divide price range into bands, sum CVD in each → negative = supply, positive = demand
 // Method 2: impulsive candle base (classic S&D, fallback)
+// ── VALIDAZIONE LIVELLI (test count + invalidazione) ────────────────────
+// Conta quante volte il prezzo ha toccato una zona e ha tenuto (validazione),
+// e rileva se il prezzo l'ha già rotta con una chiusura decisa (invalidazione).
+// Un livello testato e tenuto 2-3 volte è strutturalmente più affidabile di
+// uno mai testato — questa informazione veniva calcolata solo in parte
+// (strength/imp) e mai usata per scegliere quale livello tradare.
+function analyzeZoneQuality(klines,zL,zH,isDemand){
+  if(!klines||klines.length<5) return{touches:0,broken:false};
+  let touches=0,broken=false,wasOutside=true;
+  const buffer=(zH-zL)*0.1||zL*0.002; // piccola tolleranza sui bordi
+  for(let i=0;i<klines.length;i++){
+    const h=+klines[i][2], l=+klines[i][3], c=+klines[i][4];
+    const enteredZone = isDemand ? (l<=zH+buffer && l>=zL-buffer) : (h>=zL-buffer && h<=zH+buffer);
+    const brokeThrough = isDemand ? (c<zL-buffer) : (c>zH+buffer);
+    if(brokeThrough) broken=true;
+    if(enteredZone&&wasOutside&&!brokeThrough){ touches++; wasOutside=false; }
+    else if(!enteredZone){ wasOutside=true; }
+  }
+  return{touches,broken};
+}
+
 function calcZones(k4h, price, atr){
   if(!k4h||k4h.length<20||!atr)
     return{demand:[],supply:[],priceInSupply:false,priceInDemand:false,nearZone:null};
@@ -834,14 +895,38 @@ function calcZones(k4h, price, atr){
       supply.push(zone);
   }
 
+  // ── VALIDAZIONE / INVALIDAZIONE / CAPOVOLGIMENTO ─────────────────────
+  // Per ogni zona: conta quante volte è stata testata e tenuta, e verifica
+  // se è già stata rotta con una chiusura decisa. Una zona rotta non è più
+  // valida nel suo ruolo originale — se demand rotta (prezzo ha chiuso
+  // sotto), ora è sopra il prezzo e diventa candidata come supply (livello
+  // di supporto rotto che spesso agisce da resistenza al ritest) e viceversa.
+  const demandFinal=[], supplyFinal=[];
+  demand.forEach(z=>{
+    const q=analyzeZoneQuality(k4h,z.zL,z.zH,true);
+    const zWithQ={...z,touches:q.touches,broken:q.broken};
+    if(!q.broken){ demandFinal.push(zWithQ); }
+    else if(Math.abs(zWithQ.mid-price)/price<0.25){
+      supplyFinal.push({...zWithQ,flipped:true,type:zWithQ.type+'-flip'});
+    }
+  });
+  supply.forEach(z=>{
+    const q=analyzeZoneQuality(k4h,z.zL,z.zH,false);
+    const zWithQ={...z,touches:q.touches,broken:q.broken};
+    if(!q.broken){ supplyFinal.push(zWithQ); }
+    else if(Math.abs(zWithQ.mid-price)/price<0.25){
+      demandFinal.push({...zWithQ,flipped:true,type:zWithQ.type+'-flip'});
+    }
+  });
+
   // ── PRICE POSITION vs ZONES ───────────────────────────────────────────
-  const priceInSupply=supply.some(z=>price>=z.zL*0.998&&price<=z.zH*1.002);
-  const priceInDemand=demand.some(z=>price>=z.zL*0.998&&price<=z.zH*1.002);
+  const priceInSupply=supplyFinal.some(z=>price>=z.zL*0.998&&price<=z.zH*1.002);
+  const priceInDemand=demandFinal.some(z=>price>=z.zL*0.998&&price<=z.zH*1.002);
 
   // Nearest zone and what to do
   const allZones=[
-    ...supply.map(z=>({...z,dir:'supply'})),
-    ...demand.map(z=>({...z,dir:'demand'}))
+    ...supplyFinal.map(z=>({...z,dir:'supply'})),
+    ...demandFinal.map(z=>({...z,dir:'demand'}))
   ].sort((a,b)=>Math.abs(a.mid-price)-Math.abs(b.mid-price));
 
   let nearZone=null;
@@ -862,10 +947,13 @@ function calcZones(k4h, price, atr){
     nearZone={...z, distPct:Math.round(distPct*10)/10, action};
   }
 
-  const byProx=(a,b)=>Math.abs(a.mid-price)-Math.abs(b.mid-price);
+  // Ordinamento finale per QUALITÀ, non solo vicinanza: più test superati
+  // e più forza CVD pesano più della semplice distanza dal prezzo.
+  const qualityScore=(z,price)=>(z.touches||0)*3+(z.strength||0)*2-(Math.abs(z.mid-price)/price*100)*0.3;
+  const byQuality=(a,b)=>qualityScore(b,price)-qualityScore(a,price);
   return{
-    demand:demand.sort(byProx).slice(0,3),
-    supply:supply.sort(byProx).slice(0,3),
+    demand:demandFinal.sort(byQuality).slice(0,3),
+    supply:supplyFinal.sort(byQuality).slice(0,3),
     priceInSupply, priceInDemand, nearZone
   };
 }
@@ -976,6 +1064,15 @@ function calcStrategy(bias,price,atr,zones,sr,pivots,wPivots,str=3,volRatio=1,kl
   if(bias==='wait'||!price||!atr)return null;
   const isL=bias==='long';
 
+  // Punteggio di qualità coerente con quello usato in calcZones: più test
+  // superati e più forza pesano più della semplice vicinanza al prezzo.
+  // Sostituisce la vecchia selezione "il più vicino vince sempre", che
+  // ignorava del tutto quanto un livello fosse stato validato.
+  const scoreCandidate=(c)=>{
+    const distPct=Math.abs(c.price-price)/price*100;
+    return (c.touches||0)*3+(c.strength||0)*2-distPct*0.3;
+  };
+
   // Build candidates — strict price side check
   const candidates=[];
   if(isL){
@@ -984,22 +1081,28 @@ function calcStrategy(bias,price,atr,zones,sr,pivots,wPivots,str=3,volRatio=1,kl
     const p=pivots?.S1;
     const wp=wPivots?.S1;
     // LONG: entry must be BELOW current price
-    if(d&&d.zH<price*0.999) candidates.push({price:d.zH,source:'Demand zone',zone:d});
-    if(s&&s<price*0.999)    candidates.push({price:s,source:'Supporto S/R',zone:null});
-    if(p&&p<price*0.999)    candidates.push({price:p,source:'Pivot S1 daily',zone:null});
-    if(wp&&wp<price*0.999)  candidates.push({price:wp,source:'Pivot S1 weekly',zone:null});
-    candidates.sort((a,b)=>b.price-a.price); // highest below price = closest
+    if(d&&d.zH<price*0.999) candidates.push({price:d.zH,source:'Demand zone',zone:d,touches:d.touches||0,strength:d.strength||0});
+    if(s&&s<price*0.999){
+      const q=klines?analyzeZoneQuality(klines,s*0.995,s*1.005,true):{touches:0};
+      candidates.push({price:s,source:'Supporto S/R',zone:null,touches:q.touches,strength:0});
+    }
+    if(p&&p<price*0.999)    candidates.push({price:p,source:'Pivot S1 daily',zone:null,touches:0,strength:0});
+    if(wp&&wp<price*0.999)  candidates.push({price:wp,source:'Pivot S1 weekly',zone:null,touches:0,strength:0});
+    candidates.sort((a,b)=>scoreCandidate(b)-scoreCandidate(a));
   } else {
     const s=zones.supply[0];
     const r=sr.res[0];
     const p=pivots?.R1;
     const wp=wPivots?.R1;
     // SHORT: entry must be ABOVE current price
-    if(s&&s.zL>price*1.001) candidates.push({price:s.zL,source:'Supply zone',zone:s});
-    if(r&&r>price*1.001)    candidates.push({price:r,source:'Resistenza S/R',zone:null});
-    if(p&&p>price*1.001)    candidates.push({price:p,source:'Pivot R1 daily',zone:null});
-    if(wp&&wp>price*1.001)  candidates.push({price:wp,source:'Pivot R1 weekly',zone:null});
-    candidates.sort((a,b)=>a.price-b.price); // lowest above price = closest
+    if(s&&s.zL>price*1.001) candidates.push({price:s.zL,source:'Supply zone',zone:s,touches:s.touches||0,strength:s.strength||0});
+    if(r&&r>price*1.001){
+      const q=klines?analyzeZoneQuality(klines,r*0.995,r*1.005,false):{touches:0};
+      candidates.push({price:r,source:'Resistenza S/R',zone:null,touches:q.touches,strength:0});
+    }
+    if(p&&p>price*1.001)    candidates.push({price:p,source:'Pivot R1 daily',zone:null,touches:0,strength:0});
+    if(wp&&wp>price*1.001)  candidates.push({price:wp,source:'Pivot R1 weekly',zone:null,touches:0,strength:0});
+    candidates.sort((a,b)=>scoreCandidate(b)-scoreCandidate(a));
   }
 
   // If no valid candidate found, use ATR-based fallback
@@ -1166,6 +1269,8 @@ function calcStrategy(bias,price,atr,zones,sr,pivots,wPivots,str=3,volRatio=1,kl
   return{
     entry,
     source:entryZone.source,
+    touches:entryZone.touches||0,
+    zoneStrength:entryZone.strength||0,
     stop,tp1,tp2,
     rr1,rr2,
     stopPct,distEntry:distFromZone,
@@ -1280,11 +1385,18 @@ function renderMacro(all){
   document.getElementById('macroLight').style.boxShadow=`0 0 8px ${macroLight}`;
   document.getElementById('macroLabel').textContent=macroLabel;
   document.getElementById('macroLabel').style.color=macroColor;
-  document.getElementById('macroSub').textContent=macroSub;
+
+  const macroStability=getMacroStability(macroState);
+  const stabilityNote=macroStability.stable
+    ? ` · ✓ stabile da ${macroStability.hoursStable.toFixed(0)}h`
+    : ` · ⏳ cambiato da ${macroStability.hoursStable<1?Math.round(macroStability.hoursStable*60)+'m':macroStability.hoursStable.toFixed(1)+'h'} — NON ANCORA CONFERMATO, non fidarti per entrate a mercato`;
+  document.getElementById('macroSub').textContent=macroSub+stabilityNote;
+  document.getElementById('macroSub').style.color=macroStability.stable?'':'var(--wait)';
+
   document.getElementById('macroPills').innerHTML=pills;
   document.getElementById('macroAssets').textContent='Asset monitorati: '+ASSETS.join(' · ');
 
-  return macroState;
+  return {state:macroState, stability:macroStability};
 }
 
 async function loadOne(sym){
@@ -2161,7 +2273,34 @@ function render(){
   monitorTrades(all);
 
   // Macro semaphore
-  const macroState=renderMacro(all);
+  const macroResult=renderMacro(all);
+  const macroState=macroResult.state;
+  const macroStability=macroResult.stability;
+
+  // ── BLOCCO SU MACRO NON ANCORA CONFERMATO ────────────────────────────
+  // Questo è il fix specifico per l'accaduto del 23-25/08: il macro ha
+  // flippato a bearish, e la lettura fresca (non ancora confermata) ha
+  // dato il via libera a segnali "MOMENTUM FORTE — entra a mercato" sugli
+  // short, subito prima che il macro si ribaltasse di nuovo. Finché il
+  // macro attuale non è stabile da almeno 4h, i segnali "entra a mercato"
+  // nella sua stessa direzione vengono declassati a osservazione.
+  if(!macroStability.stable){
+    const freshDirection = (macroState==='bullish'||macroState==='altseason') ? 'long'
+                          : macroState==='bearish' ? 'short' : null;
+    if(freshDirection){
+      all.forEach(s=>{
+        if(s.bias===freshDirection&&s.strat&&s.strat.momentumStrong){
+          const hAgo=macroStability.hoursStable<1?Math.round(macroStability.hoursStable*60)+'m':macroStability.hoursStable.toFixed(1)+'h';
+          s.strat.statusLabel='⏳ Macro cambiato da '+hAgo+' — attendi conferma (4h+) prima di entrare a mercato';
+          s.strat.statusColor='var(--wait)';
+          s.strat.momentumStrong=false;
+          s.strat.atEntry=false;
+          s.strat.isRetest=false;
+          s.strat.watch=true;
+        }
+      });
+    }
+  }
 
   // If market is bearish → downgrade long signals to watch
   if(macroState==='bearish'){
@@ -2175,6 +2314,53 @@ function render(){
           s.strat.momentumStrong=false;
           s.strat.watch=true;
         }
+      }
+    });
+  }
+
+  // SIMMETRICO: se il mercato è rialzista (o alt season) → downgrade dei
+  // segnali SHORT sulle altcoin. Prima esisteva solo la regola opposta
+  // (bearish blocca i long) — questa asimmetria ha lasciato passare 4
+  // short consecutivi persi (HYPE/TRX/BTC/BNB, 23-25/08) durante un
+  // mercato che era ancora in trend rialzista secondo il semaforo macro.
+  if(macroState==='bullish'||macroState==='altseason'){
+    all.forEach(s=>{
+      if(s.bias==='short'&&s.sym!=='BTC'){
+        if(s.strat){
+          s.strat.statusLabel='⛔ SHORT bloccato — mercato macro bullish';
+          s.strat.statusColor='var(--short)';
+          s.strat.atEntry=false;
+          s.strat.isRetest=false;
+          s.strat.momentumStrong=false;
+          s.strat.watch=true;
+        }
+      }
+    });
+  }
+
+  // ── CIRCUIT BREAKER DIREZIONALE SUL LIBRO TRADE (non per singolo asset) ──
+  // getConsecutiveSL guarda un asset alla volta — non vede un pattern come
+  // "4 asset diversi, tutti short, tutti persi in 48h". Questo controllo
+  // guarda l'intero storico recente per direzione: se le ultime chiusure
+  // in una direzione sono tutte in perdita, blocca nuovi segnali in quella
+  // direzione a prescindere dall'asset, per un periodo di raffreddamento.
+  const shortLossStreak=getConsecutiveLossesByDirection('short');
+  const longLossStreak=getConsecutiveLossesByDirection('long');
+  if(shortLossStreak>=3){
+    all.forEach(s=>{
+      if(s.bias==='short'&&s.strat){
+        s.strat.statusLabel='🚫 SHORT bloccato — '+shortLossStreak+' short di fila persi nel libro (72h)';
+        s.strat.statusColor='var(--short)';
+        s.strat.atEntry=false;s.strat.isRetest=false;s.strat.momentumStrong=false;s.strat.watch=true;
+      }
+    });
+  }
+  if(longLossStreak>=3){
+    all.forEach(s=>{
+      if(s.bias==='long'&&s.strat){
+        s.strat.statusLabel='🚫 LONG bloccato — '+longLossStreak+' long di fila persi nel libro (72h)';
+        s.strat.statusColor='var(--short)';
+        s.strat.atEntry=false;s.strat.isRetest=false;s.strat.momentumStrong=false;s.strat.watch=true;
       }
     });
   }
@@ -2550,6 +2736,7 @@ function renderCard(s,mode){
           <div class="level-label">Entry (${st.source})</div>
           <div class="level-price entry">${fp(st.entry)}</div>
           <div class="level-sub" style="color:${st.statusColor}">${st.atEntry?'⚡ Sei nella zona':st.isRetest?'🔄 Retest in corso':st.alreadyBounced?'già rimbalzato '+st.distEntry.toFixed(1)+'%':'distanza '+st.distEntry.toFixed(1)+'%'}</div>
+          <div class="level-sub" style="color:${st.touches>=2?'var(--long)':st.touches===1?'var(--wait)':'var(--text3)'}">${st.touches>=2?'✅ validato '+st.touches+'×':st.touches===1?'⚠️ testato 1×':'🆕 primo test'}</div>
         </div>
         <div class="level-box tp">
           <div class="level-label">TP1</div>
@@ -2564,8 +2751,8 @@ function renderCard(s,mode){
       </div>`:''}
 
       <div class="zones">
-        ${dz?`<div class="zone-box demand"><div class="zone-label demand">🟢 Demand zone</div><div class="zone-range">${fp(dz.zL)} – ${fp(dz.zH)}</div><div class="zone-sub">impulso ${dz.imp}×ATR · ${dz.age} candele fa</div></div>`:'<div class="zone-box demand" style="opacity:.3"><div class="zone-label demand">Demand</div><div class="zone-range">non trovata</div></div>'}
-        ${sz?`<div class="zone-box supply"><div class="zone-label supply">🔴 Supply zone</div><div class="zone-range">${fp(sz.zL)} – ${fp(sz.zH)}</div><div class="zone-sub">impulso ${sz.imp}×ATR · ${sz.age} candele fa</div></div>`:'<div class="zone-box supply" style="opacity:.3"><div class="zone-label supply">Supply</div><div class="zone-range">non trovata</div></div>'}
+        ${dz?`<div class="zone-box demand"><div class="zone-label demand">🟢 Demand zone${dz.flipped?' 🔄':''}</div><div class="zone-range">${fp(dz.zL)} – ${fp(dz.zH)}</div><div class="zone-sub">${dz.flipped?'ex-supply rotta, ora demand · ':''}testata ${dz.touches||0}× · impulso ${dz.imp}×ATR · ${dz.age} candele fa</div></div>`:'<div class="zone-box demand" style="opacity:.3"><div class="zone-label demand">Demand</div><div class="zone-range">non trovata</div></div>'}
+        ${sz?`<div class="zone-box supply"><div class="zone-label supply">🔴 Supply zone${sz.flipped?' 🔄':''}</div><div class="zone-range">${fp(sz.zL)} – ${fp(sz.zH)}</div><div class="zone-sub">${sz.flipped?'ex-demand rotta, ora supply · ':''}testata ${sz.touches||0}× · impulso ${sz.imp}×ATR · ${sz.age} candele fa</div></div>`:'<div class="zone-box supply" style="opacity:.3"><div class="zone-label supply">Supply</div><div class="zone-range">non trovata</div></div>'}
       </div>
 
       <div class="strategy-text ${cardClass}">${stratText}</div>
