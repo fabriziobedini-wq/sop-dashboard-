@@ -1498,7 +1498,8 @@ function confirmTrade(sym,dir,entryZone,stop,tp1,tp2,currentBias,currentCVD,mark
     const nt2=t2d?(isL?Math.round((finalEntry+t2d)*10000)/10000:Math.round((finalEntry-t2d)*10000)/10000):null;
     const isPending=sel==='zone'; // pending only if waiting for EP
     const entryType=sel==='market'?'mercato':sel==='zone'?'EP (in attesa)':'manuale';
-    openTrade(sym,dir,finalEntry,ns,nt1,nt2||0,currentBias,currentCVD,isPending,entryType);
+    const context=(window._tradeContext&&window._tradeContext[sym])||null;
+    openTrade(sym,dir,finalEntry,ns,nt1,nt2||0,currentBias,currentCVD,isPending,entryType,context);
     modal.remove();
   };
   modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
@@ -1514,7 +1515,7 @@ function saveTrades(trades){
   localStorage.setItem(TRADES_KEY,JSON.stringify(trades));
 }
 
-function openTrade(sym,dir,entry,stop,tp1,tp2,currentBias,currentCVD,isPending=false,entryType='mercato'){
+function openTrade(sym,dir,entry,stop,tp1,tp2,currentBias,currentCVD,isPending=false,entryType='mercato',context=null){
   const trades=getTrades();
   const filtered=trades.filter(t=>t.sym!==sym||t.closed);
   filtered.push({
@@ -1530,6 +1531,7 @@ function openTrade(sym,dir,entry,stop,tp1,tp2,currentBias,currentCVD,isPending=f
     pending:isPending,
     activatedAt:isPending?null:Date.now(),
     breakevenSet:false,  // true quando lo stop è stato spostato a breakeven anticipato
+    context,             // {macro, solidity, regime, phase, quality, oiDelta, frVal, touches, zoneStrength} al momento dell'apertura
   });
   saveTrades(filtered);
   renderTrades([]);
@@ -1601,6 +1603,29 @@ function renderHistory(){
     byReason[r]=(byReason[r]||0)+1;
   });
 
+  // ── WIN RATE PER CONTESTO ─────────────────────────────────────────────
+  // La vera risposta, con dati e non impressioni, a "il metodo funziona
+  // meglio in certe condizioni che in altre?". Usa solo i trade aperti da
+  // quando registriamo il contesto — quelli vecchi non hanno questo dato
+  // e vengono esclusi automaticamente (context null).
+  function breakdownBy(field){
+    const groups={};
+    withPnl.forEach(t=>{
+      const key=t.context&&t.context[field]?t.context[field]:null;
+      if(!key) return; // trade senza contesto registrato, salta
+      if(!groups[key]) groups[key]={wins:0,total:0,pnlSum:0};
+      groups[key].total++;
+      groups[key].pnlSum+=t.pnlPct;
+      if(t.pnlPct>0) groups[key].wins++;
+    });
+    return Object.entries(groups)
+      .map(([k,v])=>({key:k,wr:Math.round(v.wins/v.total*100),total:v.total,avgPnl:Math.round(v.pnlSum/v.total*100)/100}))
+      .sort((a,b)=>b.total-a.total);
+  }
+  const byPhase=breakdownBy('phase');
+  const bySolidity=breakdownBy('solidity');
+  const contextSampleSize=withPnl.filter(t=>t.context).length;
+
   statsEl.innerHTML=`
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px">
       ${[
@@ -1616,12 +1641,43 @@ function renderHistory(){
         <div style="font-size:18px;font-weight:700;color:${s.c==='up'?'var(--long)':s.c==='dn'?'var(--short)':s.c==='wn'?'var(--wait)':'var(--text2)'}">${s.v}</div>
       </div>`).join('')}
     </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
       ${Object.entries(byReason).map(([r,n])=>`
         <div style="font-size:9px;padding:3px 8px;border-radius:20px;background:var(--bg4);color:var(--text3);border:1px solid var(--border)">
           ${REASON_LABELS[r]||r}: <strong style="color:var(--text)">${n}</strong>
         </div>`).join('')}
-    </div>`;
+    </div>
+    ${contextSampleSize>0?`
+    <div style="background:var(--bg3);border-radius:8px;padding:12px 14px;margin-bottom:6px">
+      <div style="font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">
+        Win rate per contesto <span style="font-weight:400;text-transform:none;letter-spacing:0">— basato su ${contextSampleSize} trade con contesto registrato</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <div style="font-size:9px;color:var(--text3);margin-bottom:5px">Per fase del flusso</div>
+          ${byPhase.length?byPhase.map(g=>`
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--border)">
+              <span style="font-size:10px;color:var(--text2)">${g.key}</span>
+              <span style="font-size:10px;color:var(--text3)">${g.total} trade</span>
+              <span style="font-size:10px;font-weight:700;color:${g.wr>=55?'var(--long)':g.wr>=40?'var(--wait)':'var(--short)'}">${g.wr}% WR</span>
+              <span style="font-size:9px;color:${g.avgPnl>=0?'var(--long)':'var(--short)'}">${g.avgPnl>=0?'+':''}${g.avgPnl}% avg</span>
+            </div>`).join(''):'<div style="font-size:9px;color:var(--text3)">Ancora nessun dato sufficiente</div>'}
+        </div>
+        <div>
+          <div style="font-size:9px;color:var(--text3);margin-bottom:5px">Per solidità del bias</div>
+          ${bySolidity.length?bySolidity.map(g=>`
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--border)">
+              <span style="font-size:10px;color:var(--text2)">${g.key}</span>
+              <span style="font-size:10px;color:var(--text3)">${g.total} trade</span>
+              <span style="font-size:10px;font-weight:700;color:${g.wr>=55?'var(--long)':g.wr>=40?'var(--wait)':'var(--short)'}">${g.wr}% WR</span>
+              <span style="font-size:9px;color:${g.avgPnl>=0?'var(--long)':'var(--short)'}">${g.avgPnl>=0?'+':''}${g.avgPnl}% avg</span>
+            </div>`).join(''):'<div style="font-size:9px;color:var(--text3)">Ancora nessun dato sufficiente</div>'}
+        </div>
+      </div>
+    </div>`:`
+    <div style="background:var(--bg3);border-radius:8px;padding:10px 14px;font-size:10px;color:var(--text3)">
+      📋 Il contesto (fase/solidità/regime) viene registrato da adesso in poi sui nuovi trade — questa sezione si popolerà mano a mano che apri nuove posizioni. I trade già chiusi non hanno questo dato.
+    </div>`}`;
 
   tableEl.innerHTML=`
     <table style="width:100%;border-collapse:collapse;font-size:10px">
@@ -1629,6 +1685,7 @@ function renderHistory(){
         <th style="padding:6px 8px;color:var(--text3);font-weight:500;text-align:left">Asset</th>
         <th style="padding:6px 8px;color:var(--text3);font-weight:500;text-align:left">Dir</th>
         <th style="padding:6px 8px;color:var(--text3);font-weight:500;text-align:left">Tipo entry</th>
+        <th style="padding:6px 8px;color:var(--text3);font-weight:500;text-align:left">Contesto apertura</th>
         <th style="padding:6px 8px;color:var(--text3);font-weight:500;text-align:right">Entry</th>
         <th style="padding:6px 8px;color:var(--text3);font-weight:500;text-align:right">Close</th>
         <th style="padding:6px 8px;color:var(--text3);font-weight:500;text-align:right">P&L</th>
@@ -1644,10 +1701,14 @@ function renderHistory(){
           const closeDate=t.closedAt?new Date(t.closedAt).toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
           const entryLabel=t.neverEntered?'❌ EP non toccato':t.entryType==='mercato'?'⚡ Mercato':t.entryType==='manuale'?'✏️ Manuale':'🎯 EP';
           const entryColor=t.neverEntered?'var(--text3)':t.entryType==='mercato'?'var(--long)':'var(--accent)';
+          const ctx=t.context;
+          const ctxSummary=ctx?(ctx.solidity||'—')+' · '+(ctx.phase||'—'):'— (pre-registrazione)';
+          const ctxTitle=ctx?`Macro: ${ctx.macro||'—'} (stabile da ${ctx.macroStableHours!==undefined?ctx.macroStableHours+'h':'—'})\nRegime: ${ctx.regime||'—'}\nQualità: ${ctx.quality!==undefined&&ctx.quality!==null?ctx.quality+'/5':'—'}\nOI delta: ${ctx.oiDelta!==undefined?ctx.oiDelta+'%':'—'} | Funding: ${ctx.frVal!==undefined?ctx.frVal.toFixed?ctx.frVal.toFixed(4)+'%':ctx.frVal:'—'}\nLivello testato: ${ctx.touches!==undefined&&ctx.touches!==null?ctx.touches+'×':'—'}`:'Trade aperto prima che iniziassimo a registrare il contesto';
           return`<tr style="border-bottom:1px solid var(--border);${t.neverEntered?'opacity:0.5':''}" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background=''">
             <td style="padding:7px 8px;font-weight:700;color:${t.dir==='long'?'var(--long)':'var(--short)'}">${t.sym}</td>
             <td style="padding:7px 8px"><span style="font-size:8px;font-weight:700;padding:2px 6px;border-radius:10px;background:${t.dir==='long'?'var(--long-bg)':'var(--short-bg)'};color:${t.dir==='long'?'var(--long)':'var(--short)'}">${t.dir.toUpperCase()}</span></td>
             <td style="padding:7px 8px;font-size:9px;font-weight:700;color:${entryColor}">${entryLabel}</td>
+            <td style="padding:7px 8px;font-size:9px;color:${ctx?'var(--text2)':'var(--text3)'}" title="${ctxTitle}">${ctxSummary}</td>
             <td style="padding:7px 8px;text-align:right;color:var(--text2)">${fp(t.entry)}</td>
             <td style="padding:7px 8px;text-align:right;color:var(--text2)">${fp(t.closePrice)||'—'}</td>
             <td style="padding:7px 8px;text-align:right;font-weight:700;color:${pnlColor}">${t.neverEntered?'<span style="color:var(--text3);font-size:9px">Non entrato</span>':pnl?(t.pnlPct>=0?'+':'')+t.pnlPct.toFixed(2)+'%':'—'}</td>
@@ -2364,6 +2425,31 @@ function render(){
       }
     });
   }
+
+  // ── REGISTRO CONTESTO PER "SEGUI TRADE" ──────────────────────────────
+  // Salva lo stato finale (dopo tutti gli aggiustamenti macro/circuit
+  // breaker) di ogni asset, così quando l'utente clicca "Segui trade" si
+  // può registrare ESATTAMENTE il contesto di quel momento — semaforo,
+  // regime, solidità, fase, qualità, OI/funding, quante volte il livello
+  // era stato validato. Senza questo, lo storico trade non permette
+  // nessuna analisi win-rate-per-contesto (bias/fase/solidità), che è
+  // l'unico modo per sapere con dati reali, non impressioni, se il
+  // metodo funziona meglio in certe condizioni che in altre.
+  window._tradeContext=window._tradeContext||{};
+  all.forEach(s=>{
+    window._tradeContext[s.sym]={
+      macro:macroState,
+      macroStableHours:Math.round(macroStability.hoursStable*10)/10,
+      solidity:s.solidity?s.solidity.label:null,
+      regime:s.regime?s.regime.label:null,
+      phase:s.phase?s.phase.label:null,
+      quality:s.quality,
+      oiDelta:Math.round(s.oiDelta*10)/10,
+      frVal:s.frVal,
+      touches:s.strat?s.strat.touches:null,
+      zoneStrength:s.strat?Math.round((s.strat.zoneStrength||0)*10)/10:null,
+    };
+  });
 
   // Notify new actionable signals via Telegram — only Moderato o Solido
   all.filter(s=>s.strat&&s.solidity.level>=2&&(s.strat.atEntry||s.strat.isRetest||(s.strat.momentumStrong&&s.strat.momentumRR>=1.5))).forEach(s=>{
