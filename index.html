@@ -473,10 +473,22 @@ function detectEngulfing(klines,direction){
     return{pattern:'Engulfing Bearish',strength:p.v>0&&c.v/p.v>1.5?'forte':'moderata'};
   return null;
 }
+function calcATRObj(k,n=14){
+  // Come calcATR ma su klines già parsate in oggetti {o,h,l,c,v}
+  // invece che su array raw Binance — usata da detectEMABounce, che
+  // riceve klines parsate da detectPA (vedi fix bug PA sotto).
+  if(!k||k.length<n+1) return 1;
+  const tr=[];
+  for(let i=1;i<k.length;i++){
+    const h=k[i].h,l=k[i].l,pc=k[i-1].c;
+    tr.push(Math.max(h-l,Math.abs(h-pc),Math.abs(l-pc)));
+  }
+  return tr.slice(-n).reduce((a,b)=>a+b,0)/n;
+}
 function detectEMABounce(klines,direction){
   if(!klines||klines.length<60) return null;
   const cl=klines.map(k=>k.c);
-  const atr=calcATR(klines);
+  const atr=calcATRObj(klines);
   let e20=cl.slice(0,20).reduce((a,b)=>a+b)/20;
   for(let i=20;i<cl.length;i++) e20=cl[i]*(2/21)+e20*(1-2/21);
   let e50=cl.slice(0,50).reduce((a,b)=>a+b)/50;
@@ -496,9 +508,22 @@ function detectVolumeSpike(klines,lb=20){
   const avg=klines.slice(-lb-1,-1).reduce((a,k)=>a+k.v,0)/lb;
   return klines[klines.length-2].v>avg*1.5;
 }
+function parseKlinesForPA(raw){
+  // BUG FIX (27/09/2026): detectPA riceveva finora gli array raw di Binance
+  // ([openTime,open,high,low,close,volume,...]) ma detectPinBar/detectEngulfing/
+  // detectEMABounce leggono k.o/k.h/k.l/k.c/k.v — un mismatch di formato che
+  // faceva sì che i pattern di price action non scattassero mai sulla dashboard
+  // live (i confronti tipo k.c-k.o su un array danno NaN, quindi nessuna
+  // condizione era mai vera). Qui si converte in oggetti prima di passarli ai
+  // detector.
+  if(!raw||!raw.length) return [];
+  if(!Array.isArray(raw[0])) return raw; // già in formato oggetto
+  return raw.map(k=>({t:+k[0],o:+k[1],h:+k[2],l:+k[3],c:+k[4],v:+k[5]}));
+}
 function detectPA(klines4h,direction){
-  const pattern=detectPinBar(klines4h,direction)||detectEngulfing(klines4h,direction)||detectEMABounce(klines4h,direction)||null;
-  return{pattern,volSpike:detectVolumeSpike(klines4h),timeframe:'4h'};
+  const k=parseKlinesForPA(klines4h);
+  const pattern=detectPinBar(k,direction)||detectEngulfing(k,direction)||detectEMABounce(k,direction)||null;
+  return{pattern,volSpike:detectVolumeSpike(k),timeframe:'4h'};
 }
 function calcPAScore(pa,solidity,regime){
   let s=0;
