@@ -1064,6 +1064,21 @@ function calcStrategy(bias,price,atr,zones,sr,pivots,wPivots,str=3,volRatio=1,kl
   if(bias==='wait'||!price||!atr)return null;
   const isL=bias==='long';
 
+  // ── VETO MA20 SU SHORT CONTRO-TREND ───────────────────────────────────
+  // Backtest su 68 trade storici (27/09/2026): gli short aperti con prezzo
+  // SOPRA la SMA20 4h (contro il trend di medio periodo) hanno win rate
+  // 15.4% (2/13 vincenti) e generano la quasi totalità delle perdite lato
+  // short, incluso il blowout HYPE -10.30%. Gli short sotto la SMA20 (n=2,
+  // WR 50%) sono un campione troppo piccolo per validarli come "buoni", ma
+  // nessuna prova che gli short contro-trend funzionino. Veto: niente
+  // segnale short se il prezzo è sopra la SMA20 a 4h. Klines in formato
+  // raw Binance [t,o,h,l,c,v,...]; esclude l'ultima (candela in formazione).
+  if(!isL && klines && klines.length>=21){
+    const closes=klines.slice(0,-1).map(k=>+k[4]);
+    const sma20=closes.slice(-20).reduce((a,b)=>a+b,0)/20;
+    if(price>sma20) return null;
+  }
+
   // Punteggio di qualità coerente con quello usato in calcZones: più test
   // superati e più forza pesano più della semplice vicinanza al prezzo.
   // Sostituisce la vecchia selezione "il più vicino vince sempre", che

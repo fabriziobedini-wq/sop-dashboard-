@@ -108,6 +108,12 @@ def calc_atr(klines, period=14):
         trs.append(max(h-l, abs(h-pc), abs(l-pc)))
     return sum(trs[-period:]) / period
 
+def calc_sma20(klines, period=20):
+    """SMA a `period` candele CHIUSE (esclude l'ultima, in formazione)."""
+    closes = [k['c'] for k in klines[:-1]]
+    if len(closes) < period: return None
+    return sum(closes[-period:]) / period
+
 def calc_cvd_dir(klines, lookback=12):
     recent = klines[-lookback:] if len(klines) >= lookback else klines
     cvd = sum(k['v'] if k['c'] >= k['o'] else -k['v'] for k in recent)
@@ -357,6 +363,19 @@ def find_signal(sop, macro):
     klines_4h = get_klines(sym, '4h', 100)
     klines_1h = get_klines_1h(sym, 60)
     if not klines_4h: return None
+
+    # ── VETO MA20 SU SHORT CONTRO-TREND ─────────────────────────────────────
+    # Backtest su 68 trade storici (27/09/2026): gli short aperti con prezzo
+    # SOPRA la SMA20 4h (contro il trend di medio periodo) hanno win rate
+    # 15.4% (2/13 vincenti) e generano la quasi totalità delle perdite lato
+    # short, incluso il blowout HYPE -10.30%. Gli short sotto la SMA20 (n=2,
+    # WR 50%) sono un campione troppo piccolo per validarli come "buoni", ma
+    # nessuna prova che gli short contro-trend funzionino. Veto: niente
+    # segnale short se il prezzo è sopra la SMA20 a 4h.
+    if direction == 'short':
+        sma20 = calc_sma20(klines_4h)
+        if sma20 is not None and price > sma20:
+            return None
 
     atr_4h = calc_atr(klines_4h)
     levels = calc_support_resistance(klines_4h)
