@@ -55,9 +55,17 @@ def get_ticker(sym):
     return bn_get('/fapi/v1/ticker/24hr', {'symbol': f'{sym}USDT'})
 
 def get_funding(sym):
+    """
+    Ritorna il funding rate in "punti percentuali" (es. 0.01 = 0.01%),
+    stessa convenzione usata dal dashboard (index.html moltiplica *100
+    lo stesso identico valore grezzo di Binance). PRIMA mancava il *100:
+    la soglia fr_pos>0.05 richiedeva un funding grezzo del 5% — evento
+    quasi mai osservato — rendendo il bias 'long'/'short' irraggiungibile
+    nella stragrande maggioranza dei casi e il sistema quasi sempre 'wait'.
+    """
     data = bn_get('/fapi/v1/fundingRate', {'symbol': f'{sym}USDT', 'limit': 1})
     if data and isinstance(data, list) and len(data) > 0:
-        return float(data[0].get('fundingRate', 0))
+        return float(data[0].get('fundingRate', 0)) * 100
     return 0.0
 
 def get_oi_history(sym):
@@ -271,20 +279,33 @@ def calc_sop_context(sym):
     oi_vol_ratio = (oi_current / (vol24h / 24)) if vol24h > 0 else 0
     regime = 'structural' if oi_vol_ratio >= 3 else 'momentum' if oi_vol_ratio < 1 else 'mixed'
 
-    # Bias
-    oi_up = oi_delta > 1
-    oi_dn = oi_delta < -1
-    fr_pos = fr_val > 0.05
-    fr_neg = fr_val < -0.005
+    # Bias — allineato 1:1 a calcBias() nel dashboard (index.html).
+    # PRIMA: questa cascata copriva SOLO le combinazioni a funding estremo
+    # (fr_pos/fr_neg), senza alcun ramo per "funding neutro" — che è la
+    # condizione più comune nella realtà. Risultato: bias quasi sempre
+    # 'wait' qui, anche quando il dashboard (che gestisce il caso neutro)
+    # avrebbe già dato long/short. Non è il mercato "spesso indeciso":
+    # era la cascata a non avere un percorso per dirlo.
+    oi_t = 'up' if oi_delta > 1 else 'down' if oi_delta < -1 else 'flat'
+    fr_t = 'high_pos' if fr_val > 0.05 else 'high_neg' if fr_val < -0.005 else 'neutral'
     cvd_up = cvd_dir == 'up'
     cvd_dn = cvd_dir == 'down'
 
-    if (oi_dn and fr_neg and cvd_up) or (oi_up and fr_neg and cvd_up) or (oi_dn and fr_pos and cvd_up):
-        bias = 'long'
-    elif (oi_up and fr_pos and not cvd_up) or (oi_up and not fr_pos and cvd_dn) or (oi_dn and fr_neg and cvd_dn):
-        bias = 'short'
-    else:
-        bias = 'wait'
+    if fr_t == 'high_pos':
+        bias = 'short' if not cvd_up else 'wait'
+    elif fr_t == 'neutral':
+        if oi_t == 'down':
+            bias = 'long' if cvd_up else 'wait'
+        else:  # up o flat
+            bias = 'long' if cvd_up else 'short' if cvd_dn else 'wait'
+    else:  # high_neg
+        if oi_t == 'down':
+            bias = 'long' if cvd_up else 'short' if cvd_dn else 'wait'
+        else:  # up o flat
+            bias = 'long' if cvd_up else 'wait'
+
+    fr_pos = fr_t == 'high_pos'
+    fr_neg = fr_t == 'high_neg'
 
     # Solidity (simplified)
     score = 0
