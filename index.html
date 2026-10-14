@@ -334,6 +334,16 @@ body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code',mo
     </div>
   </div>
 
+  <!-- AFFIDABILITA' (da GitHub) -->
+  <div id="reliabilitySection">
+    <div class="stitle">🧪 Affidabilità del sistema — report automatico da GitHub</div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 16px">
+      <div id="reliabilityNotice" style="font-size:11px;color:var(--short);margin-bottom:8px"></div>
+      <pre id="reliabilityBody" style="white-space:pre-wrap;font-family:inherit;font-size:11px;line-height:1.5;color:var(--text2);margin:0">Caricamento…</pre>
+      <div style="margin-top:8px;font-size:9px;color:var(--text3)">Fonte: RELIABILITY.md e SYNC_LOG.md nel repo, aggiornati dalla sync automatica (08:47 e 20:47).</div>
+    </div>
+  </div>
+
   <!-- WAIT INFO -->
   <div id="waitSection" style="display:none">
     <div class="stitle">Segnale indeciso — dati di monitoraggio</div>
@@ -2044,6 +2054,42 @@ async function testTG(){
   setTimeout(()=>document.getElementById('tgStatus').textContent='',4000);
 }
 // Load saved TG config on startup
+
+// ── AFFIDABILITA': report dal repo + chiusure da controllo prezzi ──────────
+const REPO_RAW='https://raw.githubusercontent.com/fabriziobedini-wq/sop-dashboard-/main/';
+async function loadReliability(){
+  const body=document.getElementById('reliabilityBody');
+  const note=document.getElementById('reliabilityNotice');
+  if(!body) return;
+  try{
+    const [rep,log,tr]=await Promise.all([
+      fetch(REPO_RAW+'RELIABILITY.md',{cache:'no-store'}).then(r=>r.ok?r.text():''),
+      fetch(REPO_RAW+'SYNC_LOG.md',{cache:'no-store'}).then(r=>r.ok?r.text():''),
+      fetch(REPO_RAW+'open_trades.json',{cache:'no-store'}).then(r=>r.ok?r.json():[])
+    ]);
+    // applica le chiusure per stop rilevate dal controllo prezzi (closedBy==='tv_check')
+    const local=getTrades();
+    let applied=[];
+    const next=local.map(t=>{
+      if(t.closed) return t;
+      const r=tr.find(x=>x.id===t.id&&x.closedBy==='tv_check'&&x.closed);
+      if(!r) return t;
+      applied.push(r.sym+' '+r.dir+' '+(r.pnlPct>=0?'+':'')+r.pnlPct+'%');
+      return {...t,closed:true,closeReason:r.closeReason,closedAt:r.closedAt,closePrice:r.closePrice,pnlPct:r.pnlPct,stop:r.stop,closedBy:'tv_check'};
+    });
+    if(applied.length){
+      saveTrades(next);
+      note.textContent='⚠️ Stop superato mentre la dashboard era chiusa, trade chiusi in base ai prezzi: '+applied.join(' · ');
+      if(typeof renderTrades==='function') try{renderTrades([]);}catch(e){}
+      try{renderHistory();}catch(e){}
+    }
+    const logLines=log.split('\n').filter(l=>l.startsWith('- ')).slice(-3).join('\n');
+    body.textContent=(rep||'Report non disponibile.').replace(/^#+ /gm,'').replace(/\*\*/g,'').trim()+(logLines?'\n\nUltimi interventi di sync:\n'+logLines.replace(/\*\*/g,''):'');
+  }catch(e){
+    body.textContent='Report non raggiungibile: '+e.message;
+  }
+}
+
 window.addEventListener('DOMContentLoaded',()=>{
   const {token,chat}=getTGConfig();
   if(token&&document.getElementById('tgToken')) document.getElementById('tgToken').value=token;
@@ -2052,6 +2098,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   switchTab('dashboard');
   renderTrades([]);
   renderHistory();
+  loadReliability();
 });
 
 // ── SIGNAL STATE MEMORY ───────────────────────────────────────────────────
