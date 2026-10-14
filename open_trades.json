@@ -1673,8 +1673,8 @@
     "openBias": "long",
     "openCVD": "up",
     "tp1Hit": false,
-    "closed": false,
-    "closeReason": null,
+    "closed": true,
+    "closeReason": "stop",
     "entryType": "mercato",
     "pending": false,
     "activatedAt": 1791565573262,
@@ -1691,7 +1691,11 @@
       "touches": 4,
       "zoneStrength": 0
     },
-    "lastPrice": 0.33087
+    "lastPrice": 0.33087,
+    "closedAt": 1791900000000,
+    "closePrice": 0.3274,
+    "pnlPct": -1.47,
+    "closedBy": "tv_check"
   },
   {
     "id": 1791565575954,
@@ -1705,8 +1709,8 @@
     "openBias": "long",
     "openCVD": "up",
     "tp1Hit": true,
-    "closed": false,
-    "closeReason": null,
+    "closed": true,
+    "closeReason": "stop",
     "entryType": "mercato",
     "pending": false,
     "activatedAt": 1791565575954,
@@ -1724,7 +1728,11 @@
       "zoneStrength": 0
     },
     "lastPrice": 83802.2,
-    "tp1HitAt": 1791734359048
+    "tp1HitAt": 1791734359048,
+    "closedAt": 1791806400000,
+    "closePrice": 82698.5,
+    "pnlPct": 0.0,
+    "closedBy": "tv_check"
   },
   {
     "id": 1791565578454,
@@ -1738,8 +1746,8 @@
     "openBias": "long",
     "openCVD": "up",
     "tp1Hit": false,
-    "closed": false,
-    "closeReason": null,
+    "closed": true,
+    "closeReason": "stop",
     "entryType": "mercato",
     "pending": false,
     "activatedAt": 1791565578454,
@@ -1756,6 +1764,10 @@
       "touches": 0,
       "zoneStrength": 0
     },
-    "lastPrice": 1280.76
+    "lastPrice": 1280.76,
+    "closedAt": 1791838800000,
+    "closePrice": 1222.29,
+    "pnlPct": 0.0,
+    "closedBy": "tv_check"
   }
 ]
