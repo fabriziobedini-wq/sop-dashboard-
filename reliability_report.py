@@ -16,6 +16,10 @@ from datetime import datetime, timezone
 
 TRADES_FILE = 'open_trades.json'
 MIN_N = 10  # sotto questa numerosità un bucket è solo aneddotico
+# Il 'nuovo percorso' (stop controllati con TradingView, veto MA20, fix price action,
+# sync automatica) parte da ottobre 2026: il giudizio sul sistema si fa da qui.
+BASELINE = datetime(2026, 10, 1, tzinfo=timezone.utc)
+BASELINE_MS = int(BASELINE.timestamp() * 1000)
 
 
 def load():
@@ -72,7 +76,16 @@ def build():
     L.append(f"\nTrade chiusi attivati: **{len(done)}** · mai attivati (entry non raggiunta): "
              f"{len(never_filled)} · aperti ora: {len(open_now)} · in attesa: {len(waiting)}")
 
-    L.append("\n## Complessivo")
+    new = [t for t in done if (t.get('closedAt') or 0) >= BASELINE_MS]
+    L.append("\n## NUOVO PERCORSO — dal 1 ottobre 2026 (il numero che conta)")
+    L.append(f"- {fmt(stats(new))}")
+    if len(new) < 30:
+        L.append(f"- Servono ~30 trade chiusi per un giudizio: ne mancano {30 - len(new)}.")
+    for t in new:
+        d = datetime.fromtimestamp(t['closedAt'] / 1000, timezone.utc).strftime('%d/%m')
+        L.append(f"  - {d} {t['sym']} {t['dir']}: {t['pnlPct']:+.2f}% ({t.get('closeReason') or '?'})")
+
+    L.append("\n## Storico completo (include il periodo prima del nuovo percorso)")
     L.append(f"- Tutti: {fmt(stats(done))}")
 
     # stop sfondati: perdita molto oltre la distanza dello stop teorica

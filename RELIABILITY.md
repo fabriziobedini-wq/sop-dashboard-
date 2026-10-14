@@ -1,8 +1,17 @@
-# Report affidabilità SOP — 2026-10-14 05:17 UTC
+# Report affidabilità SOP — 2026-10-14 15:05 UTC
 
 Trade chiusi attivati: **60** · mai attivati (entry non raggiunta): 11 · aperti ora: 0 · in attesa: 0
 
-## Complessivo
+## NUOVO PERCORSO — dal 1 ottobre 2026 (il numero che conta)
+- n=  5  WR= 40.0%  pnl tot=  +2.95%  medio=+0.59%  win medio=+2.21%  loss medio= -0.49% (campione piccolo)
+- Servono ~30 trade chiusi per un giudizio: ne mancano 25.
+  - 04/10 BTC long: +1.67% (bias_inverted_24h)
+  - 07/10 XRP short: +2.75% (tp2)
+  - 12/10 BTC long: +0.00% (stop)
+  - 12/10 ZEC long: +0.00% (stop)
+  - 13/10 TRX long: -1.47% (stop)
+
+## Storico completo (include il periodo prima del nuovo percorso)
 - Tutti: n= 60  WR= 43.3%  pnl tot= -35.77%  medio=-0.60%  win medio=+5.70%  loss medio= -5.41%
 - Senza stop sfondati (4 esclusi): n= 56  WR= 46.4%  pnl tot= +66.03%  medio=+1.18%  win medio=+5.70%  loss medio= -2.74%
 
