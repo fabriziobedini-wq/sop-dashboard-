@@ -633,6 +633,7 @@ def run():
             print(f'  {sym}: ERROR {e}')
 
     if not all_sop:
+        print('::warning::SOP: nessun dato dagli asset (Binance non raggiungibile o bloccato?) — run abortito')
         print('No SOP data — abort')
         save_state({**state, 'sent_signals': sent_signals})
         return
@@ -726,6 +727,7 @@ def run():
     state['last_run'] = now
     state['macro'] = macro
     save_state(state)
+    print(f'::notice::SOP ok: {len(all_sop)} asset analizzati, macro={macro}, {len(signals_found)} segnali nuovi, registro={len(registry)}')
     print(f'Done. {len(signals_found)} signals sent.')
 
 if __name__ == '__main__':
