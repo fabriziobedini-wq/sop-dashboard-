@@ -769,6 +769,8 @@ def run():
     state['last_run'] = now
     state['macro'] = macro
     save_state(state)
+    print('::notice::Valori: ' + ' | '.join(
+        f"{c['sym']} px={c['price']:.5g} OI%={c['oi_delta']:.1f} FR={c['fr_val']:.4f} oi/vol={c['oi_vol_ratio']} cvd={c['cvd_dir']}" for c in all_sop))
     print(f'::notice::SOP ok: {len(all_sop)} asset analizzati, macro={macro}, {len(signals_found)} segnali nuovi, registro={len(registry)}')
     print(f'Done. {len(signals_found)} signals sent.')
 
