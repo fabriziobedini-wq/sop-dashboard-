@@ -4,7 +4,7 @@ Registro dei segnali consigliati dal monitor, anche quelli che Fabrizio NON apre
 
 Ogni segnale che il backend notifica viene salvato in signals_log.json con
 entry/stop/TP come comunicati. Ad ogni giro (ogni 15 min) i segnali ancora
-aperti vengono "giocati su carta" sulle candele 15m di Binance dopo la notifica,
+aperti vengono "giocati su carta" sulle candele 15m (OKX) dopo la notifica,
 con le STESSE regole del dashboard:
   - stop iniziale; a 45% del percorso verso TP1 lo stop va a pareggio
   - TP1 raggiunto -> stop a pareggio (il trade continua)

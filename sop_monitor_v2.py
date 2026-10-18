@@ -13,7 +13,7 @@ TG_TOKEN = os.environ.get('TG_TOKEN', '')
 TG_CHAT  = os.environ.get('TG_CHAT', '')
 STATE_FILE = 'sop_state.json'
 TRADES_FILE = 'open_trades.json'
-BINANCE_BASE = 'https://fapi.binance.com'
+OKX_BASE = 'https://www.okx.com'
 DASHBOARD_URL = 'https://fabriziobedini-wq.github.io/sop-dashboard-/'
 
 # Whitelist fissa: top 10 crypto per MARKET CAP (non per volume/OI).
@@ -35,71 +35,110 @@ def send_tg(msg):
     except Exception as e:
         print(f'TG error: {e}')
 
-# ── BINANCE API ───────────────────────────────────────────────────────────
-def bn_get(path, params=None):
+# ── OKX API ───────────────────────────────────────────────────────────────
+_OKX_WARNED = False
+
+def okx_get(path, params=None):
+    """GET pubblico OKX v5. Ritorna la lista 'data' (o None se errore).
+    Binance (fapi) risponde HTTP 451 ai server GitHub (USA): per questo si usa OKX."""
+    global _OKX_WARNED
     try:
-        r = requests.get(f'{BINANCE_BASE}{path}', params=params or {}, timeout=10)
-        if r.status_code != 200 and not globals().get('_BN_WARNED'):
-            globals()['_BN_WARNED'] = True
-            print(f'::warning::Binance {path} -> HTTP {r.status_code}: {r.text[:160]}')
-        return r.json()
+        r = requests.get(f'{OKX_BASE}{path}', params=params or {}, timeout=10)
+        j = r.json()
+        if r.status_code != 200 or str(j.get('code')) != '0':
+            if not _OKX_WARNED:
+                _OKX_WARNED = True
+                print(f"::warning::OKX {path} -> HTTP {r.status_code}: {str(j)[:160]}")
+            return None
+        return j.get('data')
     except Exception as e:
-        print(f'Binance error {path}: {e}')
+        if not _OKX_WARNED:
+            _OKX_WARNED = True
+            print(f'::warning::OKX error {path}: {e}')
         return None
 
+def inst(sym):
+    return f'{sym}-USDT-SWAP'
+
+_BAR = {'15m': '15m', '1h': '1H', '4h': '4H'}
+
 def get_klines(sym, interval='4h', limit=100):
-    data = bn_get('/fapi/v1/klines', {'symbol': f'{sym}USDT', 'interval': interval, 'limit': limit})
-    if not data or not isinstance(data, list): return []
-    return [{'o':float(k[1]),'h':float(k[2]),'l':float(k[3]),'c':float(k[4]),'v':float(k[5]),'t':int(k[0])} for k in data]
+    """Candele in ordine cronologico, stesso formato usato da tutto il codice: {o,h,l,c,v,t}.
+    v = volume in coin (volCcy), come Binance. OKX restituisce max 300 candele per chiamata, dalla più recente."""
+    bar = _BAR.get(interval, interval)
+    out, after = [], None
+    for _ in range(8):
+        params = {'instId': inst(sym), 'bar': bar, 'limit': min(300, limit - len(out))}
+        if after: params['after'] = after
+        data = okx_get('/api/v5/market/candles', params)
+        if not data: break
+        out.extend(data)
+        after = data[-1][0]
+        if len(out) >= limit or len(data) < params['limit']: break
+    out = out[:limit]
+    out.reverse()
+    try:
+        return [{'o':float(k[1]),'h':float(k[2]),'l':float(k[3]),'c':float(k[4]),'v':float(k[6]),'t':int(k[0])} for k in out]
+    except Exception:
+        return []
 
 def get_klines_1h(sym, limit=50):
     return get_klines(sym, '1h', limit)
 
 def get_ticker(sym):
-    return bn_get('/fapi/v1/ticker/24hr', {'symbol': f'{sym}USDT'})
+    """Ritorna {'lastPrice','quoteVolume'} (volume 24h in USDT) o None."""
+    data = okx_get('/api/v5/market/ticker', {'instId': inst(sym)})
+    if not data: return None
+    try:
+        t = data[0]
+        last = float(t['last'])
+        return {'lastPrice': last, 'quoteVolume': float(t.get('volCcy24h') or 0) * last}
+    except Exception:
+        return None
 
 def get_funding(sym):
     """
     Ritorna il funding rate in "punti percentuali" (es. 0.01 = 0.01%),
     stessa convenzione usata dal dashboard (index.html moltiplica *100
-    lo stesso identico valore grezzo di Binance). PRIMA mancava il *100:
-    la soglia fr_pos>0.05 richiedeva un funding grezzo del 5% — evento
-    quasi mai osservato — rendendo il bias 'long'/'short' irraggiungibile
-    nella stragrande maggioranza dei casi e il sistema quasi sempre 'wait'.
+    il valore grezzo). Con la convenzione sbagliata la soglia fr_pos>0.05
+    richiederebbe un funding grezzo del 5%: il bias sarebbe sempre 'wait'.
+    OKX: fundingRate del periodo corrente (frazione, es. 0.0001).
     """
-    data = bn_get('/fapi/v1/fundingRate', {'symbol': f'{sym}USDT', 'limit': 1})
-    if data and isinstance(data, list) and len(data) > 0:
-        return float(data[0].get('fundingRate', 0)) * 100
+    data = okx_get('/api/v5/public/funding-rate', {'instId': inst(sym)})
+    if data:
+        try: return float(data[0]['fundingRate']) * 100
+        except Exception: pass
     return 0.0
 
 def get_oi_history(sym):
-    data = bn_get('/futures/data/openInterestHist', {'symbol': f'{sym}USDT', 'period': '4h', 'limit': 6})
-    return data if isinstance(data, list) else []
+    """Ultime 6 rilevazioni di open interest a 4h, dalla più vecchia: [{'sumOpenInterestValue': USD}]."""
+    data = okx_get('/api/v5/rubik/stat/contracts/open-interest-history',
+                   {'instId': inst(sym), 'period': '4H', 'limit': 6})
+    out = []
+    if data:
+        try:
+            # righe: [ts, oi_contratti, oi_coin, oi_usd], dalla più recente
+            rows = sorted(data, key=lambda r: int(r[0]))
+            out = [{'sumOpenInterestValue': float(r[3])} for r in rows]
+        except Exception:
+            out = []
+    return out
 
 def get_top_assets():
     """
     Universo tradabile: SOLO i top 10 per market cap (whitelist ASSETS_FALLBACK),
-    filtrati sui simboli effettivamente disponibili come perpetual USDT su Binance.
+    filtrati sui simboli effettivamente disponibili come perpetual USDT su OKX.
 
-    PRIMA (versione precedente): selezionava i top 15 per volume 24h su Binance
-    con soglia minima di 20M$. Questo permetteva l'ingresso di altcoin a bassa
-    capitalizzazione ma volume speculativo alto (es. LAB, TAIKO) — causa delle
-    due perdite catastrofiche nel backtest (-65,52% e -34,32%): volume alto
-    non equivale a liquidità profonda, e lo stop ATR-based veniva sfondato da
-    gap improvvisi su questi asset.
+    Versione ancora precedente: top 15 per volume 24h con soglia 20M$, che faceva
+    entrare altcoin a bassa capitalizzazione (es. LAB, TAIKO) — causa delle due
+    perdite catastrofiche del backtest (-65,52% e -34,32%): volume alto non
+    equivale a liquidità profonda.
     """
-    tickers = bn_get('/fapi/v1/ticker/24hr')
-    if not tickers or not isinstance(tickers, list):
+    data = okx_get('/api/v5/market/tickers', {'instType': 'SWAP'})
+    if not data:
         return ASSETS_FALLBACK.copy()
-    if not isinstance(tickers[0], dict):
-        return ASSETS_FALLBACK.copy()
-
-    available = {
-        t.get('symbol', '').replace('USDT', '')
-        for t in tickers
-        if isinstance(t, dict) and t.get('symbol', '').endswith('USDT')
-    }
-
+    available = {d.get('instId', '').replace('-USDT-SWAP', '')
+                 for d in data if isinstance(d, dict) and d.get('instId', '').endswith('-USDT-SWAP')}
     final = [s for s in ASSETS_FALLBACK if s in available]
     return final if final else ASSETS_FALLBACK.copy()
 
@@ -636,7 +675,7 @@ def run():
             print(f'  {sym}: ERROR {e}')
 
     if not all_sop:
-        print('::warning::SOP: nessun dato dagli asset (Binance non raggiungibile o bloccato?) — run abortito')
+        print('::warning::SOP: nessun dato dagli asset (OKX non raggiungibile o bloccato?) — run abortito')
         print('No SOP data — abort')
         save_state({**state, 'sent_signals': sent_signals})
         return
