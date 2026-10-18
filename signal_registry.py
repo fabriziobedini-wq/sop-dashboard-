@@ -183,3 +183,68 @@ def log_state(all_sop, macro, path=STATE_LOG, now_ms=None):
     with open(path, 'a') as f:
         f.write(json.dumps(snap, ensure_ascii=False) + '\n')
     return True
+
+
+# ── Controllo dei trade aperti nel dashboard (anche a pagina chiusa) ──────
+CHECKS_FILE = 'trade_checks.json'
+
+
+def load_checks(path=CHECKS_FILE):
+    try:
+        with open(path) as f:
+            d = json.load(f)
+            return d if isinstance(d, dict) else {}
+    except Exception:
+        return {}
+
+
+def save_checks(checks, path=CHECKS_FILE):
+    tmp = path + '.tmp'
+    with open(tmp, 'w') as f:
+        json.dump(checks, f, indent=1, ensure_ascii=False, sort_keys=True)
+    os.replace(tmp, path)
+
+
+def check_trades(trades, checks, fetch_bars, now_ms):
+    """Per ogni trade attivo del dashboard (open_trades.json) rigioca le candele 15m dall'attivazione
+    con le stesse regole del registro. Scrive l'esito in `checks` (chiave = id del trade), SENZA
+    toccare open_trades.json (che il sync copia dal browser).
+    Prudenza: se il trade ha già lo stop a pareggio (breakevenSet/tp1Hit) e non conosco il momento
+    (tp1HitAt), non so quale fosse lo stop originale -> controllo solo da ora in avanti.
+    Ritorna la lista dei trade chiusi in questo giro."""
+    newly_closed = []
+    for t in trades:
+        if t.get('closed') or t.get('pending') or t.get('neverEntered'):
+            continue
+        tid = str(t.get('id'))
+        if not tid or t.get('entry') is None or t.get('stop') is None or not t.get('tp1') or not t.get('tp2'):
+            continue
+        s = checks.get(tid)
+        if s is None:
+            act = t.get('activatedAt') or t.get('openedAt') or now_ms
+            be_known = bool(t.get('breakevenSet') or t.get('tp1Hit'))
+            if be_known and t.get('tp1HitAt'):
+                start, stop, mode = t['tp1HitAt'], t['entry'], 'da TP1'
+            elif be_known:
+                start, stop, mode = now_ms, t['stop'], 'solo da ora (stop già spostato, momento ignoto)'
+            else:
+                start, stop, mode = act, t['stop'], 'da attivazione'
+            s = {'id': t['id'], 'sym': t['sym'], 'dir': t['dir'], 'entry': t['entry'], 'stop': stop,
+                 'stopInitial': t['stop'], 'tp1': t['tp1'], 'tp2': t['tp2'], 'createdAt': start,
+                 'checkedUntil': start, 'tp1Hit': bool(t.get('tp1Hit')),
+                 'breakevenSet': bool(t.get('breakevenSet')), 'status': 'open', 'mode': mode}
+            checks[tid] = s
+        if s.get('status') != 'open':
+            continue
+        try:
+            bars = fetch_bars(s['sym'])
+        except Exception as e:
+            print(f"  controllo trade {s['sym']}: errore dati {e}")
+            continue
+        if not bars:
+            continue
+        simulate(s, bars, now_ms)
+        s['lastCheck'] = now_ms
+        if s['status'] == 'closed':
+            newly_closed.append(s)
+    return newly_closed

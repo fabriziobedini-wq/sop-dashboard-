@@ -2062,20 +2062,26 @@ async function loadReliability(){
   const note=document.getElementById('reliabilityNotice');
   if(!body) return;
   try{
-    const [rep,log,tr]=await Promise.all([
+    const [rep,log,tr,chk]=await Promise.all([
       fetch(REPO_RAW+'RELIABILITY.md',{cache:'no-store'}).then(r=>r.ok?r.text():''),
       fetch(REPO_RAW+'SYNC_LOG.md',{cache:'no-store'}).then(r=>r.ok?r.text():''),
-      fetch(REPO_RAW+'open_trades.json',{cache:'no-store'}).then(r=>r.ok?r.json():[])
+      fetch(REPO_RAW+'open_trades.json',{cache:'no-store'}).then(r=>r.ok?r.json():[]),
+      fetch(REPO_RAW+'trade_checks.json',{cache:'no-store'}).then(r=>r.ok?r.json():{}).catch(()=>({}))
     ]);
     // applica le chiusure per stop rilevate dal controllo prezzi (closedBy==='tv_check')
     const local=getTrades();
     let applied=[];
     const next=local.map(t=>{
       if(t.closed) return t;
-      const r=tr.find(x=>x.id===t.id&&x.closedBy==='tv_check'&&x.closed);
+      let r=tr.find(x=>x.id===t.id&&x.closedBy==='tv_check'&&x.closed);
+      if(!r){
+        // chiusura rilevata dal backend sulle candele 15m (trade_checks.json)
+        const c=chk&&chk[String(t.id)];
+        if(c&&c.status==='closed') r={sym:c.sym,dir:c.dir,closeReason:c.closeReason,closedAt:c.closedAt,closePrice:c.closePrice,pnlPct:c.pnlPct,stop:c.stop,_by:'backend_check'};
+      }
       if(!r) return t;
       applied.push(r.sym+' '+r.dir+' '+(r.pnlPct>=0?'+':'')+r.pnlPct+'%');
-      return {...t,closed:true,closeReason:r.closeReason,closedAt:r.closedAt,closePrice:r.closePrice,pnlPct:r.pnlPct,stop:r.stop,closedBy:'tv_check'};
+      return {...t,closed:true,closeReason:r.closeReason,closedAt:r.closedAt,closePrice:r.closePrice,pnlPct:r.pnlPct,stop:r.stop,closedBy:r._by||'tv_check'};
     });
     if(applied.length){
       saveTrades(next);

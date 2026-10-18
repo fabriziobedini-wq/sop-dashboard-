@@ -572,9 +572,12 @@ def monitor_open_trades(state):
         return
 
     sent = state.get('trade_notif', {})
+    checks = signal_registry.load_checks()
 
     for t in trades:
         if t.get('closed') or t.get('pending'):
+            continue
+        if checks.get(str(t.get('id')), {}).get('status') == 'closed':
             continue
 
         sym = t.get('sym')
@@ -735,6 +738,28 @@ def run():
     if not signals_found:
         print('No new signals this run')
 
+    # Step 4b: controllo a candele dei trade aperti nel dashboard (stop/TP anche a pagina chiusa).
+    # Scrive in trade_checks.json, mai in open_trades.json.
+    bars_cache = {}
+    def fetch_bars(sym):
+        if sym not in bars_cache:
+            bars_cache[sym] = get_klines(sym, '15m', 1000)
+        return bars_cache[sym]
+    try:
+        checks = signal_registry.load_checks()
+        before_c = json.dumps(checks, sort_keys=True)
+        closed_now = signal_registry.check_trades(load_open_trades(), checks, fetch_bars, int(time.time() * 1000))
+        if json.dumps(checks, sort_keys=True) != before_c:
+            signal_registry.save_checks(checks)
+        for c in closed_now:
+            icon = '🏆' if c['closeReason'] == 'tp2' else ('⚪' if c['closeReason'] == 'breakeven' else '🔴')
+            send_tg(f"📌 TRADE SEGUITO (backend) — {icon} <b>{c['sym']}</b> {c['dir']} chiuso: {c['closeReason']} a {c['closePrice']} ({c['pnlPct']:+.2f}%)\n"
+                    f"Rilevato dalle candele 15m, anche a pagina chiusa — chiudilo nel dashboard se non l'hai già fatto")
+        if closed_now:
+            print(f'Trade del dashboard chiusi dal backend: {[(c["sym"], c["closeReason"]) for c in closed_now]}')
+    except Exception as e:
+        print(f'Controllo trade: errore {e}')
+
     # Step 5: monitor open trades (stop/TP1/TP2/breakeven) — gira sempre,
     # anche a browser chiuso, a differenza del controllo nel dashboard
     print('Checking open trades...')
@@ -745,11 +770,6 @@ def run():
 
     # Step 6: aggiorna l'esito simulato dei segnali ancora aperti nel registro
     try:
-        bars_cache = {}
-        def fetch_bars(sym):
-            if sym not in bars_cache:
-                bars_cache[sym] = get_klines(sym, '15m', 1000)
-            return bars_cache[sym]
         before = json.dumps(registry, sort_keys=True)
         n_closed = signal_registry.update_open_signals(registry, fetch_bars, int(time.time() * 1000))
         if registry_changed or json.dumps(registry, sort_keys=True) != before:
