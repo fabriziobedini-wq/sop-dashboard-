@@ -23,7 +23,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792309751800
+  "checkedUntil": 1792311300000
  },
  {
   "id": 1792309753218,
@@ -49,7 +49,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792309753218
+  "checkedUntil": 1792311300000
  },
  {
   "id": 1792309754630,
@@ -75,6 +75,32 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792309754630
+  "checkedUntil": 1792311300000
+ },
+ {
+  "id": 1792311564528,
+  "sym": "ZEC",
+  "dir": "short",
+  "createdAt": 1792311564528,
+  "entry": 1123.76,
+  "stop": 1176.923214,
+  "stopInitial": 1176.923214,
+  "tp1": 990.851965,
+  "tp2": 911.107144,
+  "rr": 2.5,
+  "stopPct": 4.73,
+  "pattern": "Rejection EMA20",
+  "patternStrength": "forte",
+  "timeframe": "4h",
+  "score": 4,
+  "macro": "bullish",
+  "bias": "short",
+  "solidity": "moderato",
+  "regime": "structural",
+  "vetoed": null,
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1792311564528
  }
 ]
