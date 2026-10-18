@@ -23,7 +23,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792311300000
+  "checkedUntil": 1792316700000
  },
  {
   "id": 1792309753218,
@@ -49,7 +49,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792311300000
+  "checkedUntil": 1792316700000
  },
  {
   "id": 1792309754630,
@@ -75,7 +75,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792311300000
+  "checkedUntil": 1792316700000
  },
  {
   "id": 1792311564528,
@@ -101,6 +101,32 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792311564528
+  "checkedUntil": 1792316700000
+ },
+ {
+  "id": 1792317180995,
+  "sym": "ETH",
+  "dir": "short",
+  "createdAt": 1792317180995,
+  "entry": 2426.03,
+  "stop": 2472.4325,
+  "stopInitial": 2472.4325,
+  "tp1": 2310.02375,
+  "tp2": 2240.42,
+  "rr": 2.5,
+  "stopPct": 1.91,
+  "pattern": "Rejection EMA20",
+  "patternStrength": "forte",
+  "timeframe": "4h",
+  "score": 0,
+  "macro": "bullish",
+  "bias": "short",
+  "solidity": "moderato",
+  "regime": "structural",
+  "vetoed": "ma20",
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1792317180995
  }
 ]
