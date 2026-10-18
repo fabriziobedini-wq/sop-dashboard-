@@ -6,6 +6,7 @@ Notifica solo quando ENTRAMBI sono allineati
 """
 
 import os, json, time, math, requests
+import signal_registry
 from datetime import datetime, timezone
 
 TG_TOKEN = os.environ.get('TG_TOKEN', '')
@@ -652,6 +653,10 @@ def run():
         except Exception as e:
             print(f'  {sop["sym"]}: signal error {e}')
 
+    # Registro dei segnali consigliati (simulazione su carta, nessun ordine)
+    registry = signal_registry.load_signals()
+    registry_changed = False
+
     # Step 4: send notifications (sorted by score, best first)
     signals_found.sort(key=lambda x: format_signal(x[0])[1], reverse=True)
 
@@ -660,6 +665,12 @@ def run():
         print(f'Sending: {sig["sym"]} {sig["direction"]} score={score}')
         send_tg(msg)
         sent_signals[key] = time.time()
+        # Registro: salva il segnale consigliato (anche se poi non viene aperto)
+        try:
+            if signal_registry.log_signal(registry, sig, score, int(time.time() * 1000)):
+                registry_changed = True
+        except Exception as e:
+            print(f'Registro segnali: errore {e}')
         time.sleep(1)
 
     if not signals_found:
@@ -672,6 +683,21 @@ def run():
         monitor_open_trades(state)
     except Exception as e:
         print(f'Trade monitor error: {e}')
+
+    # Step 6: aggiorna l'esito simulato dei segnali ancora aperti nel registro
+    try:
+        bars_cache = {}
+        def fetch_bars(sym):
+            if sym not in bars_cache:
+                bars_cache[sym] = get_klines(sym, '15m', 1000)
+            return bars_cache[sym]
+        before = json.dumps(registry, sort_keys=True)
+        n_closed = signal_registry.update_open_signals(registry, fetch_bars, int(time.time() * 1000))
+        if registry_changed or json.dumps(registry, sort_keys=True) != before:
+            signal_registry.save_signals(registry)
+            print(f'Registro segnali aggiornato ({n_closed} chiusi in questo giro, {len(registry)} totali)')
+    except Exception as e:
+        print(f'Registro segnali: errore {e}')
 
     # Update state
     state['sent_signals'] = sent_signals

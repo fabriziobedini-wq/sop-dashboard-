@@ -61,6 +61,46 @@ def section(title, g, lines, order=None):
             lines.append(f"- **{k}**: {fmt(stats(g[k]))}")
 
 
+def signals_section(trades):
+    """Registro dei segnali consigliati (simulati su carta), con distinzione tra
+    quelli che Fabrizio ha aperto e quelli che non ha aperto."""
+    import os
+    out = ["\n## SEGNALI CONSIGLIATI (registro simulato, anche quelli non aperti)"]
+    if not os.path.exists('signals_log.json'):
+        out.append("- Registro non ancora avviato: parte dal primo segnale notificato dal backend.")
+        return out
+    sigs = json.load(open('signals_log.json'))
+    if not sigs:
+        out.append("- Registro attivo, nessun segnale ancora registrato.")
+        return out
+    real = [t for t in trades if not t.get('pending') or t.get('activatedAt')]
+    def taken(sg):
+        for t in real:
+            if t['sym'] == sg['sym'] and t['dir'] == sg['dir']:
+                dt = (t.get('openedAt') or t['id']) - sg['createdAt']
+                if -3600e3 <= dt <= 24 * 3600e3:
+                    return True
+        return False
+    closed = [s for s in sigs if s['status'] == 'closed']
+    open_ = [s for s in sigs if s['status'] == 'open']
+    first = datetime.fromtimestamp(min(s['createdAt'] for s in sigs) / 1000, timezone.utc).strftime('%d/%m/%Y')
+    out.append(f"- Registrati dal {first}: **{len(sigs)}** · chiusi (simulati) {len(closed)} · ancora aperti {len(open_)}")
+    out.append("- Regole simulate come in dashboard (pareggio al 45% verso TP1, TP1 poi pareggio, TP2). "
+               "Nella stessa candela 15m stop e target -> vale lo stop. Non simulabili: chiusura per bias invertito e manuale.")
+    if closed:
+        out.append(f"- Tutti i segnali: {fmt(stats(closed))}")
+        for label, flag in (("Aperti da te", True), ("NON aperti", False)):
+            sub = [s for s in closed if taken(s) == flag]
+            if sub:
+                out.append(f"- {label}: {fmt(stats(sub))}")
+        from collections import Counter
+        c = Counter(s.get('closeReason') for s in closed)
+        out.append("- Esiti: " + ", ".join(f"{k} {v}" for k, v in c.most_common()))
+    for s in open_:
+        out.append(f"  - aperto: {s['sym']} {s['dir']} @ {s['entry']} (stop {s['stop']}, TP1 {s['tp1']})")
+    return out
+
+
 def build():
     trades = load()
     done = [t for t in trades if t.get('closed') and not t.get('pending')
@@ -84,6 +124,8 @@ def build():
     for t in new:
         d = datetime.fromtimestamp(t['closedAt'] / 1000, timezone.utc).strftime('%d/%m')
         L.append(f"  - {d} {t['sym']} {t['dir']}: {t['pnlPct']:+.2f}% ({t.get('closeReason') or '?'})")
+
+    L.extend(signals_section(trades))
 
     L.append("\n## Storico completo (include il periodo prima del nuovo percorso)")
     L.append(f"- Tutti: {fmt(stats(done))}")
