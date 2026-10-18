@@ -70,7 +70,7 @@ def signals_section(trades):
         out.append("- Registro non ancora avviato: parte dal primo segnale notificato dal backend.")
         return out
     sigs = json.load(open('signals_log.json'))
-    if not sigs:
+    if not [x for x in sigs if not x.get('vetoed')] and not [x for x in sigs if x.get('vetoed')]:
         out.append("- Registro attivo, nessun segnale ancora registrato.")
         return out
     real = [t for t in trades if not t.get('pending') or t.get('activatedAt')]
@@ -81,9 +81,11 @@ def signals_section(trades):
                 if -3600e3 <= dt <= 24 * 3600e3:
                     return True
         return False
+    shadow = [s for s in sigs if s.get('vetoed')]
+    sigs = [s for s in sigs if not s.get('vetoed')]
     closed = [s for s in sigs if s['status'] == 'closed']
     open_ = [s for s in sigs if s['status'] == 'open']
-    first = datetime.fromtimestamp(min(s['createdAt'] for s in sigs) / 1000, timezone.utc).strftime('%d/%m/%Y')
+    first = datetime.fromtimestamp(min(s['createdAt'] for s in (sigs + shadow)) / 1000, timezone.utc).strftime('%d/%m/%Y')
     out.append(f"- Registrati dal {first}: **{len(sigs)}** · chiusi (simulati) {len(closed)} · ancora aperti {len(open_)}")
     out.append("- Regole simulate come in dashboard (pareggio al 45% verso TP1, TP1 poi pareggio, TP2). "
                "Nella stessa candela 15m stop e target -> vale lo stop. Non simulabili: chiusura per bias invertito e manuale.")
@@ -98,6 +100,39 @@ def signals_section(trades):
         out.append("- Esiti: " + ", ".join(f"{k} {v}" for k, v in c.most_common()))
     for s in open_:
         out.append(f"  - aperto: {s['sym']} {s['dir']} @ {s['entry']} (stop {s['stop']}, TP1 {s['tp1']})")
+    # segnali bloccati dal veto MA20 (non notificati): se perdono, il veto fa il suo lavoro
+    sh_closed = [s for s in shadow if s['status'] == 'closed']
+    out.append(f"- Bloccati dal veto MA20 (non notificati, simulati lo stesso): {len(shadow)} registrati, {len(sh_closed)} chiusi")
+    if sh_closed:
+        out.append(f"  - Se li avessi presi: {fmt(stats(sh_closed))}")
+        out.append("  - Lettura: risultato medio negativo = il veto evita perdite; positivo = il veto toglie occasioni.")
+    return out
+
+
+def market_state_section():
+    """Quanto tempo il mercato è stato bullish / bearish / indeciso (da state_log.jsonl)."""
+    import os
+    out = ["\n## STATO DEL MERCATO NEL TEMPO (macro del backend)"]
+    if not os.path.exists('state_log.jsonl'):
+        out.append("- Registro non ancora avviato.")
+        return out
+    rows = [json.loads(l) for l in open('state_log.jsonl') if l.strip()]
+    if len(rows) < 2:
+        out.append(f"- Solo {len(rows)} rilevazione: servono più dati. Ultima macro: {rows[0]['macro'] if rows else '?'}")
+        return out
+    from collections import defaultdict
+    tot = defaultdict(float)
+    for a, b in zip(rows, rows[1:]):
+        tot[a['macro']] += (b['t'] - a['t']) / 3.6e6
+    import time as _t
+    tot[rows[-1]['macro']] += max(0, _t.time() * 1000 - rows[-1]['t']) / 3.6e6   # stato attuale fino ad ora
+    span = sum(tot.values())
+    if span <= 0:
+        out.append("- Rilevazioni troppo ravvicinate per una percentuale.")
+        return out
+    first = datetime.fromtimestamp(rows[0]['t'] / 1000, timezone.utc).strftime('%d/%m')
+    out.append(f"- Dal {first}, {span:.0f} ore osservate: " +
+               ", ".join(f"{k} {100 * v / span:.0f}%" for k, v in sorted(tot.items(), key=lambda x: -x[1])))
     return out
 
 
@@ -126,6 +161,7 @@ def build():
         L.append(f"  - {d} {t['sym']} {t['dir']}: {t['pnlPct']:+.2f}% ({t.get('closeReason') or '?'})")
 
     L.extend(signals_section(trades))
+    L.extend(market_state_section())
 
     L.append("\n## Storico completo (include il periodo prima del nuovo percorso)")
     L.append(f"- Tutti: {fmt(stats(done))}")

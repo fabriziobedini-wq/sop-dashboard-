@@ -46,7 +46,8 @@ def log_signal(signals, sig, score, now_ms):
     """Aggiunge il segnale al registro. Ritorna True se aggiunto.
     Non duplica: se per lo stesso asset+direzione c'è già un segnale ancora aperto, salta."""
     for s in signals:
-        if s['sym'] == sig['sym'] and s['dir'] == sig['direction'] and s['status'] == 'open':
+        if (s['sym'] == sig['sym'] and s['dir'] == sig['direction'] and s['status'] == 'open'
+                and s.get('vetoed') == sig.get('vetoed')):
             return False
     sop = sig.get('sop') or {}
     signals.append({
@@ -69,6 +70,7 @@ def log_signal(signals, sig, score, now_ms):
         'bias': sop.get('bias'),
         'solidity': sop.get('solidity'),
         'regime': sop.get('regime'),
+        'vetoed': sig.get('vetoed'),
         'status': 'open',
         'tp1Hit': False,
         'breakevenSet': False,
@@ -154,3 +156,30 @@ def update_open_signals(signals, fetch_bars, now_ms):
         if s['status'] == 'closed':
             closed += 1
     return closed
+
+
+# ── Stato del mercato nel tempo ───────────────────────────────────────────
+STATE_LOG = 'state_log.jsonl'
+
+
+def log_state(all_sop, macro, path=STATE_LOG, now_ms=None):
+    """Aggiunge una riga a state_log.jsonl con macro e (bias, solidità, regime) di ogni asset,
+    ma solo se è cambiato qualcosa rispetto all'ultima riga. Serve a rispondere, coi dati,
+    a domande come 'il mercato è sempre indeciso?'."""
+    import time as _t
+    snap = {'macro': macro,
+            'assets': {c['sym']: [c.get('bias'), c.get('solidity'), c.get('regime')] for c in all_sop}}
+    last = None
+    try:
+        with open(path) as f:
+            for line in f:
+                if line.strip():
+                    last = json.loads(line)
+    except Exception:
+        last = None
+    if last and last.get('macro') == snap['macro'] and last.get('assets') == snap['assets']:
+        return False
+    snap['t'] = now_ms or int(_t.time() * 1000)
+    with open(path, 'a') as f:
+        f.write(json.dumps(snap, ensure_ascii=False) + '\n')
+    return True

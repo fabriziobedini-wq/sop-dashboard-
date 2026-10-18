@@ -1,4 +1,4 @@
-# Report affidabilità SOP — 2026-10-18 07:25 UTC
+# Report affidabilità SOP — 2026-10-18 07:29 UTC
 
 Trade chiusi attivati: **60** · mai attivati (entry non raggiunta): 11 · aperti ora: 0 · in attesa: 0
 
@@ -13,6 +13,9 @@ Trade chiusi attivati: **60** · mai attivati (entry non raggiunta): 11 · apert
 
 ## SEGNALI CONSIGLIATI (registro simulato, anche quelli non aperti)
 - Registro non ancora avviato: parte dal primo segnale notificato dal backend.
+
+## STATO DEL MERCATO NEL TEMPO (macro del backend)
+- Registro non ancora avviato.
 
 ## Storico completo (include il periodo prima del nuovo percorso)
 - Tutti: n= 60  WR= 43.3%  pnl tot= -35.77%  medio=-0.60%  win medio=+5.70%  loss medio= -5.41%

@@ -394,10 +394,13 @@ def find_signal(sop, macro):
     # WR 50%) sono un campione troppo piccolo per validarli come "buoni", ma
     # nessuna prova che gli short contro-trend funzionino. Veto: niente
     # segnale short se il prezzo è sopra la SMA20 a 4h.
+    ma20_veto = False
     if direction == 'short':
         sma20 = calc_sma20(klines_4h)
         if sma20 is not None and price > sma20:
-            return None
+            # NON si scarta più subito: il segnale viene comunque costruito e passato a run(),
+            # che NON lo notifica ma lo registra come "ombra" per misurare se il veto funziona.
+            ma20_veto = True
 
     atr_4h = calc_atr(klines_4h)
     levels = calc_support_resistance(klines_4h)
@@ -438,6 +441,7 @@ def find_signal(sop, macro):
         'pattern': pattern['pattern'], 'pattern_strength': pattern['strength'],
         'timeframe': timeframe, 'key_level': key_level,
         'vol_spike': vol_spike, 'sop': sop, 'macro': macro,
+        'vetoed': 'ma20' if ma20_veto else None,
         **levels_data
     }
 
@@ -637,11 +641,27 @@ def run():
     macro = calc_macro_context(all_sop)
     print(f'Macro: {macro}')
 
+    # Registro dei segnali consigliati (simulazione su carta, nessun ordine)
+    registry = signal_registry.load_signals()
+    registry_changed = False
+
     # Step 3: find price action signals
     signals_found = []
     for sop in all_sop:
         try:
             sig = find_signal(sop, macro)
+            if sig and sig.get('vetoed'):
+                # Segnale bloccato dal veto: solo registro "ombra", niente Telegram
+                vkey = 'veto_' + signal_key(sig)
+                if vkey not in sent_signals:
+                    sent_signals[vkey] = time.time()
+                    try:
+                        if signal_registry.log_signal(registry, sig, 0, int(time.time() * 1000)):
+                            registry_changed = True
+                            print(f'  🚫 VETATO ({sig["vetoed"]}): {sig["sym"]} {sig["direction"]} registrato come ombra')
+                    except Exception as e:
+                        print(f'Registro (ombra): errore {e}')
+                sig = None
             if sig:
                 key = signal_key(sig)
                 if key not in sent_signals:
@@ -652,10 +672,6 @@ def run():
             time.sleep(0.3)
         except Exception as e:
             print(f'  {sop["sym"]}: signal error {e}')
-
-    # Registro dei segnali consigliati (simulazione su carta, nessun ordine)
-    registry = signal_registry.load_signals()
-    registry_changed = False
 
     # Step 4: send notifications (sorted by score, best first)
     signals_found.sort(key=lambda x: format_signal(x[0])[1], reverse=True)
@@ -698,6 +714,12 @@ def run():
             print(f'Registro segnali aggiornato ({n_closed} chiusi in questo giro, {len(registry)} totali)')
     except Exception as e:
         print(f'Registro segnali: errore {e}')
+
+    # Step 7: registro dello stato del mercato (solo quando cambia qualcosa)
+    try:
+        signal_registry.log_state(all_sop, macro)
+    except Exception as e:
+        print(f'Registro stato: errore {e}')
 
     # Update state
     state['sent_signals'] = sent_signals

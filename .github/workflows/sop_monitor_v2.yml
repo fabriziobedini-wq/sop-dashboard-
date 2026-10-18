@@ -39,11 +39,11 @@ jobs:
           key: sop-state-${{ github.run_id }}
       - name: Commit signal registry
         run: |
-          if [ -n "$(git status --porcelain signals_log.json)" ]; then
+          if [ -n "$(git status --porcelain signals_log.json state_log.jsonl)" ]; then
             git config user.name "sop-monitor"
             git config user.email "sop-monitor@users.noreply.github.com"
-            git add signals_log.json
-            git commit -m "Registro segnali (automatico)"
+            for f in signals_log.json state_log.jsonl; do [ -f "$f" ] && git add "$f"; done
+            git commit -m "Registro segnali e stato (automatico)"
             for i in 1 2 3; do
               git pull --rebase -q origin main && git push -q origin HEAD:main && break
               sleep 5
