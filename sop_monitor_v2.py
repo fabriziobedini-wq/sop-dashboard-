@@ -39,6 +39,9 @@ def send_tg(msg):
 def bn_get(path, params=None):
     try:
         r = requests.get(f'{BINANCE_BASE}{path}', params=params or {}, timeout=10)
+        if r.status_code != 200 and not globals().get('_BN_WARNED'):
+            globals()['_BN_WARNED'] = True
+            print(f'::warning::Binance {path} -> HTTP {r.status_code}: {r.text[:160]}')
         return r.json()
     except Exception as e:
         print(f'Binance error {path}: {e}')
