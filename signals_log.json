@@ -5,7 +5,7 @@
   "dir": "short",
   "createdAt": 1792309751800,
   "entry": 720.6,
-  "stop": 731.409,
+  "stop": 720.6,
   "stopInitial": 731.409,
   "tp1": 693.5775,
   "tp2": 677.364,
@@ -22,8 +22,8 @@
   "vetoed": null,
   "status": "open",
   "tp1Hit": false,
-  "breakevenSet": false,
-  "checkedUntil": 1792350000000
+  "breakevenSet": true,
+  "checkedUntil": 1792358100000
  },
  {
   "id": 1792309753218,
@@ -31,7 +31,7 @@
   "dir": "short",
   "createdAt": 1792309753218,
   "entry": 103.23,
-  "stop": 105.6075,
+  "stop": 103.23,
   "stopInitial": 105.6075,
   "tp1": 97.28625,
   "tp2": 93.72,
@@ -48,8 +48,8 @@
   "vetoed": null,
   "status": "open",
   "tp1Hit": false,
-  "breakevenSet": false,
-  "checkedUntil": 1792350000000
+  "breakevenSet": true,
+  "checkedUntil": 1792358100000
  },
  {
   "id": 1792309754630,
@@ -57,7 +57,7 @@
   "dir": "short",
   "createdAt": 1792309754630,
   "entry": 1.292,
-  "stop": 1.318839,
+  "stop": 1.292,
   "stopInitial": 1.318839,
   "tp1": 1.224902,
   "tp2": 1.184644,
@@ -74,8 +74,8 @@
   "vetoed": null,
   "status": "open",
   "tp1Hit": false,
-  "breakevenSet": false,
-  "checkedUntil": 1792350000000
+  "breakevenSet": true,
+  "checkedUntil": 1792358100000
  },
  {
   "id": 1792311564528,
@@ -83,7 +83,7 @@
   "dir": "short",
   "createdAt": 1792311564528,
   "entry": 1123.76,
-  "stop": 1176.923214,
+  "stop": 1123.76,
   "stopInitial": 1176.923214,
   "tp1": 990.851965,
   "tp2": 911.107144,
@@ -100,8 +100,8 @@
   "vetoed": null,
   "status": "open",
   "tp1Hit": false,
-  "breakevenSet": false,
-  "checkedUntil": 1792350000000
+  "breakevenSet": true,
+  "checkedUntil": 1792358100000
  },
  {
   "id": 1792317180995,
@@ -127,7 +127,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1792350000000
+  "checkedUntil": 1792358100000
  },
  {
   "id": 1792342418050,
@@ -153,7 +153,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792350000000
+  "checkedUntil": 1792358100000
  },
  {
   "id": 1792342421089,
@@ -179,7 +179,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792350000000
+  "checkedUntil": 1792358100000
  },
  {
   "id": 1792342424028,
@@ -205,7 +205,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792350000000
+  "checkedUntil": 1792358100000
  },
  {
   "id": 1792342425481,
@@ -231,6 +231,6 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792350000000
+  "checkedUntil": 1792358100000
  }
 ]
