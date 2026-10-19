@@ -233,7 +233,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792392300000
+  "checkedUntil": 1792418400000
  },
  {
   "id": 1792342425481,
@@ -289,7 +289,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792392300000
+  "checkedUntil": 1792418400000
  },
  {
   "id": 1792373544845,
@@ -315,7 +315,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792392300000
+  "checkedUntil": 1792418400000
  },
  {
   "id": 1792373547018,
@@ -341,7 +341,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792392300000
+  "checkedUntil": 1792418400000
  },
  {
   "id": 1792392482372,
@@ -367,7 +367,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792392482372
+  "checkedUntil": 1792418400000
  },
  {
   "id": 1792392483779,
@@ -393,6 +393,110 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792392483779
+  "checkedUntil": 1792418400000
+ },
+ {
+  "id": 1792419047898,
+  "sym": "SOL",
+  "dir": "short",
+  "createdAt": 1792419047898,
+  "entry": 104.02,
+  "stop": 106.837857,
+  "stopInitial": 106.837857,
+  "tp1": 96.975357,
+  "tp2": 92.748572,
+  "rr": 2.5,
+  "stopPct": 2.71,
+  "pattern": "Rejection EMA50",
+  "patternStrength": "forte",
+  "timeframe": "4h",
+  "score": 5,
+  "macro": "neutral",
+  "bias": "short",
+  "solidity": "moderato",
+  "regime": "structural",
+  "vetoed": null,
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1792419047898
+ },
+ {
+  "id": 1792419049387,
+  "sym": "ETH",
+  "dir": "short",
+  "createdAt": 1792419049387,
+  "entry": 2393.88,
+  "stop": 2450.913214,
+  "stopInitial": 2450.913214,
+  "tp1": 2251.296965,
+  "tp2": 2165.747144,
+  "rr": 2.5,
+  "stopPct": 2.38,
+  "pattern": "Rejection EMA50",
+  "patternStrength": "forte",
+  "timeframe": "4h",
+  "score": 4,
+  "macro": "neutral",
+  "bias": "short",
+  "solidity": "moderato",
+  "regime": "structural",
+  "vetoed": null,
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1792419049387
+ },
+ {
+  "id": 1792419052424,
+  "sym": "ZEC",
+  "dir": "short",
+  "createdAt": 1792419052424,
+  "entry": 1125.98,
+  "stop": 1193.039643,
+  "stopInitial": 1193.039643,
+  "tp1": 958.330892,
+  "tp2": 857.741428,
+  "rr": 2.5,
+  "stopPct": 5.96,
+  "pattern": "Rejection EMA50",
+  "patternStrength": "forte",
+  "timeframe": "4h",
+  "score": 4,
+  "macro": "neutral",
+  "bias": "short",
+  "solidity": "solido",
+  "regime": "mixed",
+  "vetoed": null,
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1792419052424
+ },
+ {
+  "id": 1792419053903,
+  "sym": "HYPE",
+  "dir": "short",
+  "createdAt": 1792419053903,
+  "entry": 78.39,
+  "stop": 80.668393,
+  "stopInitial": 80.668393,
+  "tp1": 72.694018,
+  "tp2": 69.276428,
+  "rr": 2.5,
+  "stopPct": 2.91,
+  "pattern": "Engulfing Bearish",
+  "patternStrength": "moderata",
+  "timeframe": "4h",
+  "score": 3,
+  "macro": "neutral",
+  "bias": "short",
+  "solidity": "moderato",
+  "regime": "structural",
+  "vetoed": null,
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1792419053903
  }
 ]
