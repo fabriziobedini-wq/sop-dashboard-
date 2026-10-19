@@ -140,10 +140,14 @@
   "solidity": "moderato",
   "regime": "structural",
   "vetoed": "ma20",
-  "status": "open",
+  "status": "closed",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1792373400000
+  "checkedUntil": 1792374300000,
+  "closeReason": "breakeven",
+  "closedAt": 1792373400000,
+  "closePrice": 2426.03,
+  "pnlPct": -0.0
  },
  {
   "id": 1792342418050,
@@ -229,7 +233,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792373400000
+  "checkedUntil": 1792392300000
  },
  {
   "id": 1792342425481,
@@ -285,7 +289,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792373542336
+  "checkedUntil": 1792392300000
  },
  {
   "id": 1792373544845,
@@ -311,7 +315,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792373544845
+  "checkedUntil": 1792392300000
  },
  {
   "id": 1792373547018,
@@ -337,6 +341,58 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792373547018
+  "checkedUntil": 1792392300000
+ },
+ {
+  "id": 1792392482372,
+  "sym": "BNB",
+  "dir": "long",
+  "createdAt": 1792392482372,
+  "entry": 727.4,
+  "stop": 716.489,
+  "stopInitial": 716.489,
+  "tp1": 754.6775,
+  "tp2": 771.044,
+  "rr": 2.5,
+  "stopPct": 1.5,
+  "pattern": "Bounce EMA20",
+  "patternStrength": "forte",
+  "timeframe": "4h",
+  "score": 5,
+  "macro": "bullish",
+  "bias": "long",
+  "solidity": "moderato",
+  "regime": "structural",
+  "vetoed": null,
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1792392482372
+ },
+ {
+  "id": 1792392483779,
+  "sym": "BTC",
+  "dir": "long",
+  "createdAt": 1792392483779,
+  "entry": 82786.1,
+  "stop": 81544.3085,
+  "stopInitial": 81544.3085,
+  "tp1": 85890.57875,
+  "tp2": 87753.266,
+  "rr": 2.5,
+  "stopPct": 1.5,
+  "pattern": "Bounce EMA20",
+  "patternStrength": "forte",
+  "timeframe": "4h",
+  "score": 4,
+  "macro": "bullish",
+  "bias": "long",
+  "solidity": "moderato",
+  "regime": "structural",
+  "vetoed": null,
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1792392483779
  }
 ]
