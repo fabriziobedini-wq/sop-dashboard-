@@ -1,4 +1,4 @@
-# Report affidabilità SOP — 2026-10-20 17:23 UTC
+# Report affidabilità SOP — 2026-10-20 18:27 UTC
 
 Trade chiusi attivati: **60** · mai attivati (entry non raggiunta): 11 · aperti ora: 0 · in attesa: 0
 
@@ -25,7 +25,7 @@ Trade chiusi attivati: **60** · mai attivati (entry non raggiunta): 11 · apert
   - Lettura: risultato medio negativo = il veto evita perdite; positivo = il veto toglie occasioni.
 
 ## STATO DEL MERCATO NEL TEMPO (macro del backend)
-- Dal 18/10, 58 ore osservate: neutral 38%, bullish 38%, bearish 24%
+- Dal 18/10, 59 ore osservate: bullish 39%, neutral 38%, bearish 24%
 
 ## Storico completo (include il periodo prima del nuovo percorso)
 - Tutti: n= 60  WR= 43.3%  pnl tot= -35.77%  medio=-0.60%  win medio=+5.70%  loss medio= -5.41%

@@ -233,7 +233,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792516500000
+  "checkedUntil": 1792520100000
  },
  {
   "id": 1792342425481,
@@ -379,7 +379,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1792516500000
+  "checkedUntil": 1792520100000
  },
  {
   "id": 1792392483779,
@@ -735,6 +735,6 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792517009310
+  "checkedUntil": 1792520100000
  }
 ]
