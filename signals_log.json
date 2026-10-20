@@ -233,7 +233,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792529100000
+  "checkedUntil": 1792538100000
  },
  {
   "id": 1792342425481,
@@ -379,7 +379,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1792529100000
+  "checkedUntil": 1792538100000
  },
  {
   "id": 1792392483779,
@@ -735,7 +735,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792529100000
+  "checkedUntil": 1792538100000
  },
  {
   "id": 1792529104216,
@@ -761,7 +761,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792529104216
+  "checkedUntil": 1792538100000
  },
  {
   "id": 1792529107328,
@@ -787,7 +787,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792529107328
+  "checkedUntil": 1792538100000
  },
  {
   "id": 1792529108848,
@@ -813,7 +813,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792529108848
+  "checkedUntil": 1792538100000
  },
  {
   "id": 1792529110465,
@@ -839,7 +839,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792529110465
+  "checkedUntil": 1792538100000
  },
  {
   "id": 1792529115126,
@@ -865,6 +865,32 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792529115126
+  "checkedUntil": 1792538100000
+ },
+ {
+  "id": 1792538744922,
+  "sym": "XRP",
+  "dir": "long",
+  "createdAt": 1792538744922,
+  "entry": 1.3357,
+  "stop": 1.303664,
+  "stopInitial": 1.303664,
+  "tp1": 1.41579,
+  "tp2": 1.463844,
+  "rr": 2.5,
+  "stopPct": 2.4,
+  "pattern": "Bounce EMA20",
+  "patternStrength": "forte",
+  "timeframe": "4h",
+  "score": 4,
+  "macro": "bullish",
+  "bias": "long",
+  "solidity": "moderato",
+  "regime": "structural",
+  "vetoed": null,
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1792538744922
  }
 ]
