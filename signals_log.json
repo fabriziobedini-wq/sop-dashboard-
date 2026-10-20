@@ -233,7 +233,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792498500000
+  "checkedUntil": 1792516500000
  },
  {
   "id": 1792342425481,
@@ -286,10 +286,14 @@
   "solidity": "moderato",
   "regime": "structural",
   "vetoed": "ma20",
-  "status": "open",
+  "status": "closed",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792498500000
+  "checkedUntil": 1792505700000,
+  "closeReason": "stop",
+  "closedAt": 1792504800000,
+  "closePrice": 107.365714,
+  "pnlPct": -2.4
  },
  {
   "id": 1792373544845,
@@ -312,10 +316,14 @@
   "solidity": "moderato",
   "regime": "mixed",
   "vetoed": "ma20",
-  "status": "open",
+  "status": "closed",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792498500000
+  "checkedUntil": 1792505700000,
+  "closeReason": "stop",
+  "closedAt": 1792504800000,
+  "closePrice": 1219.585357,
+  "pnlPct": -5.08
  },
  {
   "id": 1792373547018,
@@ -338,10 +346,14 @@
   "solidity": "moderato",
   "regime": "structural",
   "vetoed": null,
-  "status": "open",
+  "status": "closed",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792498500000
+  "checkedUntil": 1792508400000,
+  "closeReason": "stop",
+  "closedAt": 1792507500000,
+  "closePrice": 0.081987,
+  "pnlPct": -2.78
  },
  {
   "id": 1792392482372,
@@ -349,7 +361,7 @@
   "dir": "long",
   "createdAt": 1792392482372,
   "entry": 727.4,
-  "stop": 716.489,
+  "stop": 727.4,
   "stopInitial": 716.489,
   "tp1": 754.6775,
   "tp2": 771.044,
@@ -366,8 +378,8 @@
   "vetoed": null,
   "status": "open",
   "tp1Hit": false,
-  "breakevenSet": false,
-  "checkedUntil": 1792498500000
+  "breakevenSet": true,
+  "checkedUntil": 1792516500000
  },
  {
   "id": 1792392483779,
@@ -420,10 +432,14 @@
   "solidity": "moderato",
   "regime": "structural",
   "vetoed": null,
-  "status": "open",
+  "status": "closed",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792498500000
+  "checkedUntil": 1792505700000,
+  "closeReason": "stop",
+  "closedAt": 1792504800000,
+  "closePrice": 106.837857,
+  "pnlPct": -2.71
  },
  {
   "id": 1792419049387,
@@ -446,10 +462,14 @@
   "solidity": "moderato",
   "regime": "structural",
   "vetoed": null,
-  "status": "open",
+  "status": "closed",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792498500000
+  "checkedUntil": 1792505700000,
+  "closeReason": "stop",
+  "closedAt": 1792504800000,
+  "closePrice": 2450.913214,
+  "pnlPct": -2.38
  },
  {
   "id": 1792419052424,
@@ -472,10 +492,14 @@
   "solidity": "solido",
   "regime": "mixed",
   "vetoed": null,
-  "status": "open",
+  "status": "closed",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792498500000
+  "checkedUntil": 1792505700000,
+  "closeReason": "stop",
+  "closedAt": 1792504800000,
+  "closePrice": 1193.039643,
+  "pnlPct": -5.96
  },
  {
   "id": 1792419053903,
@@ -498,10 +522,14 @@
   "solidity": "moderato",
   "regime": "structural",
   "vetoed": null,
-  "status": "open",
+  "status": "closed",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792498500000
+  "checkedUntil": 1792505700000,
+  "closeReason": "stop",
+  "closedAt": 1792504800000,
+  "closePrice": 80.668393,
+  "pnlPct": -2.91
  },
  {
   "id": 1792439601135,
@@ -524,10 +552,14 @@
   "solidity": "moderato",
   "regime": "structural",
   "vetoed": null,
-  "status": "open",
+  "status": "closed",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792498500000
+  "checkedUntil": 1792505700000,
+  "closeReason": "stop",
+  "closedAt": 1792504800000,
+  "closePrice": 1.330032,
+  "pnlPct": -2.45
  },
  {
   "id": 1792451558242,
@@ -550,10 +582,14 @@
   "solidity": "moderato",
   "regime": "structural",
   "vetoed": "ma20",
-  "status": "open",
+  "status": "closed",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792498500000
+  "checkedUntil": 1792505700000,
+  "closeReason": "stop",
+  "closedAt": 1792504800000,
+  "closePrice": 1.335668,
+  "pnlPct": -2.39
  },
  {
   "id": 1792451560484,
@@ -576,10 +612,14 @@
   "solidity": "moderato",
   "regime": "structural",
   "vetoed": "ma20",
-  "status": "open",
+  "status": "closed",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792498500000
+  "checkedUntil": 1792505700000,
+  "closeReason": "stop",
+  "closedAt": 1792504800000,
+  "closePrice": 81.595357,
+  "pnlPct": -3.01
  },
  {
   "id": 1792451561247,
@@ -602,10 +642,14 @@
   "solidity": "moderato",
   "regime": "structural",
   "vetoed": "ma20",
-  "status": "open",
+  "status": "closed",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792498500000
+  "checkedUntil": 1792507500000,
+  "closeReason": "stop",
+  "closedAt": 1792506600000,
+  "closePrice": 0.081942,
+  "pnlPct": -2.98
  },
  {
   "id": 1792479124899,
@@ -628,10 +672,14 @@
   "solidity": "moderato",
   "regime": "structural",
   "vetoed": "ma20",
-  "status": "open",
+  "status": "closed",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792498500000
+  "checkedUntil": 1792506600000,
+  "closeReason": "stop",
+  "closedAt": 1792505700000,
+  "closePrice": 740.6455,
+  "pnlPct": -1.5
  },
  {
   "id": 1792483615371,
@@ -654,9 +702,39 @@
   "solidity": "moderato",
   "regime": "structural",
   "vetoed": null,
+  "status": "closed",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1792505700000,
+  "closeReason": "stop",
+  "closedAt": 1792504800000,
+  "closePrice": 82563.6525,
+  "pnlPct": -1.5
+ },
+ {
+  "id": 1792517009310,
+  "sym": "HYPE",
+  "dir": "long",
+  "createdAt": 1792517009310,
+  "entry": 80.074,
+  "stop": 77.539536,
+  "stopInitial": 77.539536,
+  "tp1": 86.41016,
+  "tp2": 90.211856,
+  "rr": 2.5,
+  "stopPct": 3.17,
+  "pattern": "Engulfing Bullish",
+  "patternStrength": "forte",
+  "timeframe": "4h",
+  "score": 5,
+  "macro": "bullish",
+  "bias": "long",
+  "solidity": "moderato",
+  "regime": "structural",
+  "vetoed": null,
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792498500000
+  "checkedUntil": 1792517009310
  }
 ]

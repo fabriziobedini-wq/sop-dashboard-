@@ -1,4 +1,4 @@
-# Report affidabilità SOP — 2026-10-20 12:24 UTC
+# Report affidabilità SOP — 2026-10-20 17:23 UTC
 
 Trade chiusi attivati: **60** · mai attivati (entry non raggiunta): 11 · aperti ora: 0 · in attesa: 0
 
@@ -12,26 +12,20 @@ Trade chiusi attivati: **60** · mai attivati (entry non raggiunta): 11 · apert
   - 13/10 TRX long: -1.47% (stop)
 
 ## SEGNALI CONSIGLIATI (registro simulato, anche quelli non aperti)
-- Registrati dal 18/10/2026: **17** · chiusi (simulati) 8 · ancora aperti 9
+- Registrati dal 18/10/2026: **18** · chiusi (simulati) 15 · ancora aperti 3
 - Regole simulate come in dashboard (pareggio al 45% verso TP1, TP1 poi pareggio, TP2). Nella stessa candela 15m stop e target -> vale lo stop. Non simulabili: chiusura per bias invertito e manuale.
-- Tutti i segnali: n=  8  WR=  0.0%  pnl tot=  -7.69%  medio=-0.96%  win medio=+0.00%  loss medio= -0.96% (campione piccolo)
-- NON aperti: n=  8  WR=  0.0%  pnl tot=  -7.69%  medio=-0.96%  win medio=+0.00%  loss medio= -0.96% (campione piccolo)
-- Esiti: breakeven 4, stop 4
+- Tutti i segnali: n= 15  WR=  0.0%  pnl tot= -28.38%  medio=-1.89%  win medio=+0.00%  loss medio= -1.89%
+- NON aperti: n= 15  WR=  0.0%  pnl tot= -28.38%  medio=-1.89%  win medio=+0.00%  loss medio= -1.89%
+- Esiti: stop 11, breakeven 4
   - aperto: TRX short @ 0.3323 (stop 0.337284, TP1 0.31984)
-  - aperto: DOGE short @ 0.07977 (stop 0.081987, TP1 0.074227)
-  - aperto: BNB long @ 727.4 (stop 716.489, TP1 754.6775)
-  - aperto: SOL short @ 104.02 (stop 106.837857, TP1 96.975357)
-  - aperto: ETH short @ 2393.88 (stop 2450.913214, TP1 2251.296965)
-  - aperto: ZEC short @ 1125.98 (stop 1193.039643, TP1 958.330892)
-  - aperto: HYPE short @ 78.39 (stop 80.668393, TP1 72.694018)
-  - aperto: XRP short @ 1.2982 (stop 1.330032, TP1 1.21862)
-  - aperto: BTC short @ 81343.5 (stop 82563.6525, TP1 78293.11875)
-- Bloccati dal veto MA20 (non notificati, simulati lo stesso): 7 registrati, 1 chiusi
-  - Se li avessi presi: n=  1  WR=  0.0%  pnl tot=  +0.00%  medio=+0.00%  win medio=+0.00%  loss medio= +0.00% (campione piccolo)
+  - aperto: BNB long @ 727.4 (stop 727.4, TP1 754.6775)
+  - aperto: HYPE long @ 80.074 (stop 77.539536, TP1 86.41016)
+- Bloccati dal veto MA20 (non notificati, simulati lo stesso): 7 registrati, 7 chiusi
+  - Se li avessi presi: n=  7  WR=  0.0%  pnl tot= -17.36%  medio=-2.48%  win medio=+0.00%  loss medio= -2.48% (campione piccolo)
   - Lettura: risultato medio negativo = il veto evita perdite; positivo = il veto toglie occasioni.
 
 ## STATO DEL MERCATO NEL TEMPO (macro del backend)
-- Dal 18/10, 53 ore osservate: neutral 42%, bullish 41%, bearish 17%
+- Dal 18/10, 58 ore osservate: neutral 38%, bullish 38%, bearish 24%
 
 ## Storico completo (include il periodo prima del nuovo percorso)
 - Tutti: n= 60  WR= 43.3%  pnl tot= -35.77%  medio=-0.60%  win medio=+5.70%  loss medio= -5.41%
