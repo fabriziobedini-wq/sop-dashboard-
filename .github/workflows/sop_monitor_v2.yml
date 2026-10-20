@@ -37,13 +37,17 @@ jobs:
         with:
           path: sop_state.json
           key: sop-state-${{ github.run_id }}
-      - name: Commit signal registry
+      - name: Commit signal registry and report
         run: |
-          if [ -n "$(git status --porcelain signals_log.json state_log.jsonl trade_checks.json)" ]; then
+          # rigenera il report di affidabilità (la pagina SOP lo legge da qui); se cambia solo la data in testa, lo scarta
+          python3 reliability_report.py --write || echo "::warning::reliability_report non eseguito"
+          if git diff -I'^# Report affidabilità' --quiet -- RELIABILITY.md; then git checkout -q -- RELIABILITY.md 2>/dev/null || true; fi
+          FILES="signals_log.json state_log.jsonl trade_checks.json RELIABILITY.md reliability_history.csv"
+          if [ -n "$(git status --porcelain $FILES)" ]; then
             git config user.name "sop-monitor"
             git config user.email "sop-monitor@users.noreply.github.com"
-            for f in signals_log.json state_log.jsonl trade_checks.json; do [ -f "$f" ] && git add "$f"; done
-            git commit -m "Registro segnali e stato (automatico)"
+            for f in $FILES; do [ -f "$f" ] && git add "$f"; done
+            git commit -m "Registro segnali, stato e report (automatico)"
             for i in 1 2 3; do
               git pull --rebase -q origin main && git push -q origin HEAD:main && break
               sleep 5
