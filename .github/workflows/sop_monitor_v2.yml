@@ -42,7 +42,7 @@ jobs:
           # rigenera il report di affidabilità (la pagina SOP lo legge da qui); se cambia solo la data in testa, lo scarta
           python3 reliability_report.py --write || echo "::warning::reliability_report non eseguito"
           if git diff -I'^# Report affidabilità' --quiet -- RELIABILITY.md; then git checkout -q -- RELIABILITY.md 2>/dev/null || true; fi
-          FILES="signals_log.json state_log.jsonl trade_checks.json RELIABILITY.md reliability_history.csv"
+          FILES="signals_log.json state_log.jsonl trade_checks.json RELIABILITY.md reliability_history.csv status.json"
           if [ -n "$(git status --porcelain $FILES)" ]; then
             git config user.name "sop-monitor"
             git config user.email "sop-monitor@users.noreply.github.com"

@@ -334,6 +334,21 @@ body{background:var(--bg);color:var(--text);font-family:'SF Mono','Fira Code',mo
     </div>
   </div>
 
+  <!-- MONITOR SOP: tutto in un posto -->
+  <div id="monitorSection">
+    <div class="stitle">📡 Monitor SOP — stato, segnali consigliati e risultati</div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 16px">
+      <div id="monStatus" style="font-size:11px;margin-bottom:10px;color:var(--text2)">Caricamento…</div>
+      <div id="monSummary" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px"></div>
+      <div class="stitle" style="margin-top:6px">Aperti (simulati anche se non li apri)</div>
+      <div id="monOpen" style="overflow-x:auto"></div>
+      <div class="stitle" style="margin-top:14px">Ultimi chiusi</div>
+      <div id="monClosed" style="overflow-x:auto"></div>
+      <div id="monTrades"></div>
+      <div style="margin-top:8px;font-size:9px;color:var(--text3)">Fonte: programma su GitHub (dati OKX), aggiornato a ogni giro. Simulazione su carta: nessun ordine, nessun broker. "ombra" = segnale bloccato dal filtro MA20, non inviato su Telegram.</div>
+    </div>
+  </div>
+
   <!-- AFFIDABILITA' (da GitHub) -->
   <div id="reliabilitySection">
     <div class="stitle">🧪 Affidabilità del sistema — report automatico da GitHub</div>
@@ -2057,6 +2072,53 @@ async function testTG(){
 
 // ── AFFIDABILITA': report dal repo + chiusure da controllo prezzi ──────────
 const REPO_RAW='https://raw.githubusercontent.com/fabriziobedini-wq/sop-dashboard-/main/';
+
+async function loadMonitor(){
+  const $=id=>document.getElementById(id);
+  const esc=v=>String(v==null?'':v).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const fmt=n=>{n=+n;return !isFinite(n)?'-':(Math.abs(n)>=100?n.toFixed(1):Math.abs(n)>=1?n.toFixed(3):n.toPrecision(4))};
+  const pc=v=>v==null||!isFinite(v)?'-':(v>=0?'+':'')+(+v).toFixed(2)+'%';
+  const col=v=>v>0?'var(--long)':v<0?'var(--short)':'var(--text2)';
+  const ago=ms=>{const m=Math.round((Date.now()-ms)/60000);return m<90?m+' min fa':m<2880?Math.round(m/60)+' h fa':Math.round(m/1440)+' g fa'};
+  const dt=ms=>new Date(ms).toLocaleString('it-IT',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+  try{
+    const g=f=>fetch(REPO_RAW+f+'?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).catch(()=>null);
+    const [st,sig,chk]=await Promise.all([g('status.json'),g('signals_log.json'),g('trade_checks.json')]);
+    const stEl=$('monStatus');
+    if(!st){stEl.innerHTML='<span style="color:var(--short)">⚠️ Stato del programma non disponibile (status.json assente o GitHub non raggiungibile).</span>';}
+    else{
+      const old=(Date.now()-st.lastRun)>6*3600*1000;
+      stEl.innerHTML=(old?'<span style="color:var(--short)">⚠️ Nessun giro da più di 6 ore — controlla GitHub Actions.</span> ':'<span style="color:var(--long)">● Attivo</span> ')
+        +'· ultimo giro '+esc(dt(st.lastRun))+' ('+esc(ago(st.lastRun))+') · fonte '+esc(st.source)+' · '+esc(st.nAssets)+' asset analizzati · macro <b>'+esc(st.macro)+'</b>';
+    }
+    const px={};(st&&st.assets||[]).forEach(a=>px[a.sym]=a.price);
+    const list=Array.isArray(sig)?sig:[];
+    const open=list.filter(s=>s.status==='open').sort((a,b)=>b.createdAt-a.createdAt);
+    const closed=list.filter(s=>s.status==='closed').sort((a,b)=>b.closedAt-a.closedAt);
+    const stats=arr=>{const c=arr.filter(s=>s.status==='closed');const w=c.filter(s=>s.pnlPct>0).length;const t=c.reduce((x,s)=>x+s.pnlPct,0);return {n:arr.length,c:c.length,w,t}};
+    const real=list.filter(s=>!s.vetoed),sh=list.filter(s=>s.vetoed);
+    const sr=stats(real),ss=stats(sh);
+    const box=(label,main,sub)=>'<div class="ov" style="min-width:130px"><div class="ov-label">'+label+'</div><div class="ov-val" style="font-size:16px;font-weight:700">'+main+'</div><div class="ov-sub">'+sub+'</div></div>';
+    $('monSummary').innerHTML=
+      box('Segnali consigliati',esc(sr.n),esc(real.filter(s=>s.status==='open').length)+' aperti · '+esc(sr.c)+' chiusi')+
+      box('Risultato chiusi','<span style="color:'+col(sr.t)+'">'+esc(pc(sr.t))+'</span>',esc(sr.w)+' vincenti su '+esc(sr.c)+' (campione piccolo)')+
+      box('Ombra (filtro MA20)',esc(ss.n),esc(ss.c)+' chiusi · '+esc(pc(ss.t)));
+    const tbl=(rows,head)=>rows.length?'<table style="width:100%;border-collapse:collapse;font-size:10px"><thead><tr style="color:var(--text3);text-align:left">'+head.map(h=>'<th style="padding:3px 6px;font-weight:500">'+h+'</th>').join('')+'</tr></thead><tbody>'+rows.join('')+'</tbody></table>':'<div style="font-size:10px;color:var(--text3)">Nessuno.</div>';
+    const td=(v,c)=>'<td style="padding:3px 6px;border-top:1px solid var(--border);'+(c?'color:'+c+';':'')+'white-space:nowrap">'+v+'</td>';
+    const dirTxt=s=>'<b style="color:'+(s.dir==='long'?'var(--long)':'var(--short)')+'">'+esc(s.dir)+'</b>';
+    $('monOpen').innerHTML=tbl(open.map(s=>{
+      const p=px[s.sym];const u=p?(s.dir==='long'?1:-1)*(p-s.entry)/s.entry*100:null;
+      return '<tr>'+td(esc(s.sym)+(s.vetoed?' <span style="color:var(--text3)">ombra</span>':''))+td(dirTxt(s))+td(esc(fmt(s.entry)))+td(esc(fmt(s.stop))+(s.breakevenSet?' <span style="color:var(--text3)">(pareggio)</span>':''))+td(esc(fmt(s.tp1)))+td(esc(s.pattern||'')+' '+esc(s.timeframe||''))+td(esc(ago(s.createdAt)))+td(esc(pc(u)),u==null?null:col(u))+'</tr>';
+    }),['Asset','Dir.','Entry','Stop','TP1','Pattern','Aperto','Ora']);
+    $('monClosed').innerHTML=tbl(closed.slice(0,10).map(s=>
+      '<tr>'+td(esc(s.sym)+(s.vetoed?' <span style="color:var(--text3)">ombra</span>':''))+td(dirTxt(s))+td(esc(s.closeReason))+td(esc(pc(s.pnlPct)),col(s.pnlPct))+td(esc(dt(s.closedAt)))+'</tr>'),['Asset','Dir.','Esito','Risultato','Chiuso']);
+    const mine=Object.values(chk||{});
+    $('monTrades').innerHTML=mine.length?'<div class="stitle" style="margin-top:14px">I tuoi trade controllati dal backend</div>'+tbl(mine.map(s=>'<tr>'+td(esc(s.sym))+td(dirTxt(s))+td(esc(s.status==='closed'?s.closeReason+' '+pc(s.pnlPct):'aperto'),s.status==='closed'?col(s.pnlPct):null)+td(esc(s.mode||''))+'</tr>'),['Asset','Dir.','Stato','Controllo']):'';
+  }catch(e){
+    $('monStatus').innerHTML='<span style="color:var(--short)">Monitor non raggiungibile: '+esc(e.message)+'</span>';
+  }
+}
+
 async function loadReliability(){
   const body=document.getElementById('reliabilityBody');
   const note=document.getElementById('reliabilityNotice');
@@ -2104,6 +2166,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   switchTab('dashboard');
   renderTrades([]);
   renderHistory();
+  loadMonitor();
   loadReliability();
 });
 

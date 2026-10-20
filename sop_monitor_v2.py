@@ -789,6 +789,20 @@ def run():
     state['last_run'] = now
     state['macro'] = macro
     save_state(state)
+    try:
+        status = {
+            'lastRun': int(time.time() * 1000), 'source': 'OKX', 'macro': macro,
+            'nAssets': len(all_sop), 'newSignals': len(signals_found),
+            'registry': {'total': len(registry),
+                         'open': sum(1 for r in registry if r['status'] == 'open'),
+                         'closed': sum(1 for r in registry if r['status'] == 'closed')},
+            'assets': [{'sym': c['sym'], 'price': c['price'], 'bias': c['bias'],
+                        'solidity': c['solidity'], 'regime': c['regime']} for c in all_sop],
+        }
+        with open('status.json', 'w') as f:
+            json.dump(status, f, ensure_ascii=False)
+    except Exception as e:
+        print(f'status.json: errore {e}')
     print('::notice::Valori: ' + ' | '.join(
         f"{c['sym']} px={c['price']:.5g} OI%={c['oi_delta']:.1f} FR={c['fr_val']:.4f} oi/vol={c['oi_vol_ratio']} cvd={c['cvd_dir']}" for c in all_sop))
     print(f'::notice::SOP ok: {len(all_sop)} asset analizzati, macro={macro}, {len(signals_found)} segnali nuovi, registro={len(registry)}')
