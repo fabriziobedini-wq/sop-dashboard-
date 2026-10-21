@@ -233,7 +233,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792547100000
+  "checkedUntil": 1792565100000
  },
  {
   "id": 1792342425481,
@@ -379,7 +379,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1792547100000
+  "checkedUntil": 1792565100000
  },
  {
   "id": 1792392483779,
@@ -735,7 +735,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792547100000
+  "checkedUntil": 1792565100000
  },
  {
   "id": 1792529104216,
@@ -761,7 +761,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792547100000
+  "checkedUntil": 1792565100000
  },
  {
   "id": 1792529107328,
@@ -787,7 +787,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792547100000
+  "checkedUntil": 1792565100000
  },
  {
   "id": 1792529108848,
@@ -813,7 +813,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792547100000
+  "checkedUntil": 1792565100000
  },
  {
   "id": 1792529110465,
@@ -839,7 +839,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792547100000
+  "checkedUntil": 1792565100000
  },
  {
   "id": 1792529115126,
@@ -865,7 +865,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792547100000
+  "checkedUntil": 1792565100000
  },
  {
   "id": 1792538744922,
@@ -891,6 +891,32 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792547100000
+  "checkedUntil": 1792565100000
+ },
+ {
+  "id": 1792565290640,
+  "sym": "BNB",
+  "dir": "short",
+  "createdAt": 1792565290640,
+  "entry": 744.2,
+  "stop": 755.363,
+  "stopInitial": 755.363,
+  "tp1": 716.2925,
+  "tp2": 699.548,
+  "rr": 2.5,
+  "stopPct": 1.5,
+  "pattern": "Pin Bar Bearish",
+  "patternStrength": "forte",
+  "timeframe": "4h",
+  "score": 0,
+  "macro": "neutral",
+  "bias": "short",
+  "solidity": "solido",
+  "regime": "structural",
+  "vetoed": "ma20",
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1792565290640
  }
 ]
