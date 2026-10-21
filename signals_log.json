@@ -233,7 +233,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792585800000
+  "checkedUntil": 1792603800000
  },
  {
   "id": 1792342425481,
@@ -379,7 +379,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1792585800000
+  "checkedUntil": 1792603800000
  },
  {
   "id": 1792392483779,
@@ -735,7 +735,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792585800000
+  "checkedUntil": 1792603800000
  },
  {
   "id": 1792529104216,
@@ -743,7 +743,7 @@
   "dir": "long",
   "createdAt": 1792529104216,
   "entry": 82736.8,
-  "stop": 81495.582143,
+  "stop": 82736.8,
   "stopInitial": 81495.582143,
   "tp1": 85839.844642,
   "tp2": 87701.671428,
@@ -760,8 +760,8 @@
   "vetoed": null,
   "status": "open",
   "tp1Hit": false,
-  "breakevenSet": false,
-  "checkedUntil": 1792585800000
+  "breakevenSet": true,
+  "checkedUntil": 1792603800000
  },
  {
   "id": 1792529107328,
@@ -787,7 +787,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792585800000
+  "checkedUntil": 1792603800000
  },
  {
   "id": 1792529108848,
@@ -813,7 +813,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792585800000
+  "checkedUntil": 1792603800000
  },
  {
   "id": 1792529110465,
@@ -821,7 +821,7 @@
   "dir": "long",
   "createdAt": 1792529110465,
   "entry": 2442.75,
-  "stop": 2383.728214,
+  "stop": 2442.75,
   "stopInitial": 2383.728214,
   "tp1": 2590.304465,
   "tp2": 2678.837144,
@@ -838,8 +838,8 @@
   "vetoed": null,
   "status": "open",
   "tp1Hit": false,
-  "breakevenSet": false,
-  "checkedUntil": 1792585800000
+  "breakevenSet": true,
+  "checkedUntil": 1792603800000
  },
  {
   "id": 1792529115126,
@@ -847,7 +847,7 @@
   "dir": "long",
   "createdAt": 1792529115126,
   "entry": 1234.47,
-  "stop": 1162.602857,
+  "stop": 1234.47,
   "stopInitial": 1162.602857,
   "tp1": 1414.137857,
   "tp2": 1521.938572,
@@ -864,8 +864,8 @@
   "vetoed": null,
   "status": "open",
   "tp1Hit": false,
-  "breakevenSet": false,
-  "checkedUntil": 1792585800000
+  "breakevenSet": true,
+  "checkedUntil": 1792603800000
  },
  {
   "id": 1792538744922,
@@ -873,7 +873,7 @@
   "dir": "long",
   "createdAt": 1792538744922,
   "entry": 1.3357,
-  "stop": 1.303664,
+  "stop": 1.3357,
   "stopInitial": 1.303664,
   "tp1": 1.41579,
   "tp2": 1.463844,
@@ -890,8 +890,8 @@
   "vetoed": null,
   "status": "open",
   "tp1Hit": false,
-  "breakevenSet": false,
-  "checkedUntil": 1792585800000
+  "breakevenSet": true,
+  "checkedUntil": 1792603800000
  },
  {
   "id": 1792565290640,
@@ -917,6 +917,32 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792585800000
+  "checkedUntil": 1792603800000
+ },
+ {
+  "id": 1792604323251,
+  "sym": "TRX",
+  "dir": "short",
+  "createdAt": 1792604323251,
+  "entry": 0.333,
+  "stop": 0.337995,
+  "stopInitial": 0.337995,
+  "tp1": 0.320513,
+  "tp2": 0.31302,
+  "rr": 2.5,
+  "stopPct": 1.5,
+  "pattern": "Rejection EMA50",
+  "patternStrength": "forte",
+  "timeframe": "4h",
+  "score": 0,
+  "macro": "bullish",
+  "bias": "short",
+  "solidity": "moderato",
+  "regime": "structural",
+  "vetoed": "ma20",
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1792604323251
  }
 ]
