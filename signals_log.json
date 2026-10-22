@@ -233,7 +233,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792692000000
+  "checkedUntil": 1792704600000
  },
  {
   "id": 1792342425481,
@@ -949,7 +949,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1792692000000
+  "checkedUntil": 1792704600000
  },
  {
   "id": 1792604323251,
@@ -975,7 +975,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792692000000
+  "checkedUntil": 1792704600000
  },
  {
   "id": 1792655801700,
@@ -1031,7 +1031,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792692000000
+  "checkedUntil": 1792704600000
  },
  {
   "id": 1792675321229,
@@ -1057,7 +1057,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792692000000
+  "checkedUntil": 1792704600000
  },
  {
   "id": 1792692286994,
@@ -1083,6 +1083,58 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792692286994
+  "checkedUntil": 1792704600000
+ },
+ {
+  "id": 1792704679414,
+  "sym": "BTC",
+  "dir": "short",
+  "createdAt": 1792704679414,
+  "entry": 81510.2,
+  "stop": 82732.853,
+  "stopInitial": 82732.853,
+  "tp1": 78453.5675,
+  "tp2": 76619.588,
+  "rr": 2.5,
+  "stopPct": 1.5,
+  "pattern": "Engulfing Bearish",
+  "patternStrength": "moderata",
+  "timeframe": "1h",
+  "score": 3,
+  "macro": "neutral",
+  "bias": "short",
+  "solidity": "moderato",
+  "regime": "structural",
+  "vetoed": null,
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1792704679414
+ },
+ {
+  "id": 1792704682650,
+  "sym": "HYPE",
+  "dir": "short",
+  "createdAt": 1792704682650,
+  "entry": 77.807,
+  "stop": 80.135536,
+  "stopInitial": 80.135536,
+  "tp1": 71.98566,
+  "tp2": 68.492856,
+  "rr": 2.5,
+  "stopPct": 2.99,
+  "pattern": "Engulfing Bearish",
+  "patternStrength": "moderata",
+  "timeframe": "4h",
+  "score": 3,
+  "macro": "neutral",
+  "bias": "short",
+  "solidity": "moderato",
+  "regime": "structural",
+  "vetoed": null,
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1792704682650
  }
 ]
