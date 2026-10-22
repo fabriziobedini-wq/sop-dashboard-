@@ -233,7 +233,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792674900000
+  "checkedUntil": 1792692000000
  },
  {
   "id": 1792342425481,
@@ -376,10 +376,14 @@
   "solidity": "moderato",
   "regime": "structural",
   "vetoed": null,
-  "status": "open",
+  "status": "closed",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1792674900000
+  "checkedUntil": 1792688400000,
+  "closeReason": "breakeven",
+  "closedAt": 1792687500000,
+  "closePrice": 727.4,
+  "pnlPct": 0.0
  },
  {
   "id": 1792392483779,
@@ -732,10 +736,14 @@
   "solidity": "moderato",
   "regime": "structural",
   "vetoed": null,
-  "status": "open",
+  "status": "closed",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792674900000
+  "checkedUntil": 1792682100000,
+  "closeReason": "stop",
+  "closedAt": 1792681200000,
+  "closePrice": 77.539536,
+  "pnlPct": -3.17
  },
  {
   "id": 1792529104216,
@@ -941,7 +949,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1792674900000
+  "checkedUntil": 1792692000000
  },
  {
   "id": 1792604323251,
@@ -967,7 +975,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792674900000
+  "checkedUntil": 1792692000000
  },
  {
   "id": 1792655801700,
@@ -990,10 +998,14 @@
   "solidity": "solido",
   "regime": "structural",
   "vetoed": null,
-  "status": "open",
+  "status": "closed",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792674900000
+  "checkedUntil": 1792688400000,
+  "closeReason": "stop",
+  "closedAt": 1792687500000,
+  "closePrice": 2372.1425,
+  "pnlPct": -2.35
  },
  {
   "id": 1792675319744,
@@ -1019,7 +1031,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792675319744
+  "checkedUntil": 1792692000000
  },
  {
   "id": 1792675321229,
@@ -1045,6 +1057,32 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792675321229
+  "checkedUntil": 1792692000000
+ },
+ {
+  "id": 1792692286994,
+  "sym": "ZEC",
+  "dir": "long",
+  "createdAt": 1792692286994,
+  "entry": 1192.0,
+  "stop": 1112.029643,
+  "stopInitial": 1112.029643,
+  "tp1": 1391.925892,
+  "tp2": 1511.881428,
+  "rr": 2.5,
+  "stopPct": 6.71,
+  "pattern": "Bounce EMA50",
+  "patternStrength": "forte",
+  "timeframe": "4h",
+  "score": 4,
+  "macro": "neutral",
+  "bias": "long",
+  "solidity": "solido",
+  "regime": "mixed",
+  "vetoed": null,
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1792692286994
  }
 ]

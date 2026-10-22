@@ -1,4 +1,4 @@
-# Report affidabilità SOP — 2026-10-22 13:22 UTC
+# Report affidabilità SOP — 2026-10-22 18:04 UTC
 
 Trade chiusi attivati: **60** · mai attivati (entry non raggiunta): 11 · aperti ora: 0 · in attesa: 0
 
@@ -12,23 +12,21 @@ Trade chiusi attivati: **60** · mai attivati (entry non raggiunta): 11 · apert
   - 13/10 TRX long: -1.47% (stop)
 
 ## SEGNALI CONSIGLIATI (registro simulato, anche quelli non aperti)
-- Registrati dal 18/10/2026: **27** · chiusi (simulati) 21 · ancora aperti 6
+- Registrati dal 18/10/2026: **28** · chiusi (simulati) 24 · ancora aperti 4
 - Regole simulate come in dashboard (pareggio al 45% verso TP1, TP1 poi pareggio, TP2). Nella stessa candela 15m stop e target -> vale lo stop. Non simulabili: chiusura per bias invertito e manuale.
-- Tutti i segnali: n= 21  WR=  0.0%  pnl tot= -33.64%  medio=-1.60%  win medio=+0.00%  loss medio= -1.60%
-- NON aperti: n= 21  WR=  0.0%  pnl tot= -33.64%  medio=-1.60%  win medio=+0.00%  loss medio= -1.60%
-- Esiti: stop 13, breakeven 8
+- Tutti i segnali: n= 24  WR=  0.0%  pnl tot= -39.16%  medio=-1.63%  win medio=+0.00%  loss medio= -1.63%
+- NON aperti: n= 24  WR=  0.0%  pnl tot= -39.16%  medio=-1.63%  win medio=+0.00%  loss medio= -1.63%
+- Esiti: stop 15, breakeven 9
   - aperto: TRX short @ 0.3323 (stop 0.337284, TP1 0.31984)
-  - aperto: BNB long @ 727.4 (stop 727.4, TP1 754.6775)
-  - aperto: HYPE long @ 80.074 (stop 77.539536, TP1 86.41016)
-  - aperto: ETH long @ 2429.24 (stop 2372.1425, TP1 2571.98375)
   - aperto: BNB short @ 731.9 (stop 742.8785, TP1 704.45375)
   - aperto: ETH short @ 2398.68 (stop 2452.880357, TP1 2263.179107)
+  - aperto: ZEC long @ 1192.0 (stop 1112.029643, TP1 1391.925892)
 - Bloccati dal veto MA20 (non notificati, simulati lo stesso): 9 registrati, 7 chiusi
   - Se li avessi presi: n=  7  WR=  0.0%  pnl tot= -17.36%  medio=-2.48%  win medio=+0.00%  loss medio= -2.48% (campione piccolo)
   - Lettura: risultato medio negativo = il veto evita perdite; positivo = il veto toglie occasioni.
 
 ## STATO DEL MERCATO NEL TEMPO (macro del backend)
-- Dal 18/10, 102 ore osservate: bullish 59%, neutral 27%, bearish 14%
+- Dal 18/10, 106 ore osservate: bullish 56%, neutral 31%, bearish 13%
 
 ## Storico completo (include il periodo prima del nuovo percorso)
 - Tutti: n= 60  WR= 43.3%  pnl tot= -35.77%  medio=-0.60%  win medio=+5.70%  loss medio= -5.41%
