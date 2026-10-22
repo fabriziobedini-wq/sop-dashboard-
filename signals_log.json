@@ -233,7 +233,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792655100000
+  "checkedUntil": 1792674900000
  },
  {
   "id": 1792342425481,
@@ -379,7 +379,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1792655100000
+  "checkedUntil": 1792674900000
  },
  {
   "id": 1792392483779,
@@ -735,7 +735,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792655100000
+  "checkedUntil": 1792674900000
  },
  {
   "id": 1792529104216,
@@ -788,10 +788,14 @@
   "solidity": "solido",
   "regime": "structural",
   "vetoed": null,
-  "status": "open",
+  "status": "closed",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792655100000
+  "checkedUntil": 1792658700000,
+  "closeReason": "stop",
+  "closedAt": 1792657800000,
+  "closePrice": 103.622857,
+  "pnlPct": -2.66
  },
  {
   "id": 1792529108848,
@@ -874,10 +878,14 @@
   "solidity": "solido",
   "regime": "mixed",
   "vetoed": null,
-  "status": "open",
+  "status": "closed",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1792655100000
+  "checkedUntil": 1792659600000,
+  "closeReason": "breakeven",
+  "closedAt": 1792658700000,
+  "closePrice": 1234.47,
+  "pnlPct": 0.0
  },
  {
   "id": 1792538744922,
@@ -900,10 +908,14 @@
   "solidity": "moderato",
   "regime": "structural",
   "vetoed": null,
-  "status": "open",
+  "status": "closed",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1792655100000
+  "checkedUntil": 1792656900000,
+  "closeReason": "breakeven",
+  "closedAt": 1792656000000,
+  "closePrice": 1.3357,
+  "pnlPct": 0.0
  },
  {
   "id": 1792565290640,
@@ -911,7 +923,7 @@
   "dir": "short",
   "createdAt": 1792565290640,
   "entry": 744.2,
-  "stop": 755.363,
+  "stop": 744.2,
   "stopInitial": 755.363,
   "tp1": 716.2925,
   "tp2": 699.548,
@@ -928,8 +940,8 @@
   "vetoed": "ma20",
   "status": "open",
   "tp1Hit": false,
-  "breakevenSet": false,
-  "checkedUntil": 1792655100000
+  "breakevenSet": true,
+  "checkedUntil": 1792674900000
  },
  {
   "id": 1792604323251,
@@ -955,7 +967,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792655100000
+  "checkedUntil": 1792674900000
  },
  {
   "id": 1792655801700,
@@ -981,6 +993,58 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792655801700
+  "checkedUntil": 1792674900000
+ },
+ {
+  "id": 1792675319744,
+  "sym": "BNB",
+  "dir": "short",
+  "createdAt": 1792675319744,
+  "entry": 731.9,
+  "stop": 742.8785,
+  "stopInitial": 742.8785,
+  "tp1": 704.45375,
+  "tp2": 687.986,
+  "rr": 2.5,
+  "stopPct": 1.5,
+  "pattern": "Rejection EMA20",
+  "patternStrength": "forte",
+  "timeframe": "4h",
+  "score": 7,
+  "macro": "neutral",
+  "bias": "short",
+  "solidity": "solido",
+  "regime": "structural",
+  "vetoed": null,
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1792675319744
+ },
+ {
+  "id": 1792675321229,
+  "sym": "ETH",
+  "dir": "short",
+  "createdAt": 1792675321229,
+  "entry": 2398.68,
+  "stop": 2452.880357,
+  "stopInitial": 2452.880357,
+  "tp1": 2263.179107,
+  "tp2": 2181.878572,
+  "rr": 2.5,
+  "stopPct": 2.26,
+  "pattern": "Rejection EMA20",
+  "patternStrength": "forte",
+  "timeframe": "4h",
+  "score": 4,
+  "macro": "neutral",
+  "bias": "short",
+  "solidity": "moderato",
+  "regime": "structural",
+  "vetoed": null,
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1792675321229
  }
 ]
