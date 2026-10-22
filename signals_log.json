@@ -233,7 +233,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792636200000
+  "checkedUntil": 1792655100000
  },
  {
   "id": 1792342425481,
@@ -379,7 +379,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1792636200000
+  "checkedUntil": 1792655100000
  },
  {
   "id": 1792392483779,
@@ -735,7 +735,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792636200000
+  "checkedUntil": 1792655100000
  },
  {
   "id": 1792529104216,
@@ -758,10 +758,14 @@
   "solidity": "solido",
   "regime": "structural",
   "vetoed": null,
-  "status": "open",
+  "status": "closed",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1792636200000
+  "checkedUntil": 1792639800000,
+  "closeReason": "breakeven",
+  "closedAt": 1792638900000,
+  "closePrice": 82736.8,
+  "pnlPct": 0.0
  },
  {
   "id": 1792529107328,
@@ -787,7 +791,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792636200000
+  "checkedUntil": 1792655100000
  },
  {
   "id": 1792529108848,
@@ -810,10 +814,14 @@
   "solidity": "solido",
   "regime": "structural",
   "vetoed": null,
-  "status": "open",
+  "status": "closed",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792636200000
+  "checkedUntil": 1792648800000,
+  "closeReason": "stop",
+  "closedAt": 1792647900000,
+  "closePrice": 0.079685,
+  "pnlPct": -2.6
  },
  {
   "id": 1792529110465,
@@ -869,7 +877,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1792636200000
+  "checkedUntil": 1792655100000
  },
  {
   "id": 1792538744922,
@@ -895,7 +903,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1792636200000
+  "checkedUntil": 1792655100000
  },
  {
   "id": 1792565290640,
@@ -921,7 +929,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792636200000
+  "checkedUntil": 1792655100000
  },
  {
   "id": 1792604323251,
@@ -947,6 +955,32 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792636200000
+  "checkedUntil": 1792655100000
+ },
+ {
+  "id": 1792655801700,
+  "sym": "ETH",
+  "dir": "long",
+  "createdAt": 1792655801700,
+  "entry": 2429.24,
+  "stop": 2372.1425,
+  "stopInitial": 2372.1425,
+  "tp1": 2571.98375,
+  "tp2": 2657.63,
+  "rr": 2.5,
+  "stopPct": 2.35,
+  "pattern": "Bounce EMA20",
+  "patternStrength": "forte",
+  "timeframe": "4h",
+  "score": 5,
+  "macro": "bullish",
+  "bias": "long",
+  "solidity": "solido",
+  "regime": "structural",
+  "vetoed": null,
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1792655801700
  }
 ]
