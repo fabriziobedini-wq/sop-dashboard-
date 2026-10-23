@@ -233,7 +233,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792729800000
+  "checkedUntil": 1792747800000
  },
  {
   "id": 1792342425481,
@@ -946,10 +946,14 @@
   "solidity": "solido",
   "regime": "structural",
   "vetoed": "ma20",
-  "status": "open",
+  "status": "closed",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1792729800000
+  "checkedUntil": 1792737000000,
+  "closeReason": "breakeven",
+  "closedAt": 1792736100000,
+  "closePrice": 744.2,
+  "pnlPct": -0.0
  },
  {
   "id": 1792604323251,
@@ -975,7 +979,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792729800000
+  "checkedUntil": 1792747800000
  },
  {
   "id": 1792655801700,
@@ -1028,10 +1032,14 @@
   "solidity": "solido",
   "regime": "structural",
   "vetoed": null,
-  "status": "open",
+  "status": "closed",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792729800000
+  "checkedUntil": 1792737000000,
+  "closeReason": "stop",
+  "closedAt": 1792736100000,
+  "closePrice": 742.8785,
+  "pnlPct": -1.5
  },
  {
   "id": 1792675321229,
@@ -1057,7 +1065,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792729800000
+  "checkedUntil": 1792747800000
  },
  {
   "id": 1792692286994,
@@ -1083,7 +1091,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792729800000
+  "checkedUntil": 1792747800000
  },
  {
   "id": 1792704679414,
@@ -1109,7 +1117,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792729800000
+  "checkedUntil": 1792747800000
  },
  {
   "id": 1792704682650,
@@ -1135,6 +1143,32 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792729800000
+  "checkedUntil": 1792747800000
+ },
+ {
+  "id": 1792748114896,
+  "sym": "XRP",
+  "dir": "short",
+  "createdAt": 1792748114896,
+  "entry": 1.3192,
+  "stop": 1.3516,
+  "stopInitial": 1.3516,
+  "tp1": 1.2382,
+  "tp2": 1.1896,
+  "rr": 2.5,
+  "stopPct": 2.46,
+  "pattern": "Rejection EMA20",
+  "patternStrength": "forte",
+  "timeframe": "4h",
+  "score": 5,
+  "macro": "bearish",
+  "bias": "short",
+  "solidity": "moderato",
+  "regime": "structural",
+  "vetoed": null,
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1792748114896
  }
 ]
