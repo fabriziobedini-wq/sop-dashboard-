@@ -233,7 +233,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792713600000
+  "checkedUntil": 1792729800000
  },
  {
   "id": 1792342425481,
@@ -949,7 +949,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1792713600000
+  "checkedUntil": 1792729800000
  },
  {
   "id": 1792604323251,
@@ -975,7 +975,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792713600000
+  "checkedUntil": 1792729800000
  },
  {
   "id": 1792655801700,
@@ -1031,7 +1031,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792713600000
+  "checkedUntil": 1792729800000
  },
  {
   "id": 1792675321229,
@@ -1057,7 +1057,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792713600000
+  "checkedUntil": 1792729800000
  },
  {
   "id": 1792692286994,
@@ -1083,7 +1083,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792713600000
+  "checkedUntil": 1792729800000
  },
  {
   "id": 1792704679414,
@@ -1109,7 +1109,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792713600000
+  "checkedUntil": 1792729800000
  },
  {
   "id": 1792704682650,
@@ -1135,6 +1135,6 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792713600000
+  "checkedUntil": 1792729800000
  }
 ]
