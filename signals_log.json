@@ -233,7 +233,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792800000000
+  "checkedUntil": 1792813500000
  },
  {
   "id": 1792342425481,
@@ -979,7 +979,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792800000000
+  "checkedUntil": 1792813500000
  },
  {
   "id": 1792655801700,
@@ -1065,7 +1065,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792800000000
+  "checkedUntil": 1792813500000
  },
  {
   "id": 1792692286994,
@@ -1091,7 +1091,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792800000000
+  "checkedUntil": 1792813500000
  },
  {
   "id": 1792704679414,
@@ -1117,7 +1117,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792800000000
+  "checkedUntil": 1792813500000
  },
  {
   "id": 1792704682650,
@@ -1143,7 +1143,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792800000000
+  "checkedUntil": 1792813500000
  },
  {
   "id": 1792748114896,
@@ -1169,7 +1169,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1792800000000
+  "checkedUntil": 1792813500000
  },
  {
   "id": 1792765580107,
@@ -1195,7 +1195,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792800000000
+  "checkedUntil": 1792813500000
  },
  {
   "id": 1792780425270,
@@ -1226,5 +1226,57 @@
   "closedAt": 1792796400000,
   "closePrice": 732.5445,
   "pnlPct": -1.5
+ },
+ {
+  "id": 1792813828025,
+  "sym": "TRX",
+  "dir": "long",
+  "createdAt": 1792813828025,
+  "entry": 0.32951,
+  "stop": 0.324567,
+  "stopInitial": 0.324567,
+  "tp1": 0.341868,
+  "tp2": 0.349282,
+  "rr": 2.5,
+  "stopPct": 1.5,
+  "pattern": "Pin Bar Bullish",
+  "patternStrength": "forte",
+  "timeframe": "4h",
+  "score": 6,
+  "macro": "neutral",
+  "bias": "long",
+  "solidity": "solido",
+  "regime": "structural",
+  "vetoed": null,
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1792813828025
+ },
+ {
+  "id": 1792813829523,
+  "sym": "BNB",
+  "dir": "long",
+  "createdAt": 1792813829523,
+  "entry": 739.1,
+  "stop": 727.432143,
+  "stopInitial": 727.432143,
+  "tp1": 768.269643,
+  "tp2": 785.771428,
+  "rr": 2.5,
+  "stopPct": 1.58,
+  "pattern": "Pin Bar Bullish",
+  "patternStrength": "forte",
+  "timeframe": "4h",
+  "score": 5,
+  "macro": "neutral",
+  "bias": "long",
+  "solidity": "solido",
+  "regime": "structural",
+  "vetoed": null,
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1792813829523
  }
 ]
