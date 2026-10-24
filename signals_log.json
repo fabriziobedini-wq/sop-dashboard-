@@ -233,7 +233,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792791000000
+  "checkedUntil": 1792800000000
  },
  {
   "id": 1792342425481,
@@ -979,7 +979,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792791000000
+  "checkedUntil": 1792800000000
  },
  {
   "id": 1792655801700,
@@ -1065,7 +1065,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792791000000
+  "checkedUntil": 1792800000000
  },
  {
   "id": 1792692286994,
@@ -1091,7 +1091,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792791000000
+  "checkedUntil": 1792800000000
  },
  {
   "id": 1792704679414,
@@ -1117,7 +1117,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792791000000
+  "checkedUntil": 1792800000000
  },
  {
   "id": 1792704682650,
@@ -1143,7 +1143,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792791000000
+  "checkedUntil": 1792800000000
  },
  {
   "id": 1792748114896,
@@ -1151,7 +1151,7 @@
   "dir": "short",
   "createdAt": 1792748114896,
   "entry": 1.3192,
-  "stop": 1.3516,
+  "stop": 1.3192,
   "stopInitial": 1.3516,
   "tp1": 1.2382,
   "tp2": 1.1896,
@@ -1168,8 +1168,8 @@
   "vetoed": null,
   "status": "open",
   "tp1Hit": false,
-  "breakevenSet": false,
-  "checkedUntil": 1792791000000
+  "breakevenSet": true,
+  "checkedUntil": 1792800000000
  },
  {
   "id": 1792765580107,
@@ -1195,7 +1195,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792791000000
+  "checkedUntil": 1792800000000
  },
  {
   "id": 1792780425270,
@@ -1218,9 +1218,13 @@
   "solidity": "solido",
   "regime": "structural",
   "vetoed": null,
-  "status": "open",
+  "status": "closed",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792791000000
+  "checkedUntil": 1792797300000,
+  "closeReason": "stop",
+  "closedAt": 1792796400000,
+  "closePrice": 732.5445,
+  "pnlPct": -1.5
  }
 ]
