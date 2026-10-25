@@ -233,7 +233,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792890900000
+  "checkedUntil": 1792908900000
  },
  {
   "id": 1792342425481,
@@ -979,7 +979,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792890900000
+  "checkedUntil": 1792908900000
  },
  {
   "id": 1792655801700,
@@ -1065,7 +1065,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1792890900000
+  "checkedUntil": 1792908900000
  },
  {
   "id": 1792692286994,
@@ -1091,7 +1091,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792890900000
+  "checkedUntil": 1792908900000
  },
  {
   "id": 1792704679414,
@@ -1117,7 +1117,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1792890900000
+  "checkedUntil": 1792908900000
  },
  {
   "id": 1792704682650,
@@ -1143,7 +1143,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1792890900000
+  "checkedUntil": 1792908900000
  },
  {
   "id": 1792748114896,
@@ -1169,7 +1169,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1792890900000
+  "checkedUntil": 1792908900000
  },
  {
   "id": 1792765580107,
@@ -1195,7 +1195,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1792890900000
+  "checkedUntil": 1792908900000
  },
  {
   "id": 1792780425270,
@@ -1251,7 +1251,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792890900000
+  "checkedUntil": 1792908900000
  },
  {
   "id": 1792813829523,
@@ -1312,5 +1312,31 @@
   "closedAt": 1792872000000,
   "closePrice": 731.907143,
   "pnlPct": -1.64
+ },
+ {
+  "id": 1792909525317,
+  "sym": "BNB",
+  "dir": "short",
+  "createdAt": 1792909525317,
+  "entry": 744.7,
+  "stop": 758.028571,
+  "stopInitial": 758.028571,
+  "tp1": 711.378573,
+  "tp2": 691.385716,
+  "rr": 2.5,
+  "stopPct": 1.79,
+  "pattern": "Engulfing Bearish",
+  "patternStrength": "moderata",
+  "timeframe": "1h",
+  "score": 0,
+  "macro": "neutral",
+  "bias": "short",
+  "solidity": "solido",
+  "regime": "structural",
+  "vetoed": "ma20",
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1792909525317
  }
 ]
