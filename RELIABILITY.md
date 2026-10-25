@@ -1,4 +1,4 @@
-# Report affidabilità SOP — 2026-10-25 18:30 UTC
+# Report affidabilità SOP — 2026-10-25 21:07 UTC
 
 Trade chiusi attivati: **60** · mai attivati (entry non raggiunta): 11 · aperti ora: 0 · in attesa: 0
 
@@ -26,12 +26,12 @@ Trade chiusi attivati: **60** · mai attivati (entry non raggiunta): 11 · apert
   - aperto: SOL short @ 104.06 (stop 104.06, TP1 98.00375)
   - aperto: TRX long @ 0.32951 (stop 0.324567, TP1 0.341868)
   - aperto: DOGE short @ 0.07677 (stop 0.07883, TP1 0.07162)
-- Bloccati dal veto MA20 (non notificati, simulati lo stesso): 10 registrati, 8 chiusi
+- Bloccati dal veto MA20 (non notificati, simulati lo stesso): 11 registrati, 8 chiusi
   - Se li avessi presi: n=  8  WR=  0.0%  pnl tot= -17.36%  medio=-2.17%  win medio=+0.00%  loss medio= -2.17% (campione piccolo)
   - Lettura: risultato medio negativo = il veto evita perdite; positivo = il veto toglie occasioni.
 
 ## STATO DEL MERCATO NEL TEMPO (macro del backend)
-- Dal 18/10, 179 ore osservate: neutral 50%, bullish 34%, bearish 16%
+- Dal 18/10, 181 ore osservate: neutral 49%, bullish 33%, bearish 18%
 
 ## Storico completo (include il periodo prima del nuovo percorso)
 - Tutti: n= 60  WR= 43.3%  pnl tot= -35.77%  medio=-0.60%  win medio=+5.70%  loss medio= -5.41%

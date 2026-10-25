@@ -233,7 +233,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792953000000
+  "checkedUntil": 1792962000000
  },
  {
   "id": 1792342425481,
@@ -979,7 +979,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792953000000
+  "checkedUntil": 1792962000000
  },
  {
   "id": 1792655801700,
@@ -1065,7 +1065,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1792953000000
+  "checkedUntil": 1792962000000
  },
  {
   "id": 1792692286994,
@@ -1091,7 +1091,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792953000000
+  "checkedUntil": 1792962000000
  },
  {
   "id": 1792704679414,
@@ -1117,7 +1117,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1792953000000
+  "checkedUntil": 1792962000000
  },
  {
   "id": 1792704682650,
@@ -1143,7 +1143,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1792953000000
+  "checkedUntil": 1792962000000
  },
  {
   "id": 1792748114896,
@@ -1169,7 +1169,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1792953000000
+  "checkedUntil": 1792962000000
  },
  {
   "id": 1792765580107,
@@ -1195,7 +1195,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1792953000000
+  "checkedUntil": 1792962000000
  },
  {
   "id": 1792780425270,
@@ -1251,7 +1251,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792953000000
+  "checkedUntil": 1792962000000
  },
  {
   "id": 1792813829523,
@@ -1337,7 +1337,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792953000000
+  "checkedUntil": 1792962000000
  },
  {
   "id": 1792929159502,
@@ -1363,6 +1363,32 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1792953000000
+  "checkedUntil": 1792962000000
+ },
+ {
+  "id": 1792962415064,
+  "sym": "ZEC",
+  "dir": "short",
+  "createdAt": 1792962415064,
+  "entry": 1214.49,
+  "stop": 1266.880714,
+  "stopInitial": 1266.880714,
+  "tp1": 1083.513215,
+  "tp2": 1004.927144,
+  "rr": 2.5,
+  "stopPct": 4.31,
+  "pattern": "Pin Bar Bearish",
+  "patternStrength": "moderata",
+  "timeframe": "4h",
+  "score": 0,
+  "macro": "neutral",
+  "bias": "short",
+  "solidity": "solido",
+  "regime": "structural",
+  "vetoed": "ma20",
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1792962415064
  }
 ]
