@@ -233,7 +233,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1793125800000
+  "checkedUntil": 1793140200000
  },
  {
   "id": 1792342425481,
@@ -979,7 +979,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1793125800000
+  "checkedUntil": 1793140200000
  },
  {
   "id": 1792655801700,
@@ -1065,7 +1065,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1793125800000
+  "checkedUntil": 1793140200000
  },
  {
   "id": 1792692286994,
@@ -1091,7 +1091,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1793125800000
+  "checkedUntil": 1793140200000
  },
  {
   "id": 1792704679414,
@@ -1117,7 +1117,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1793125800000
+  "checkedUntil": 1793140200000
  },
  {
   "id": 1792704682650,
@@ -1203,7 +1203,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1793125800000
+  "checkedUntil": 1793140200000
  },
  {
   "id": 1792780425270,
@@ -1259,7 +1259,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1793125800000
+  "checkedUntil": 1793140200000
  },
  {
   "id": 1792813829523,
@@ -1345,7 +1345,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1793125800000
+  "checkedUntil": 1793140200000
  },
  {
   "id": 1792929159502,
@@ -1368,10 +1368,14 @@
   "solidity": "moderato",
   "regime": "structural",
   "vetoed": null,
-  "status": "open",
+  "status": "closed",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1793125800000
+  "checkedUntil": 1793137500000,
+  "closeReason": "stop",
+  "closedAt": 1793136600000,
+  "closePrice": 0.07883,
+  "pnlPct": -2.68
  },
  {
   "id": 1792962415064,
@@ -1427,7 +1431,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1793125800000
+  "checkedUntil": 1793140200000
  },
  {
   "id": 1793106603967,
@@ -1453,7 +1457,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1793125800000
+  "checkedUntil": 1793140200000
  },
  {
   "id": 1793106607939,
@@ -1479,7 +1483,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1793125800000
+  "checkedUntil": 1793140200000
  },
  {
   "id": 1793106609257,
@@ -1505,7 +1509,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1793125800000
+  "checkedUntil": 1793140200000
  },
  {
   "id": 1793106610595,
@@ -1531,7 +1535,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1793125800000
+  "checkedUntil": 1793140200000
  },
  {
   "id": 1793126424263,
@@ -1557,6 +1561,58 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1793126424263
+  "checkedUntil": 1793140200000
+ },
+ {
+  "id": 1793140595845,
+  "sym": "BTC",
+  "dir": "long",
+  "createdAt": 1793140595845,
+  "entry": 80818.9,
+  "stop": 79606.6165,
+  "stopInitial": 79606.6165,
+  "tp1": 83849.60875,
+  "tp2": 85668.034,
+  "rr": 2.5,
+  "stopPct": 1.5,
+  "pattern": "Bounce EMA20",
+  "patternStrength": "forte",
+  "timeframe": "4h",
+  "score": 5,
+  "macro": "bullish",
+  "bias": "long",
+  "solidity": "moderato",
+  "regime": "structural",
+  "vetoed": null,
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1793140595845
+ },
+ {
+  "id": 1793140597216,
+  "sym": "ETH",
+  "dir": "long",
+  "createdAt": 1793140597216,
+  "entry": 2346.97,
+  "stop": 2299.887143,
+  "stopInitial": 2299.887143,
+  "tp1": 2464.677142,
+  "tp2": 2535.301428,
+  "rr": 2.5,
+  "stopPct": 2.01,
+  "pattern": "Bounce EMA20",
+  "patternStrength": "forte",
+  "timeframe": "4h",
+  "score": 5,
+  "macro": "bullish",
+  "bias": "long",
+  "solidity": "moderato",
+  "regime": "structural",
+  "vetoed": null,
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1793140597216
  }
 ]
