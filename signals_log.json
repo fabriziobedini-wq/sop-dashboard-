@@ -233,7 +233,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1793054700000
+  "checkedUntil": 1793065500000
  },
  {
   "id": 1792342425481,
@@ -979,7 +979,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1793054700000
+  "checkedUntil": 1793065500000
  },
  {
   "id": 1792655801700,
@@ -1065,7 +1065,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1793054700000
+  "checkedUntil": 1793065500000
  },
  {
   "id": 1792692286994,
@@ -1091,7 +1091,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1793054700000
+  "checkedUntil": 1793065500000
  },
  {
   "id": 1792704679414,
@@ -1117,7 +1117,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1793054700000
+  "checkedUntil": 1793065500000
  },
  {
   "id": 1792704682650,
@@ -1173,7 +1173,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1793054700000
+  "checkedUntil": 1793065500000
  },
  {
   "id": 1792765580107,
@@ -1199,7 +1199,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1793054700000
+  "checkedUntil": 1793065500000
  },
  {
   "id": 1792780425270,
@@ -1255,7 +1255,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1793054700000
+  "checkedUntil": 1793065500000
  },
  {
   "id": 1792813829523,
@@ -1341,7 +1341,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1793054700000
+  "checkedUntil": 1793065500000
  },
  {
   "id": 1792929159502,
@@ -1367,7 +1367,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1793054700000
+  "checkedUntil": 1793065500000
  },
  {
   "id": 1792962415064,
@@ -1398,5 +1398,31 @@
   "closedAt": 1793026800000,
   "closePrice": 1266.880714,
   "pnlPct": -4.31
+ },
+ {
+  "id": 1793065893636,
+  "sym": "XRP",
+  "dir": "short",
+  "createdAt": 1793065893636,
+  "entry": 1.3046,
+  "stop": 1.332136,
+  "stopInitial": 1.332136,
+  "tp1": 1.23576,
+  "tp2": 1.194456,
+  "rr": 2.5,
+  "stopPct": 2.11,
+  "pattern": "Rejection EMA50",
+  "patternStrength": "forte",
+  "timeframe": "4h",
+  "score": 0,
+  "macro": "bearish",
+  "bias": "short",
+  "solidity": "moderato",
+  "regime": "structural",
+  "vetoed": "ma20",
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1793065893636
  }
 ]
