@@ -1,4 +1,4 @@
-# Report affidabilità SOP — 2026-10-27 22:36 UTC
+# Report affidabilità SOP — 2026-10-28 01:42 UTC
 
 Trade chiusi attivati: **60** · mai attivati (entry non raggiunta): 11 · aperti ora: 0 · in attesa: 0
 
@@ -30,12 +30,12 @@ Trade chiusi attivati: **60** · mai attivati (entry non raggiunta): 11 · apert
   - aperto: BNB long @ 749.02 (stop 737.174286, TP1 778.634285)
   - aperto: BTC long @ 80818.9 (stop 79606.6165, TP1 83849.60875)
   - aperto: ETH long @ 2346.97 (stop 2299.887143, TP1 2464.677142)
-- Bloccati dal veto MA20 (non notificati, simulati lo stesso): 12 registrati, 9 chiusi
-  - Se li avessi presi: n=  9  WR=  0.0%  pnl tot= -21.67%  medio=-2.41%  win medio=+0.00%  loss medio= -2.41% (campione piccolo)
+- Bloccati dal veto MA20 (non notificati, simulati lo stesso): 12 registrati, 10 chiusi
+  - Se li avessi presi: n= 10  WR=  0.0%  pnl tot= -23.78%  medio=-2.38%  win medio=+0.00%  loss medio= -2.38%
   - Lettura: risultato medio negativo = il veto evita perdite; positivo = il veto toglie occasioni.
 
 ## STATO DEL MERCATO NEL TEMPO (macro del backend)
-- Dal 18/10, 231 ore osservate: neutral 50%, bullish 30%, bearish 20%
+- Dal 18/10, 234 ore osservate: neutral 49%, bullish 31%, bearish 20%
 
 ## Storico completo (include il periodo prima del nuovo percorso)
 - Tutti: n= 60  WR= 43.3%  pnl tot= -35.77%  medio=-0.60%  win medio=+5.70%  loss medio= -5.41%
