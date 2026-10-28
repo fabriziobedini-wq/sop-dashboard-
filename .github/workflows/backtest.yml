@@ -1,0 +1,24 @@
+name: SOP Backtest (manuale)
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests
+      - name: Backtest su storico OKX
+        run: python backtest.py
+      - name: Salva i risultati
+        run: |
+          git config user.name "sop-monitor"
+          git config user.email "sop-monitor@users.noreply.github.com"
+          git add BACKTEST.md backtest_results.json
+          git commit -m "Risultati backtest SOP (automatico)" || exit 0
+          for i in 1 2 3; do git pull --rebase -q origin main && git push -q origin HEAD:main && break; sleep 5; done
