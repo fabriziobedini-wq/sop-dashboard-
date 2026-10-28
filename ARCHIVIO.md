@@ -22,3 +22,12 @@ Niente è stato cancellato: codice, dati e storico restano in questo repository.
 - GitHub → Actions → "SOP Strategy Monitor v2" → Enable workflow.
 - Riattivare il task programmato "SOP Trade Sync".
 - Idea non eseguita: backtest sulle candele storiche OKX (pattern + EMA20/50 + stesse regole di stop/TP) per capire se stop o pattern sono il problema.
+
+## Backtest del 28/10/2026 (storico OKX 20/02 → 28/10/2026, 9 asset, 4h + 1h)
+Dettagli e tabelle: `BACKTEST.md` e `backtest_results.json`. Solo la parte price action (pattern + stop/TP del backend), pattern valutati in entrambe le direzioni, senza commissioni né slippage. Il bias da OI/funding/CVD NON è stato testato (storico troppo corto).
+- **Pattern vs entrate casuali con le stesse regole di stop/TP:** n=1301 pattern contro 1744 casuali. TP1 raggiunto nel 18,4% contro 20,1%; media -0,034R contro -0,003R. Differenza di circa 1 errore standard: nessun vantaggio dimostrato, e prima dei costi.
+- **Allargare lo stop (2,5×ATR) o filtrare per trend (SMA20):** non cambia il quadro, nessuna combinazione positiva in modo robusto.
+- **Short -0,077R (n=633) contro long +0,006R (n=668);** ultimi 30 giorni del campione -0,234R: periodo sfavorevole ai pattern.
+- **Rejection EMA20 (short):** n=141, TP1 12%, -0,292R: il pattern che il live ha usato di più ed è il peggiore del backtest (indizio, non prova: sono 11 pattern confrontati).
+- **Live 18–28/10:** 0 TP1 su 32 chiusi. Il backtest ne farebbe aspettare circa 6: più sfortunato/avverso del backtest, causa non stabilita (campione corto e correlato, regime, oppure il livello di bias OI/funding/CVD che il backtest non copre).
+- **Conclusione:** per il livello price action non c'è evidenza di vantaggio. Il bias OI/funding/CVD resta non misurato.
