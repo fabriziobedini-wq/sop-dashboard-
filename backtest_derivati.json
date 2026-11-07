@@ -1,0 +1,701 @@
+{
+ "periodo": [
+  "2024-11-01",
+  "2026-10-31"
+ ],
+ "asset": [
+  "BTC",
+  "ETH",
+  "SOL",
+  "XRP",
+  "BNB",
+  "DOGE",
+  "ADA",
+  "LINK",
+  "AVAX",
+  "TRX"
+ ],
+ "costo_pct": 0.1,
+ "risultati": {
+  "SOP bias (come nel backend)": {
+   "24h": {
+    "n": 5601,
+    "mean": -0.007,
+    "hit": 0.457,
+    "t": -0.13,
+    "long": {
+     "n": 3264,
+     "mean": 0.078,
+     "hit": 0.461,
+     "t": 1.03
+    },
+    "short": {
+     "n": 2337,
+     "mean": -0.126,
+     "hit": 0.451,
+     "t": -1.64
+    },
+    "primo_anno": {
+     "n": 2778,
+     "mean": 0.038,
+     "hit": 0.47,
+     "t": 0.41
+    },
+    "secondo_anno": {
+     "n": 2823,
+     "mean": -0.052,
+     "hit": 0.443,
+     "t": -0.88
+    },
+    "caso": -0.089,
+    "asset_positivi": 4,
+    "asset": 10
+   },
+   "72h": {
+    "n": 2190,
+    "mean": -0.113,
+    "hit": 0.466,
+    "t": -0.78,
+    "long": {
+     "n": 1171,
+     "mean": 0.03,
+     "hit": 0.462,
+     "t": 0.14
+    },
+    "short": {
+     "n": 1019,
+     "mean": -0.277,
+     "hit": 0.471,
+     "t": -1.42
+    },
+    "primo_anno": {
+     "n": 1098,
+     "mean": -0.042,
+     "hit": 0.474,
+     "t": -0.18
+    },
+    "secondo_anno": {
+     "n": 1092,
+     "mean": -0.185,
+     "hit": 0.459,
+     "t": -1.11
+    },
+    "caso": -0.086,
+    "asset_positivi": 3,
+    "asset": 10
+   }
+  },
+  "SOP bias con CVD vero": {
+   "24h": {
+    "n": 5368,
+    "mean": -0.095,
+    "hit": 0.478,
+    "t": -1.73,
+    "long": {
+     "n": 1603,
+     "mean": 0.068,
+     "hit": 0.487,
+     "t": 0.82
+    },
+    "short": {
+     "n": 3765,
+     "mean": -0.164,
+     "hit": 0.474,
+     "t": -2.34
+    },
+    "primo_anno": {
+     "n": 2633,
+     "mean": -0.187,
+     "hit": 0.482,
+     "t": -2.0
+    },
+    "secondo_anno": {
+     "n": 2735,
+     "mean": -0.007,
+     "hit": 0.475,
+     "t": -0.11
+    },
+    "caso": -0.127,
+    "asset_positivi": 2,
+    "asset": 10
+   },
+   "72h": {
+    "n": 2158,
+    "mean": -0.15,
+    "hit": 0.488,
+    "t": -1.03,
+    "long": {
+     "n": 555,
+     "mean": 0.026,
+     "hit": 0.467,
+     "t": 0.11
+    },
+    "short": {
+     "n": 1603,
+     "mean": -0.211,
+     "hit": 0.496,
+     "t": -1.18
+    },
+    "primo_anno": {
+     "n": 1072,
+     "mean": -0.513,
+     "hit": 0.474,
+     "t": -2.11
+    },
+    "secondo_anno": {
+     "n": 1086,
+     "mean": 0.208,
+     "hit": 0.503,
+     "t": 1.27
+    },
+    "caso": -0.197,
+    "asset_positivi": 2,
+    "asset": 10
+   }
+  },
+  "Funding estremo, contrarian": {
+   "24h": {
+    "n": 1340,
+    "mean": -0.273,
+    "hit": 0.487,
+    "t": -2.31,
+    "long": {
+     "n": 1133,
+     "mean": -0.22,
+     "hit": 0.48,
+     "t": -1.77
+    },
+    "short": {
+     "n": 207,
+     "mean": -0.562,
+     "hit": 0.522,
+     "t": -1.62
+    },
+    "primo_anno": {
+     "n": 708,
+     "mean": -0.325,
+     "hit": 0.493,
+     "t": -1.7
+    },
+    "secondo_anno": {
+     "n": 632,
+     "mean": -0.215,
+     "hit": 0.479,
+     "t": -1.64
+    },
+    "caso": -0.1,
+    "asset_positivi": 1,
+    "asset": 10
+   },
+   "72h": {
+    "n": 781,
+    "mean": 0.038,
+    "hit": 0.52,
+    "t": 0.15,
+    "long": {
+     "n": 659,
+     "mean": 0.123,
+     "hit": 0.51,
+     "t": 0.45
+    },
+    "short": {
+     "n": 122,
+     "mean": -0.416,
+     "hit": 0.574,
+     "t": -0.53
+    },
+    "primo_anno": {
+     "n": 399,
+     "mean": 0.088,
+     "hit": 0.491,
+     "t": 0.2
+    },
+    "secondo_anno": {
+     "n": 382,
+     "mean": -0.013,
+     "hit": 0.55,
+     "t": -0.05
+    },
+    "caso": -0.107,
+    "asset_positivi": 4,
+    "asset": 10
+   }
+  },
+  "Long/short top trader estremo, contrarian": {
+   "24h": {
+    "n": 1828,
+    "mean": -0.141,
+    "hit": 0.49,
+    "t": -1.37,
+    "long": {
+     "n": 919,
+     "mean": 0.043,
+     "hit": 0.491,
+     "t": 0.32
+    },
+    "short": {
+     "n": 909,
+     "mean": -0.327,
+     "hit": 0.488,
+     "t": -2.12
+    },
+    "primo_anno": {
+     "n": 925,
+     "mean": -0.192,
+     "hit": 0.506,
+     "t": -1.1
+    },
+    "secondo_anno": {
+     "n": 903,
+     "mean": -0.089,
+     "hit": 0.473,
+     "t": -0.82
+    },
+    "caso": -0.1,
+    "asset_positivi": 3,
+    "asset": 10
+   },
+   "72h": {
+    "n": 879,
+    "mean": -0.056,
+    "hit": 0.514,
+    "t": -0.24,
+    "long": {
+     "n": 441,
+     "mean": 0.048,
+     "hit": 0.492,
+     "t": 0.16
+    },
+    "short": {
+     "n": 438,
+     "mean": -0.16,
+     "hit": 0.537,
+     "t": -0.46
+    },
+    "primo_anno": {
+     "n": 444,
+     "mean": -0.043,
+     "hit": 0.529,
+     "t": -0.11
+    },
+    "secondo_anno": {
+     "n": 435,
+     "mean": -0.069,
+     "hit": 0.499,
+     "t": -0.27
+    },
+    "caso": -0.1,
+    "asset_positivi": 4,
+    "asset": 10
+   }
+  },
+  "Long/short folla estremo, contrarian": {
+   "24h": {
+    "n": 1520,
+    "mean": 0.166,
+    "hit": 0.495,
+    "t": 1.59,
+    "long": {
+     "n": 785,
+     "mean": 0.257,
+     "hit": 0.493,
+     "t": 1.74
+    },
+    "short": {
+     "n": 735,
+     "mean": 0.069,
+     "hit": 0.497,
+     "t": 0.47
+    },
+    "primo_anno": {
+     "n": 785,
+     "mean": 0.189,
+     "hit": 0.502,
+     "t": 1.15
+    },
+    "secondo_anno": {
+     "n": 735,
+     "mean": 0.142,
+     "hit": 0.487,
+     "t": 1.12
+    },
+    "caso": -0.1,
+    "asset_positivi": 7,
+    "asset": 10
+   },
+   "72h": {
+    "n": 810,
+    "mean": 0.717,
+    "hit": 0.514,
+    "t": 2.87,
+    "long": {
+     "n": 426,
+     "mean": 0.833,
+     "hit": 0.509,
+     "t": 2.38
+    },
+    "short": {
+     "n": 384,
+     "mean": 0.587,
+     "hit": 0.518,
+     "t": 1.65
+    },
+    "primo_anno": {
+     "n": 424,
+     "mean": 0.894,
+     "hit": 0.502,
+     "t": 2.41
+    },
+    "secondo_anno": {
+     "n": 386,
+     "mean": 0.521,
+     "hit": 0.526,
+     "t": 1.59
+    },
+    "caso": -0.1,
+    "asset_positivi": 9,
+    "asset": 10
+   }
+  },
+  "Volume aggressivo estremo, segue": {
+   "24h": {
+    "n": 2696,
+    "mean": 0.035,
+    "hit": 0.511,
+    "t": 0.5,
+    "long": {
+     "n": 1343,
+     "mean": -0.092,
+     "hit": 0.503,
+     "t": -0.93
+    },
+    "short": {
+     "n": 1353,
+     "mean": 0.161,
+     "hit": 0.52,
+     "t": 1.64
+    },
+    "primo_anno": {
+     "n": 1313,
+     "mean": -0.016,
+     "hit": 0.52,
+     "t": -0.14
+    },
+    "secondo_anno": {
+     "n": 1383,
+     "mean": 0.083,
+     "hit": 0.503,
+     "t": 1.06
+    },
+    "caso": -0.1,
+    "asset_positivi": 3,
+    "asset": 10
+   },
+   "72h": {
+    "n": 1502,
+    "mean": -0.173,
+    "hit": 0.49,
+    "t": -1.07,
+    "long": {
+     "n": 728,
+     "mean": -0.333,
+     "hit": 0.467,
+     "t": -1.55
+    },
+    "short": {
+     "n": 774,
+     "mean": -0.023,
+     "hit": 0.512,
+     "t": -0.09
+    },
+    "primo_anno": {
+     "n": 735,
+     "mean": -0.244,
+     "hit": 0.497,
+     "t": -0.93
+    },
+    "secondo_anno": {
+     "n": 767,
+     "mean": -0.105,
+     "hit": 0.484,
+     "t": -0.55
+    },
+    "caso": -0.1,
+    "asset_positivi": 5,
+    "asset": 10
+   }
+  },
+  "OI in forte aumento, segue il prezzo": {
+   "24h": {
+    "n": 1117,
+    "mean": 0.122,
+    "hit": 0.459,
+    "t": 0.8,
+    "long": {
+     "n": 1027,
+     "mean": 0.129,
+     "hit": 0.463,
+     "t": 0.81
+    },
+    "short": {
+     "n": 90,
+     "mean": 0.033,
+     "hit": 0.422,
+     "t": 0.08
+    },
+    "primo_anno": {
+     "n": 539,
+     "mean": 0.307,
+     "hit": 0.475,
+     "t": 1.15
+    },
+    "secondo_anno": {
+     "n": 578,
+     "mean": -0.052,
+     "hit": 0.445,
+     "t": -0.34
+    },
+    "caso": -0.101,
+    "asset_positivi": 7,
+    "asset": 10
+   },
+   "72h": {
+    "n": 815,
+    "mean": -0.424,
+    "hit": 0.394,
+    "t": -1.7,
+    "long": {
+     "n": 740,
+     "mean": -0.494,
+     "hit": 0.385,
+     "t": -1.86
+    },
+    "short": {
+     "n": 75,
+     "mean": 0.261,
+     "hit": 0.48,
+     "t": 0.35
+    },
+    "primo_anno": {
+     "n": 388,
+     "mean": -0.278,
+     "hit": 0.412,
+     "t": -0.67
+    },
+    "secondo_anno": {
+     "n": 427,
+     "mean": -0.557,
+     "hit": 0.377,
+     "t": -1.92
+    },
+    "caso": -0.109,
+    "asset_positivi": 2,
+    "asset": 10
+   }
+  },
+  "OI in forte calo, contro il prezzo": {
+   "24h": {
+    "n": 1296,
+    "mean": 0.218,
+    "hit": 0.512,
+    "t": 2.01,
+    "long": {
+     "n": 1217,
+     "mean": 0.142,
+     "hit": 0.507,
+     "t": 1.26
+    },
+    "short": {
+     "n": 79,
+     "mean": 1.386,
+     "hit": 0.595,
+     "t": 3.73
+    },
+    "primo_anno": {
+     "n": 652,
+     "mean": 0.573,
+     "hit": 0.548,
+     "t": 3.34
+    },
+    "secondo_anno": {
+     "n": 644,
+     "mean": -0.141,
+     "hit": 0.477,
+     "t": -1.09
+    },
+    "caso": -0.101,
+    "asset_positivi": 6,
+    "asset": 10
+   },
+   "72h": {
+    "n": 938,
+    "mean": 0.406,
+    "hit": 0.506,
+    "t": 1.89,
+    "long": {
+     "n": 885,
+     "mean": 0.37,
+     "hit": 0.508,
+     "t": 1.67
+    },
+    "short": {
+     "n": 53,
+     "mean": 1.005,
+     "hit": 0.472,
+     "t": 1.11
+    },
+    "primo_anno": {
+     "n": 470,
+     "mean": 1.085,
+     "hit": 0.562,
+     "t": 3.11
+    },
+    "secondo_anno": {
+     "n": 468,
+     "mean": -0.277,
+     "hit": 0.451,
+     "t": -1.13
+    },
+    "caso": -0.11,
+    "asset_positivi": 7,
+    "asset": 10
+   }
+  },
+  "Liquidazioni (sostituto), contrarian": {
+   "24h": {
+    "n": 127,
+    "mean": 1.818,
+    "hit": 0.535,
+    "t": 3.27,
+    "long": {
+     "n": 123,
+     "mean": 2.003,
+     "hit": 0.545,
+     "t": 3.6
+    },
+    "short": {
+     "n": 4,
+     "mean": -3.868,
+     "hit": 0.25,
+     "t": -1.05
+    },
+    "primo_anno": {
+     "n": 61,
+     "mean": 3.475,
+     "hit": 0.607,
+     "t": 3.5
+    },
+    "secondo_anno": {
+     "n": 66,
+     "mean": 0.287,
+     "hit": 0.47,
+     "t": 0.59
+    },
+    "caso": -0.041,
+    "asset_positivi": 9,
+    "asset": 10
+   },
+   "72h": {
+    "n": 121,
+    "mean": 2.728,
+    "hit": 0.628,
+    "t": 3.78,
+    "long": {
+     "n": 117,
+     "mean": 3.135,
+     "hit": 0.65,
+     "t": 4.62
+    },
+    "short": {
+     "n": 4,
+     "mean": -9.184,
+     "hit": 0.0,
+     "t": -1.19
+    },
+    "primo_anno": {
+     "n": 60,
+     "mean": 4.278,
+     "hit": 0.733,
+     "t": 4.53
+    },
+    "secondo_anno": {
+     "n": 61,
+     "mean": 1.204,
+     "hit": 0.525,
+     "t": 1.14
+    },
+    "caso": 0.081,
+    "asset_positivi": 9,
+    "asset": 10
+   }
+  },
+  "Funding estremo + OI in aumento, contrarian": {
+   "24h": {
+    "n": 810,
+    "mean": -0.351,
+    "hit": 0.478,
+    "t": -1.81,
+    "long": {
+     "n": 538,
+     "mean": -0.135,
+     "hit": 0.452,
+     "t": -0.74
+    },
+    "short": {
+     "n": 272,
+     "mean": -0.778,
+     "hit": 0.529,
+     "t": -1.73
+    },
+    "primo_anno": {
+     "n": 378,
+     "mean": -0.555,
+     "hit": 0.484,
+     "t": -1.47
+    },
+    "secondo_anno": {
+     "n": 432,
+     "mean": -0.173,
+     "hit": 0.472,
+     "t": -1.12
+    },
+    "caso": -0.1,
+    "asset_positivi": 2,
+    "asset": 10
+   },
+   "72h": {
+    "n": 573,
+    "mean": -0.763,
+    "hit": 0.45,
+    "t": -2.62,
+    "long": {
+     "n": 402,
+     "mean": -0.533,
+     "hit": 0.443,
+     "t": -1.6
+    },
+    "short": {
+     "n": 171,
+     "mean": -1.304,
+     "hit": 0.468,
+     "t": -2.26
+    },
+    "primo_anno": {
+     "n": 266,
+     "mean": -1.005,
+     "hit": 0.429,
+     "t": -2.04
+    },
+    "secondo_anno": {
+     "n": 307,
+     "mean": -0.553,
+     "hit": 0.469,
+     "t": -1.64
+    },
+    "caso": -0.104,
+    "asset_positivi": 1,
+    "asset": 10
+   }
+  }
+ }
+}
