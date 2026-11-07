@@ -1,0 +1,37 @@
+name: Radar Scopri (cloud)
+on:
+  schedule:
+    - cron: '20 0 * * *'   # ogni notte 00:20 UTC: candela crypto chiusa, mercati USA chiusi
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: radar-scan
+  cancel-in-progress: false
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Dipendenze
+        run: |
+          pip install requests
+          cd radar_cloud && npm init -y >/dev/null && npm install playwright@1.48.2 >/dev/null && npx playwright install --with-deps chromium >/dev/null
+      - name: Candele giornaliere
+        run: python radar_cloud/fetch_bars.py
+      - name: Scansione con le regole della pagina
+        run: node radar_cloud/run_scan.js
+      - name: Salva i risultati
+        run: |
+          git config user.name "sop-monitor"
+          git config user.email "sop-monitor@users.noreply.github.com"
+          git add radar_cloud/out/scan_latest.json radar_cloud/out/candidates.json radar_cloud/out/bars_tail.json
+          git commit -m "Scansione radar Scopri (automatico)" || exit 0
+          for i in 1 2 3; do git pull --rebase -q origin main && git push -q origin HEAD:main && break; sleep 5; done
