@@ -7,7 +7,8 @@ Stampa un piano JSON: proposte nuove da creare, proposte aperte da chiudere, sca
 Regole identiche alla pagina: niente doppioni (stesso asset e lato aperto o già proposto oggi),
 massimo 3 posizioni aperte (Regole 2+) nello stesso gruppo e lato, valutazione con TP1 prima dello stop,
 stessa candela = stop, scadenza dopo 30 candele."""
-import glob, json, os, sys, time
+import glob, json, os, re, sys, time
+ID_RE = re.compile(r'^[A-Za-z0-9_\-.~:@+]{1,200}$')
 
 HZ, MAX_CLUSTER = 30, 3
 db_dir, out_dir = sys.argv[1], sys.argv[2]
@@ -80,6 +81,8 @@ new, skipped = [], []
 fresh = now - scan.get('at', 0) < 36 * 3600000
 for c in cands if fresh else []:
     d = c['doc']; sym, dr = d['symbol'], int(d['dir'])
+    if not ID_RE.match(c['id']):
+        skipped.append((sym, 'simbolo non salvabile nel database')); continue
     if c['id'] in props:
         skipped.append((sym, 'già nel registro')); continue
     if any(q.get('symbol') == sym and int(q.get('dir', 0)) == dr and (q.get('status') == 'open' or q.get('date') == d['date']) for q in props.values()):
@@ -95,9 +98,20 @@ for c in cands if fresh else []:
     d['cloud'] = True
     new.append({'doc_id': c['id'], 'data': d}); props[c['id']] = d
 
-json.dump({
+plan = {
     'scan': scan if scan.get('at', 0) > float(db_scan.get('at', 0) or 0) else None,
     'scan_at': scan.get('at'), 'scan_fresh': fresh,
     'new': new, 'updates': updates, 'skipped': skipped,
-}, sys.stdout, ensure_ascii=False, indent=1)
+}
+emit = os.environ.get('EMIT_DIR')
+if emit:
+    os.makedirs(emit, exist_ok=True)
+    for i, n in enumerate(plan['new']):
+        json.dump(n['data'], open(os.path.join(emit, f'new_{i}.json'), 'w'), ensure_ascii=False); n['file'] = os.path.join(emit, f'new_{i}.json')
+    for i, u in enumerate(plan['updates']):
+        json.dump(u['fields'], open(os.path.join(emit, f'upd_{i}.json'), 'w')); u['file'] = os.path.join(emit, f'upd_{i}.json')
+    if plan['scan']:
+        json.dump(plan['scan'], open(os.path.join(emit, 'scan.json'), 'w'), ensure_ascii=False); plan['scan_file'] = os.path.join(emit, 'scan.json')
+    plan['scan'] = bool(plan['scan'])
+json.dump(plan, sys.stdout, ensure_ascii=False, indent=1)
 print(f"\n# nuove {len(new)}, chiuse {len(updates)}, scartate {len(skipped)}, scansione nuova: {scan.get('at', 0) > float(db_scan.get('at', 0) or 0)}", file=sys.stderr)
