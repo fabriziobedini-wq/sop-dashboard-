@@ -1706,6 +1706,32 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1794059569478
+  "checkedUntil": 1794075300000
+ },
+ {
+  "id": 1794075982711,
+  "sym": "BNB",
+  "dir": "short",
+  "createdAt": 1794075982711,
+  "entry": 696.24,
+  "stop": 707.461071,
+  "stopInitial": 707.461071,
+  "tp1": 668.187323,
+  "tp2": 651.355716,
+  "rr": 2.5,
+  "stopPct": 1.61,
+  "pattern": "Rejection EMA20",
+  "patternStrength": "forte",
+  "timeframe": "4h",
+  "score": 5,
+  "macro": "neutral",
+  "bias": "short",
+  "solidity": "moderato",
+  "regime": "structural",
+  "vetoed": null,
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1794075982711
  }
 ]
