@@ -1706,7 +1706,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1794075300000
+  "checkedUntil": 1794088800000
  },
  {
   "id": 1794075982711,
@@ -1732,6 +1732,32 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1794075982711
+  "checkedUntil": 1794088800000
+ },
+ {
+  "id": 1794089431673,
+  "sym": "ZEC",
+  "dir": "long",
+  "createdAt": 1794089431673,
+  "entry": 1246.58,
+  "stop": 1174.943214,
+  "stopInitial": 1174.943214,
+  "tp1": 1425.671965,
+  "tp2": 1533.127144,
+  "rr": 2.5,
+  "stopPct": 5.75,
+  "pattern": "Pin Bar Bullish",
+  "patternStrength": "forte",
+  "timeframe": "1h",
+  "score": 5,
+  "macro": "neutral",
+  "bias": "long",
+  "solidity": "solido",
+  "regime": "structural",
+  "vetoed": null,
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1794089431673
  }
 ]
