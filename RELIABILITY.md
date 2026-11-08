@@ -1,4 +1,4 @@
-# Report affidabilità SOP — 2026-11-08 01:25 UTC
+# Report affidabilità SOP — 2026-11-08 07:39 UTC
 
 Trade chiusi attivati: **60** · mai attivati (entry non raggiunta): 11 · aperti ora: 0 · in attesa: 0
 
@@ -21,12 +21,12 @@ Trade chiusi attivati: **60** · mai attivati (entry non raggiunta): 11 · apert
   - aperto: BNB short @ 696.24 (stop 707.461071, TP1 668.187323)
   - aperto: ZEC long @ 1246.58 (stop 1174.943214, TP1 1425.671965)
   - aperto: ZEC short @ 1253.13 (stop 1318.547143, TP1 1089.587143)
-- Bloccati dal veto MA20 (non notificati, simulati lo stesso): 12 registrati, 12 chiusi
+- Bloccati dal veto MA20 (non notificati, simulati lo stesso): 13 registrati, 12 chiusi
   - Se li avessi presi: n= 12  WR=  0.0%  pnl tot= -25.57%  medio=-2.13%  win medio=+0.00%  loss medio= -2.13%
   - Lettura: risultato medio negativo = il veto evita perdite; positivo = il veto toglie occasioni.
 
 ## STATO DEL MERCATO NEL TEMPO (macro del backend)
-- Dal 18/10, 498 ore osservate: bullish 65%, neutral 25%, bearish 9%
+- Dal 18/10, 504 ore osservate: bullish 64%, neutral 26%, bearish 9%
 
 ## Storico completo (include il periodo prima del nuovo percorso)
 - Tutti: n= 60  WR= 43.3%  pnl tot= -35.77%  medio=-0.60%  win medio=+5.70%  loss medio= -5.41%
