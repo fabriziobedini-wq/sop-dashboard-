@@ -1706,7 +1706,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1794088800000
+  "checkedUntil": 1794100500000
  },
  {
   "id": 1794075982711,
@@ -1732,7 +1732,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1794088800000
+  "checkedUntil": 1794100500000
  },
  {
   "id": 1794089431673,
@@ -1758,6 +1758,32 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1794089431673
+  "checkedUntil": 1794100500000
+ },
+ {
+  "id": 1794101129678,
+  "sym": "ZEC",
+  "dir": "short",
+  "createdAt": 1794101129678,
+  "entry": 1253.13,
+  "stop": 1318.547143,
+  "stopInitial": 1318.547143,
+  "tp1": 1089.587143,
+  "tp2": 991.461428,
+  "rr": 2.5,
+  "stopPct": 5.22,
+  "pattern": "Rejection EMA50",
+  "patternStrength": "forte",
+  "timeframe": "4h",
+  "score": 5,
+  "macro": "neutral",
+  "bias": "short",
+  "solidity": "solido",
+  "regime": "structural",
+  "vetoed": null,
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1794101129678
  }
 ]
