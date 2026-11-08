@@ -1688,7 +1688,7 @@
   "dir": "short",
   "createdAt": 1794059569478,
   "entry": 1.164,
-  "stop": 1.205754,
+  "stop": 1.164,
   "stopInitial": 1.205754,
   "tp1": 1.059615,
   "tp2": 0.996984,
@@ -1705,8 +1705,8 @@
   "vetoed": null,
   "status": "open",
   "tp1Hit": false,
-  "breakevenSet": false,
-  "checkedUntil": 1794164400000
+  "breakevenSet": true,
+  "checkedUntil": 1794177900000
  },
  {
   "id": 1794075982711,
@@ -1714,7 +1714,7 @@
   "dir": "short",
   "createdAt": 1794075982711,
   "entry": 696.24,
-  "stop": 707.461071,
+  "stop": 696.24,
   "stopInitial": 707.461071,
   "tp1": 668.187323,
   "tp2": 651.355716,
@@ -1731,8 +1731,8 @@
   "vetoed": null,
   "status": "open",
   "tp1Hit": false,
-  "breakevenSet": false,
-  "checkedUntil": 1794164400000
+  "breakevenSet": true,
+  "checkedUntil": 1794177900000
  },
  {
   "id": 1794089431673,
@@ -1758,7 +1758,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1794164400000
+  "checkedUntil": 1794177900000
  },
  {
   "id": 1794101129678,
@@ -1766,7 +1766,7 @@
   "dir": "short",
   "createdAt": 1794101129678,
   "entry": 1253.13,
-  "stop": 1318.547143,
+  "stop": 1253.13,
   "stopInitial": 1318.547143,
   "tp1": 1089.587143,
   "tp2": 991.461428,
@@ -1783,8 +1783,8 @@
   "vetoed": null,
   "status": "open",
   "tp1Hit": false,
-  "breakevenSet": false,
-  "checkedUntil": 1794164400000
+  "breakevenSet": true,
+  "checkedUntil": 1794177900000
  },
  {
   "id": 1794123544560,
@@ -1792,7 +1792,7 @@
   "dir": "short",
   "createdAt": 1794123544560,
   "entry": 698.57,
-  "stop": 709.04855,
+  "stop": 698.57,
   "stopInitial": 709.04855,
   "tp1": 672.373625,
   "tp2": 656.6558,
@@ -1809,8 +1809,8 @@
   "vetoed": "ma20",
   "status": "open",
   "tp1Hit": false,
-  "breakevenSet": false,
-  "checkedUntil": 1794164400000
+  "breakevenSet": true,
+  "checkedUntil": 1794177900000
  },
  {
   "id": 1794148287361,
@@ -1833,10 +1833,14 @@
   "solidity": "solido",
   "regime": "structural",
   "vetoed": null,
-  "status": "open",
+  "status": "closed",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1794164400000
+  "checkedUntil": 1794173400000,
+  "closeReason": "stop",
+  "closedAt": 1794172500000,
+  "closePrice": 75.891179,
+  "pnlPct": -2.03
  },
  {
   "id": 1794148288702,
@@ -1859,10 +1863,14 @@
   "solidity": "moderato",
   "regime": "structural",
   "vetoed": null,
-  "status": "open",
+  "status": "closed",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1794164400000
+  "checkedUntil": 1794175200000,
+  "closeReason": "stop",
+  "closedAt": 1794174300000,
+  "closePrice": 74820.6,
+  "pnlPct": -1.5
  },
  {
   "id": 1794148290066,
@@ -1885,10 +1893,14 @@
   "solidity": "moderato",
   "regime": "structural",
   "vetoed": null,
-  "status": "open",
+  "status": "closed",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1794164400000
+  "checkedUntil": 1794175200000,
+  "closeReason": "stop",
+  "closedAt": 1794174300000,
+  "closePrice": 2204.22315,
+  "pnlPct": -1.5
  },
  {
   "id": 1794148291434,
@@ -1914,7 +1926,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1794164400000
+  "checkedUntil": 1794177900000
  },
  {
   "id": 1794148292759,
@@ -1922,7 +1934,7 @@
   "dir": "short",
   "createdAt": 1794148292759,
   "entry": 0.07103,
-  "stop": 0.072206,
+  "stop": 0.07103,
   "stopInitial": 0.072206,
   "tp1": 0.06809,
   "tp2": 0.066326,
@@ -1938,9 +1950,10 @@
   "regime": "structural",
   "vetoed": null,
   "status": "open",
-  "tp1Hit": false,
-  "breakevenSet": false,
-  "checkedUntil": 1794164400000
+  "tp1Hit": true,
+  "breakevenSet": true,
+  "checkedUntil": 1794177900000,
+  "tp1HitAt": 1794174300000
  },
  {
   "id": 1794164938617,
@@ -1948,7 +1961,7 @@
   "dir": "short",
   "createdAt": 1794164938617,
   "entry": 76.929,
-  "stop": 78.473786,
+  "stop": 76.929,
   "stopInitial": 78.473786,
   "tp1": 73.067035,
   "tp2": 70.749856,
@@ -1965,7 +1978,59 @@
   "vetoed": null,
   "status": "open",
   "tp1Hit": false,
+  "breakevenSet": true,
+  "checkedUntil": 1794177900000
+ },
+ {
+  "id": 1794178293160,
+  "sym": "TRX",
+  "dir": "short",
+  "createdAt": 1794178293160,
+  "entry": 0.31913,
+  "stop": 0.323917,
+  "stopInitial": 0.323917,
+  "tp1": 0.307163,
+  "tp2": 0.299982,
+  "rr": 2.5,
+  "stopPct": 1.5,
+  "pattern": "Rejection EMA50",
+  "patternStrength": "forte",
+  "timeframe": "4h",
+  "score": 0,
+  "macro": "neutral",
+  "bias": "short",
+  "solidity": "moderato",
+  "regime": "structural",
+  "vetoed": "ma20",
+  "status": "open",
+  "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1794164938617
+  "checkedUntil": 1794178293160
+ },
+ {
+  "id": 1794178295199,
+  "sym": "ETH",
+  "dir": "short",
+  "createdAt": 1794178295199,
+  "entry": 2121.05,
+  "stop": 2160.816071,
+  "stopInitial": 2160.816071,
+  "tp1": 2021.634823,
+  "tp2": 1961.985716,
+  "rr": 2.5,
+  "stopPct": 1.87,
+  "pattern": "Engulfing Bearish",
+  "patternStrength": "forte",
+  "timeframe": "4h",
+  "score": 5,
+  "macro": "neutral",
+  "bias": "short",
+  "solidity": "solido",
+  "regime": "structural",
+  "vetoed": null,
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1794178295199
  }
 ]
