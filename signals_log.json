@@ -1706,7 +1706,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1794148200000
+  "checkedUntil": 1794164400000
  },
  {
   "id": 1794075982711,
@@ -1732,7 +1732,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1794148200000
+  "checkedUntil": 1794164400000
  },
  {
   "id": 1794089431673,
@@ -1758,7 +1758,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1794148200000
+  "checkedUntil": 1794164400000
  },
  {
   "id": 1794101129678,
@@ -1784,7 +1784,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1794148200000
+  "checkedUntil": 1794164400000
  },
  {
   "id": 1794123544560,
@@ -1810,7 +1810,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1794148200000
+  "checkedUntil": 1794164400000
  },
  {
   "id": 1794148287361,
@@ -1836,7 +1836,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1794148287361
+  "checkedUntil": 1794164400000
  },
  {
   "id": 1794148288702,
@@ -1862,7 +1862,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1794148288702
+  "checkedUntil": 1794164400000
  },
  {
   "id": 1794148290066,
@@ -1888,7 +1888,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1794148290066
+  "checkedUntil": 1794164400000
  },
  {
   "id": 1794148291434,
@@ -1914,7 +1914,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1794148291434
+  "checkedUntil": 1794164400000
  },
  {
   "id": 1794148292759,
@@ -1940,6 +1940,32 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1794148292759
+  "checkedUntil": 1794164400000
+ },
+ {
+  "id": 1794164938617,
+  "sym": "HYPE",
+  "dir": "short",
+  "createdAt": 1794164938617,
+  "entry": 76.929,
+  "stop": 78.473786,
+  "stopInitial": 78.473786,
+  "tp1": 73.067035,
+  "tp2": 70.749856,
+  "rr": 2.5,
+  "stopPct": 2.01,
+  "pattern": "Pin Bar Bearish",
+  "patternStrength": "forte",
+  "timeframe": "4h",
+  "score": 4,
+  "macro": "bullish",
+  "bias": "short",
+  "solidity": "moderato",
+  "regime": "structural",
+  "vetoed": null,
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1794164938617
  }
 ]
