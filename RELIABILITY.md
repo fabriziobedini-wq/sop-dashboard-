@@ -1,4 +1,4 @@
-# Report affidabilità SOP — 2026-11-08 07:39 UTC
+# Report affidabilità SOP — 2026-11-08 14:31 UTC
 
 Trade chiusi attivati: **60** · mai attivati (entry non raggiunta): 11 · aperti ora: 0 · in attesa: 0
 
@@ -12,7 +12,7 @@ Trade chiusi attivati: **60** · mai attivati (entry non raggiunta): 11 · apert
   - 13/10 TRX long: -1.47% (stop)
 
 ## SEGNALI CONSIGLIATI (registro simulato, anche quelli non aperti)
-- Registrati dal 18/10/2026: **48** · chiusi (simulati) 44 · ancora aperti 4
+- Registrati dal 18/10/2026: **53** · chiusi (simulati) 44 · ancora aperti 9
 - Regole simulate come in dashboard (pareggio al 45% verso TP1, TP1 poi pareggio, TP2). Nella stessa candela 15m stop e target -> vale lo stop. Non simulabili: chiusura per bias invertito e manuale.
 - Tutti i segnali: n= 44  WR=  4.5%  pnl tot= -36.30%  medio=-0.82%  win medio=+9.18%  loss medio= -1.30%
 - NON aperti: n= 44  WR=  4.5%  pnl tot= -36.30%  medio=-0.82%  win medio=+9.18%  loss medio= -1.30%
@@ -21,12 +21,17 @@ Trade chiusi attivati: **60** · mai attivati (entry non raggiunta): 11 · apert
   - aperto: BNB short @ 696.24 (stop 707.461071, TP1 668.187323)
   - aperto: ZEC long @ 1246.58 (stop 1174.943214, TP1 1425.671965)
   - aperto: ZEC short @ 1253.13 (stop 1318.547143, TP1 1089.587143)
+  - aperto: HYPE long @ 77.465 (stop 75.891179, TP1 81.399553)
+  - aperto: BTC long @ 75960.0 (stop 74820.6, TP1 78808.5)
+  - aperto: ETH long @ 2237.79 (stop 2204.22315, TP1 2321.707125)
+  - aperto: TRX long @ 0.32039 (stop 0.315584, TP1 0.332405)
+  - aperto: DOGE short @ 0.07103 (stop 0.072206, TP1 0.06809)
 - Bloccati dal veto MA20 (non notificati, simulati lo stesso): 13 registrati, 12 chiusi
   - Se li avessi presi: n= 12  WR=  0.0%  pnl tot= -25.57%  medio=-2.13%  win medio=+0.00%  loss medio= -2.13%
   - Lettura: risultato medio negativo = il veto evita perdite; positivo = il veto toglie occasioni.
 
 ## STATO DEL MERCATO NEL TEMPO (macro del backend)
-- Dal 18/10, 504 ore osservate: bullish 64%, neutral 26%, bearish 9%
+- Dal 18/10, 511 ore osservate: bullish 64%, neutral 27%, bearish 9%
 
 ## Storico completo (include il periodo prima del nuovo percorso)
 - Tutti: n= 60  WR= 43.3%  pnl tot= -35.77%  medio=-0.60%  win medio=+5.70%  loss medio= -5.41%
