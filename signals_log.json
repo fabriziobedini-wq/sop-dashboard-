@@ -1706,7 +1706,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1794218400000
+  "checkedUntil": 1794256200000
  },
  {
   "id": 1794075982711,
@@ -1732,7 +1732,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1794218400000
+  "checkedUntil": 1794256200000
  },
  {
   "id": 1794089431673,
@@ -1755,10 +1755,14 @@
   "solidity": "solido",
   "regime": "structural",
   "vetoed": null,
-  "status": "open",
+  "status": "closed",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1794218400000
+  "checkedUntil": 1794242700000,
+  "closeReason": "stop",
+  "closedAt": 1794241800000,
+  "closePrice": 1174.943214,
+  "pnlPct": -5.75
  },
  {
   "id": 1794101129678,
@@ -1784,7 +1788,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1794218400000
+  "checkedUntil": 1794256200000
  },
  {
   "id": 1794123544560,
@@ -1810,7 +1814,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1794218400000
+  "checkedUntil": 1794256200000
  },
  {
   "id": 1794148287361,
@@ -1926,7 +1930,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1794218400000
+  "checkedUntil": 1794256200000
  },
  {
   "id": 1794148292759,
@@ -1952,7 +1956,7 @@
   "status": "open",
   "tp1Hit": true,
   "breakevenSet": true,
-  "checkedUntil": 1794218400000,
+  "checkedUntil": 1794256200000,
   "tp1HitAt": 1794174300000
  },
  {
@@ -1979,7 +1983,7 @@
   "status": "open",
   "tp1Hit": true,
   "breakevenSet": true,
-  "checkedUntil": 1794218400000,
+  "checkedUntil": 1794256200000,
   "tp1HitAt": 1794210300000
  },
  {
@@ -2006,7 +2010,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1794218400000
+  "checkedUntil": 1794256200000
  },
  {
   "id": 1794178295199,
@@ -2062,6 +2066,32 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1794218400000
+  "checkedUntil": 1794256200000
+ },
+ {
+  "id": 1794256342662,
+  "sym": "BTC",
+  "dir": "short",
+  "createdAt": 1794256342662,
+  "entry": 74672.5,
+  "stop": 75830.425,
+  "stopInitial": 75830.425,
+  "tp1": 71777.6875,
+  "tp2": 70040.8,
+  "rr": 2.5,
+  "stopPct": 1.55,
+  "pattern": "Rejection EMA20",
+  "patternStrength": "forte",
+  "timeframe": "4h",
+  "score": 4,
+  "macro": "neutral",
+  "bias": "short",
+  "solidity": "moderato",
+  "regime": "structural",
+  "vetoed": null,
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1794256342662
  }
 ]
