@@ -1,4 +1,4 @@
-# Report affidabilità SOP — 2026-11-08 22:51 UTC
+# Report affidabilità SOP — 2026-11-09 02:16 UTC
 
 Trade chiusi attivati: **60** · mai attivati (entry non raggiunta): 11 · aperti ora: 0 · in attesa: 0
 
@@ -12,11 +12,11 @@ Trade chiusi attivati: **60** · mai attivati (entry non raggiunta): 11 · apert
   - 13/10 TRX long: -1.47% (stop)
 
 ## SEGNALI CONSIGLIATI (registro simulato, anche quelli non aperti)
-- Registrati dal 18/10/2026: **55** · chiusi (simulati) 47 · ancora aperti 8
+- Registrati dal 18/10/2026: **56** · chiusi (simulati) 48 · ancora aperti 8
 - Regole simulate come in dashboard (pareggio al 45% verso TP1, TP1 poi pareggio, TP2). Nella stessa candela 15m stop e target -> vale lo stop. Non simulabili: chiusura per bias invertito e manuale.
-- Tutti i segnali: n= 47  WR=  4.3%  pnl tot= -41.33%  medio=-0.88%  win medio=+9.18%  loss medio= -1.33%
-- NON aperti: n= 47  WR=  4.3%  pnl tot= -41.33%  medio=-0.88%  win medio=+9.18%  loss medio= -1.33%
-- Esiti: stop 27, breakeven 18, tp2 2
+- Tutti i segnali: n= 48  WR=  4.2%  pnl tot= -43.20%  medio=-0.90%  win medio=+9.18%  loss medio= -1.34%
+- NON aperti: n= 48  WR=  4.2%  pnl tot= -43.20%  medio=-0.90%  win medio=+9.18%  loss medio= -1.34%
+- Esiti: stop 28, breakeven 18, tp2 2
   - aperto: XRP short @ 1.164 (stop 1.164, TP1 1.059615)
   - aperto: BNB short @ 696.24 (stop 696.24, TP1 668.187323)
   - aperto: ZEC long @ 1246.58 (stop 1174.943214, TP1 1425.671965)
@@ -24,13 +24,13 @@ Trade chiusi attivati: **60** · mai attivati (entry non raggiunta): 11 · apert
   - aperto: TRX long @ 0.32039 (stop 0.315584, TP1 0.332405)
   - aperto: DOGE short @ 0.07103 (stop 0.07103, TP1 0.06809)
   - aperto: HYPE short @ 76.929 (stop 76.929, TP1 73.067035)
-  - aperto: ETH short @ 2121.05 (stop 2160.816071, TP1 2021.634823)
+  - aperto: TRX short @ 0.31883 (stop 0.323612, TP1 0.306875)
 - Bloccati dal veto MA20 (non notificati, simulati lo stesso): 14 registrati, 12 chiusi
   - Se li avessi presi: n= 12  WR=  0.0%  pnl tot= -25.57%  medio=-2.13%  win medio=+0.00%  loss medio= -2.13%
   - Lettura: risultato medio negativo = il veto evita perdite; positivo = il veto toglie occasioni.
 
 ## STATO DEL MERCATO NEL TEMPO (macro del backend)
-- Dal 18/10, 519 ore osservate: bullish 64%, neutral 27%, bearish 9%
+- Dal 18/10, 522 ore osservate: bullish 64%, neutral 27%, bearish 9%
 
 ## Storico completo (include il periodo prima del nuovo percorso)
 - Tutti: n= 60  WR= 43.3%  pnl tot= -35.77%  medio=-0.60%  win medio=+5.70%  loss medio= -5.41%
