@@ -1706,7 +1706,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1794278700000
+  "checkedUntil": 1794306600000
  },
  {
   "id": 1794075982711,
@@ -1732,7 +1732,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1794278700000
+  "checkedUntil": 1794306600000
  },
  {
   "id": 1794089431673,
@@ -1788,7 +1788,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1794278700000
+  "checkedUntil": 1794306600000
  },
  {
   "id": 1794123544560,
@@ -1814,7 +1814,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1794278700000
+  "checkedUntil": 1794306600000
  },
  {
   "id": 1794148287361,
@@ -1930,7 +1930,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1794278700000
+  "checkedUntil": 1794306600000
  },
  {
   "id": 1794148292759,
@@ -1956,7 +1956,7 @@
   "status": "open",
   "tp1Hit": true,
   "breakevenSet": true,
-  "checkedUntil": 1794278700000,
+  "checkedUntil": 1794306600000,
   "tp1HitAt": 1794174300000
  },
  {
@@ -1983,7 +1983,7 @@
   "status": "open",
   "tp1Hit": true,
   "breakevenSet": true,
-  "checkedUntil": 1794278700000,
+  "checkedUntil": 1794306600000,
   "tp1HitAt": 1794210300000
  },
  {
@@ -2010,7 +2010,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1794278700000
+  "checkedUntil": 1794306600000
  },
  {
   "id": 1794178295199,
@@ -2066,7 +2066,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1794278700000
+  "checkedUntil": 1794306600000
  },
  {
   "id": 1794256342662,
@@ -2092,6 +2092,32 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1794278700000
+  "checkedUntil": 1794306600000
+ },
+ {
+  "id": 1794307186182,
+  "sym": "ETH",
+  "dir": "short",
+  "createdAt": 1794307186182,
+  "entry": 2090.12,
+  "stop": 2148.876071,
+  "stopInitial": 2148.876071,
+  "tp1": 1943.229822,
+  "tp2": 1855.095716,
+  "rr": 2.5,
+  "stopPct": 2.81,
+  "pattern": "Pin Bar Bearish",
+  "patternStrength": "forte",
+  "timeframe": "4h",
+  "score": 4,
+  "macro": "bearish",
+  "bias": "short",
+  "solidity": "moderato",
+  "regime": "structural",
+  "vetoed": null,
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1794307186182
  }
 ]
