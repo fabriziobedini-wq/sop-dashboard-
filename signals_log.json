@@ -1706,7 +1706,7 @@
   "status": "open",
   "tp1Hit": true,
   "breakevenSet": true,
-  "checkedUntil": 1794393000000,
+  "checkedUntil": 1794420000000,
   "tp1HitAt": 1794317400000
  },
  {
@@ -1733,7 +1733,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1794393000000
+  "checkedUntil": 1794420000000
  },
  {
   "id": 1794089431673,
@@ -1820,7 +1820,7 @@
   "status": "open",
   "tp1Hit": true,
   "breakevenSet": true,
-  "checkedUntil": 1794393000000,
+  "checkedUntil": 1794420000000,
   "tp1HitAt": 1794328200000
  },
  {
@@ -1937,7 +1937,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1794393000000
+  "checkedUntil": 1794420000000
  },
  {
   "id": 1794148292759,
@@ -1963,7 +1963,7 @@
   "status": "open",
   "tp1Hit": true,
   "breakevenSet": true,
-  "checkedUntil": 1794393000000,
+  "checkedUntil": 1794420000000,
   "tp1HitAt": 1794174300000
  },
  {
@@ -2021,7 +2021,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1794393000000
+  "checkedUntil": 1794420000000
  },
  {
   "id": 1794178295199,
@@ -2077,7 +2077,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1794393000000
+  "checkedUntil": 1794420000000
  },
  {
   "id": 1794256342662,
@@ -2100,10 +2100,14 @@
   "solidity": "moderato",
   "regime": "structural",
   "vetoed": null,
-  "status": "open",
+  "status": "closed",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1794393000000
+  "checkedUntil": 1794418200000,
+  "closeReason": "breakeven",
+  "closedAt": 1794417300000,
+  "closePrice": 74672.5,
+  "pnlPct": -0.0
  },
  {
   "id": 1794307186182,
@@ -2159,6 +2163,58 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": false,
-  "checkedUntil": 1794393000000
+  "checkedUntil": 1794420000000
+ },
+ {
+  "id": 1794420184631,
+  "sym": "ZEC",
+  "dir": "short",
+  "createdAt": 1794420184631,
+  "entry": 1009.41,
+  "stop": 1087.502143,
+  "stopInitial": 1087.502143,
+  "tp1": 814.179642,
+  "tp2": 697.041428,
+  "rr": 2.5,
+  "stopPct": 7.74,
+  "pattern": "Pin Bar Bearish",
+  "patternStrength": "forte",
+  "timeframe": "1h",
+  "score": 5,
+  "macro": "bearish",
+  "bias": "short",
+  "solidity": "solido",
+  "regime": "mixed",
+  "vetoed": null,
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1794420184631
+ },
+ {
+  "id": 1794420188940,
+  "sym": "HYPE",
+  "dir": "short",
+  "createdAt": 1794420188940,
+  "entry": 73.763,
+  "stop": 76.439857,
+  "stopInitial": 76.439857,
+  "tp1": 67.070858,
+  "tp2": 63.055572,
+  "rr": 2.5,
+  "stopPct": 3.63,
+  "pattern": "Rejection EMA20",
+  "patternStrength": "forte",
+  "timeframe": "4h",
+  "score": 4,
+  "macro": "bearish",
+  "bias": "short",
+  "solidity": "moderato",
+  "regime": "structural",
+  "vetoed": null,
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1794420188940
  }
 ]
