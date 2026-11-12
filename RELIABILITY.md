@@ -1,4 +1,4 @@
-# Report affidabilità SOP — 2026-11-12 07:43 UTC
+# Report affidabilità SOP — 2026-11-12 16:18 UTC
 
 Trade chiusi attivati: **60** · mai attivati (entry non raggiunta): 11 · aperti ora: 0 · in attesa: 0
 
@@ -12,24 +12,22 @@ Trade chiusi attivati: **60** · mai attivati (entry non raggiunta): 11 · apert
   - 13/10 TRX long: -1.47% (stop)
 
 ## SEGNALI CONSIGLIATI (registro simulato, anche quelli non aperti)
-- Registrati dal 18/10/2026: **61** · chiusi (simulati) 54 · ancora aperti 7
+- Registrati dal 18/10/2026: **61** · chiusi (simulati) 56 · ancora aperti 5
 - Regole simulate come in dashboard (pareggio al 45% verso TP1, TP1 poi pareggio, TP2). Nella stessa candela 15m stop e target -> vale lo stop. Non simulabili: chiusura per bias invertito e manuale.
-- Tutti i segnali: n= 54  WR=  9.3%  pnl tot= -13.42%  medio=-0.25%  win medio=+10.78%  loss medio= -1.37%
-- NON aperti: n= 54  WR=  9.3%  pnl tot= -13.42%  medio=-0.25%  win medio=+10.78%  loss medio= -1.37%
-- Esiti: stop 29, breakeven 20, tp2 5
+- Tutti i segnali: n= 56  WR= 10.7%  pnl tot=  -8.47%  medio=-0.15%  win medio=+10.05%  loss medio= -1.38%
+- NON aperti: n= 56  WR= 10.7%  pnl tot=  -8.47%  medio=-0.15%  win medio=+10.05%  loss medio= -1.38%
+- Esiti: stop 30, breakeven 20, tp2 6
   - aperto: XRP short @ 1.164 (stop 1.164, TP1 1.059615)
-  - aperto: BNB short @ 696.24 (stop 696.24, TP1 668.187323)
-  - aperto: TRX long @ 0.32039 (stop 0.315584, TP1 0.332405)
   - aperto: TRX short @ 0.31883 (stop 0.323612, TP1 0.306875)
   - aperto: SOL short @ 83.14 (stop 86.187143, TP1 75.522142)
   - aperto: ZEC short @ 1009.41 (stop 1087.502143, TP1 814.179642)
   - aperto: HYPE short @ 73.763 (stop 73.763, TP1 67.070858)
-- Bloccati dal veto MA20 (non notificati, simulati lo stesso): 14 registrati, 12 chiusi
-  - Se li avessi presi: n= 12  WR=  0.0%  pnl tot= -25.57%  medio=-2.13%  win medio=+0.00%  loss medio= -2.13%
+- Bloccati dal veto MA20 (non notificati, simulati lo stesso): 14 registrati, 13 chiusi
+  - Se li avessi presi: n= 13  WR=  7.7%  pnl tot= -19.57%  medio=-1.51%  win medio=+6.00%  loss medio= -2.13%
   - Lettura: risultato medio negativo = il veto evita perdite; positivo = il veto toglie occasioni.
 
 ## STATO DEL MERCATO NEL TEMPO (macro del backend)
-- Dal 18/10, 600 ore osservate: bullish 55%, neutral 32%, bearish 13%
+- Dal 18/10, 608 ore osservate: bullish 55%, neutral 33%, bearish 13%
 
 ## Storico completo (include il periodo prima del nuovo percorso)
 - Tutti: n= 60  WR= 43.3%  pnl tot= -35.77%  medio=-0.60%  win medio=+5.70%  loss medio= -5.41%
