@@ -1,0 +1,24 @@
+name: SOP Backtest ripartenza (manuale)
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests
+      - name: Backtest checklist fine della discesa
+        run: python backtest_ripartenza.py
+      - name: Salva i risultati
+        run: |
+          git config user.name "sop-monitor"
+          git config user.email "sop-monitor@users.noreply.github.com"
+          git add BACKTEST_RIPARTENZA.md backtest_ripartenza.json
+          git commit -m "Risultati backtest ripartenza (automatico)" || exit 0
+          for i in 1 2 3; do git pull --rebase -q origin main && git push -q origin HEAD:main && break; sleep 5; done
