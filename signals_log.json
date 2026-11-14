@@ -2042,7 +2042,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1794609900000
+  "checkedUntil": 1794624300000
  },
  {
   "id": 1794178295199,
@@ -2098,7 +2098,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1794609900000
+  "checkedUntil": 1794624300000
  },
  {
   "id": 1794256342662,
@@ -2182,9 +2182,10 @@
   "regime": "structural",
   "vetoed": null,
   "status": "open",
-  "tp1Hit": false,
+  "tp1Hit": true,
   "breakevenSet": true,
-  "checkedUntil": 1794609900000
+  "checkedUntil": 1794624300000,
+  "tp1HitAt": 1794622500000
  },
  {
   "id": 1794420184631,
@@ -2210,7 +2211,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1794609900000
+  "checkedUntil": 1794624300000
  },
  {
   "id": 1794420188940,
@@ -2264,9 +2265,10 @@
   "regime": "structural",
   "vetoed": null,
   "status": "open",
-  "tp1Hit": false,
+  "tp1Hit": true,
   "breakevenSet": true,
-  "checkedUntil": 1794609900000
+  "checkedUntil": 1794624300000,
+  "tp1HitAt": 1794622500000
  },
  {
   "id": 1794591749628,
@@ -2274,7 +2276,7 @@
   "dir": "short",
   "createdAt": 1794591749628,
   "entry": 1.026,
-  "stop": 1.061979,
+  "stop": 1.026,
   "stopInitial": 1.061979,
   "tp1": 0.936053,
   "tp2": 0.882084,
@@ -2291,7 +2293,7 @@
   "vetoed": null,
   "status": "open",
   "tp1Hit": false,
-  "breakevenSet": false,
-  "checkedUntil": 1794609900000
+  "breakevenSet": true,
+  "checkedUntil": 1794624300000
  }
 ]
