@@ -1,0 +1,497 @@
+{
+ "Confronto: ricomprare in un momento qualsiasi della discesa": {
+  "72h": {
+   "n": 1206,
+   "media": -0.3,
+   "vinte": 49,
+   "t": -1.54
+  },
+  "7g": {
+   "n": 1197,
+   "media": -1.24,
+   "vinte": 43,
+   "t": -4.25
+  },
+  "stop/target": {
+   "n": 1197,
+   "media": -0.95,
+   "vinte": 30,
+   "t": -5.55
+  },
+  "anno1": {
+   "n": 641,
+   "media": -0.89,
+   "vinte": 33,
+   "t": -3.4
+  },
+  "anno2": {
+   "n": 556,
+   "media": -1.01,
+   "vinte": 27,
+   "t": -4.84
+  },
+  "asset_positivi": "0/10"
+ },
+ "Almeno 2 condizioni su 7": {
+  "72h": {
+   "n": 1101,
+   "media": -0.16,
+   "vinte": 48,
+   "t": -0.79
+  },
+  "7g": {
+   "n": 1093,
+   "media": -1.02,
+   "vinte": 44,
+   "t": -3.37
+  },
+  "stop/target": {
+   "n": 1093,
+   "media": -0.92,
+   "vinte": 33,
+   "t": -4.91
+  },
+  "anno1": {
+   "n": 587,
+   "media": -0.76,
+   "vinte": 36,
+   "t": -2.56
+  },
+  "anno2": {
+   "n": 506,
+   "media": -1.12,
+   "vinte": 29,
+   "t": -5.15
+  },
+  "asset_positivi": "0/10"
+ },
+ "Almeno 3 condizioni su 7": {
+  "72h": {
+   "n": 856,
+   "media": -0.15,
+   "vinte": 46,
+   "t": -0.65
+  },
+  "7g": {
+   "n": 849,
+   "media": -1.02,
+   "vinte": 44,
+   "t": -3.07
+  },
+  "stop/target": {
+   "n": 849,
+   "media": -0.92,
+   "vinte": 34,
+   "t": -3.88
+  },
+  "anno1": {
+   "n": 445,
+   "media": -0.45,
+   "vinte": 39,
+   "t": -1.16
+  },
+  "anno2": {
+   "n": 404,
+   "media": -1.44,
+   "vinte": 28,
+   "t": -5.53
+  },
+  "asset_positivi": "0/10"
+ },
+ "Almeno 4 condizioni su 7": {
+  "72h": {
+   "n": 474,
+   "media": -0.09,
+   "vinte": 44,
+   "t": -0.31
+  },
+  "7g": {
+   "n": 470,
+   "media": -0.82,
+   "vinte": 43,
+   "t": -1.97
+  },
+  "stop/target": {
+   "n": 470,
+   "media": -1.02,
+   "vinte": 36,
+   "t": -3.12
+  },
+  "anno1": {
+   "n": 242,
+   "media": -1.03,
+   "vinte": 38,
+   "t": -2.01
+  },
+  "anno2": {
+   "n": 228,
+   "media": -1.02,
+   "vinte": 34,
+   "t": -2.52
+  },
+  "asset_positivi": "1/10"
+ },
+ "Almeno 5 condizioni su 7": {
+  "72h": {
+   "n": 174,
+   "media": -1.34,
+   "vinte": 40,
+   "t": -2.96
+  },
+  "7g": {
+   "n": 174,
+   "media": -1.22,
+   "vinte": 45,
+   "t": -2.0
+  },
+  "stop/target": {
+   "n": 174,
+   "media": -1.5,
+   "vinte": 39,
+   "t": -2.86
+  },
+  "anno1": {
+   "n": 80,
+   "media": -1.92,
+   "vinte": 38,
+   "t": -2.16
+  },
+  "anno2": {
+   "n": 94,
+   "media": -1.13,
+   "vinte": 39,
+   "t": -1.88
+  },
+  "asset_positivi": "2/10"
+ },
+ "Almeno 6 condizioni su 7": {
+  "72h": {
+   "n": 18,
+   "media": -4.34,
+   "vinte": 17,
+   "t": -2.75
+  },
+  "7g": {
+   "n": 18,
+   "media": -2.48,
+   "vinte": 33,
+   "t": -1.82
+  },
+  "stop/target": {
+   "n": 18,
+   "media": -2.56,
+   "vinte": 33,
+   "t": -1.95
+  },
+  "anno1": {
+   "n": 5,
+   "media": -8.22,
+   "vinte": 0,
+   "t": -3.29
+  },
+  "anno2": {
+   "n": 13,
+   "media": -0.38,
+   "vinte": 46,
+   "t": -0.35
+  },
+  "asset_positivi": "0/8"
+ },
+ "Solo condizione 1 cascata liquidazioni long": {
+  "72h": {
+   "n": 102,
+   "media": 4.02,
+   "vinte": 70,
+   "t": 5.56
+  },
+  "7g": {
+   "n": 102,
+   "media": 0.96,
+   "vinte": 57,
+   "t": 1.04
+  },
+  "stop/target": {
+   "n": 102,
+   "media": 0.26,
+   "vinte": 36,
+   "t": 0.7
+  },
+  "anno1": {
+   "n": 51,
+   "media": 0.96,
+   "vinte": 49,
+   "t": 1.47
+  },
+  "anno2": {
+   "n": 51,
+   "media": -0.43,
+   "vinte": 24,
+   "t": -1.27
+  },
+  "asset_positivi": "5/10"
+ },
+ "Solo condizione 2 folla non più long estrema": {
+  "72h": {
+   "n": 950,
+   "media": 0.01,
+   "vinte": 48,
+   "t": 0.06
+  },
+  "7g": {
+   "n": 945,
+   "media": -0.83,
+   "vinte": 44,
+   "t": -2.53
+  },
+  "stop/target": {
+   "n": 945,
+   "media": -0.84,
+   "vinte": 33,
+   "t": -4.14
+  },
+  "anno1": {
+   "n": 492,
+   "media": -0.62,
+   "vinte": 36,
+   "t": -1.9
+  },
+  "anno2": {
+   "n": 453,
+   "media": -1.08,
+   "vinte": 30,
+   "t": -4.59
+  },
+  "asset_positivi": "1/10"
+ },
+ "Solo condizione 3 leva scaricata (OI -10%)": {
+  "72h": {
+   "n": 671,
+   "media": 0.04,
+   "vinte": 50,
+   "t": 0.12
+  },
+  "7g": {
+   "n": 670,
+   "media": -1.3,
+   "vinte": 41,
+   "t": -3.27
+  },
+  "stop/target": {
+   "n": 670,
+   "media": -1.23,
+   "vinte": 27,
+   "t": -5.89
+  },
+  "anno1": {
+   "n": 407,
+   "media": -1.3,
+   "vinte": 28,
+   "t": -4.42
+  },
+  "anno2": {
+   "n": 263,
+   "media": -1.12,
+   "vinte": 26,
+   "t": -4.06
+  },
+  "asset_positivi": "3/10"
+ },
+ "Solo condizione 4 funding negativo": {
+  "72h": {
+   "n": 820,
+   "media": -0.32,
+   "vinte": 47,
+   "t": -1.33
+  },
+  "7g": {
+   "n": 818,
+   "media": -1.18,
+   "vinte": 44,
+   "t": -3.47
+  },
+  "stop/target": {
+   "n": 818,
+   "media": -0.91,
+   "vinte": 30,
+   "t": -4.84
+  },
+  "anno1": {
+   "n": 399,
+   "media": -0.86,
+   "vinte": 32,
+   "t": -2.85
+  },
+  "anno2": {
+   "n": 419,
+   "media": -0.96,
+   "vinte": 28,
+   "t": -4.19
+  },
+  "asset_positivi": "2/10"
+ },
+ "Solo condizione 5 tornano gli acquisti aggressivi": {
+  "72h": {
+   "n": 298,
+   "media": -0.72,
+   "vinte": 44,
+   "t": -2.31
+  },
+  "7g": {
+   "n": 295,
+   "media": -0.33,
+   "vinte": 48,
+   "t": -0.63
+  },
+  "stop/target": {
+   "n": 295,
+   "media": -0.11,
+   "vinte": 41,
+   "t": -0.3
+  },
+  "anno1": {
+   "n": 100,
+   "media": 0.59,
+   "vinte": 45,
+   "t": 0.76
+  },
+  "anno2": {
+   "n": 195,
+   "media": -0.47,
+   "vinte": 38,
+   "t": -1.16
+  },
+  "asset_positivi": "4/10"
+ },
+ "Solo condizione 6 prezzo sopra media 20 (4h)": {
+  "72h": {
+   "n": 662,
+   "media": -0.72,
+   "vinte": 42,
+   "t": -2.74
+  },
+  "7g": {
+   "n": 656,
+   "media": -1.17,
+   "vinte": 44,
+   "t": -2.95
+  },
+  "stop/target": {
+   "n": 656,
+   "media": -1.03,
+   "vinte": 38,
+   "t": -3.48
+  },
+  "anno1": {
+   "n": 361,
+   "media": -0.85,
+   "vinte": 40,
+   "t": -1.91
+  },
+  "anno2": {
+   "n": 295,
+   "media": -1.25,
+   "vinte": 34,
+   "t": -3.37
+  },
+  "asset_positivi": "0/10"
+ },
+ "Solo condizione 7 minimo crescente (4h)": {
+  "72h": {
+   "n": 897,
+   "media": -0.4,
+   "vinte": 44,
+   "t": -1.75
+  },
+  "7g": {
+   "n": 889,
+   "media": -0.85,
+   "vinte": 43,
+   "t": -2.53
+  },
+  "stop/target": {
+   "n": 889,
+   "media": -0.97,
+   "vinte": 34,
+   "t": -4.15
+  },
+  "anno1": {
+   "n": 489,
+   "media": -0.27,
+   "vinte": 39,
+   "t": -0.75
+  },
+  "anno2": {
+   "n": 400,
+   "media": -1.82,
+   "vinte": 27,
+   "t": -6.87
+  },
+  "asset_positivi": "1/10"
+ },
+ "Liquidazioni + folla non più estrema + una conferma di prezzo (6 o 7)": {
+  "72h": {
+   "n": 73,
+   "media": -1.87,
+   "vinte": 41,
+   "t": -2.16
+  },
+  "7g": {
+   "n": 73,
+   "media": -2.81,
+   "vinte": 36,
+   "t": -2.98
+  },
+  "stop/target": {
+   "n": 73,
+   "media": -2.81,
+   "vinte": 27,
+   "t": -3.87
+  },
+  "anno1": {
+   "n": 36,
+   "media": -3.41,
+   "vinte": 31,
+   "t": -2.97
+  },
+  "anno2": {
+   "n": 37,
+   "media": -2.22,
+   "vinte": 24,
+   "t": -2.48
+  },
+  "asset_positivi": "3/10"
+ },
+ "Leva scaricata + folla non più estrema + una conferma di prezzo (6 o 7)": {
+  "72h": {
+   "n": 298,
+   "media": -0.46,
+   "vinte": 48,
+   "t": -1.23
+  },
+  "7g": {
+   "n": 295,
+   "media": -0.98,
+   "vinte": 40,
+   "t": -1.77
+  },
+  "stop/target": {
+   "n": 295,
+   "media": -1.48,
+   "vinte": 31,
+   "t": -3.33
+  },
+  "anno1": {
+   "n": 181,
+   "media": -1.22,
+   "vinte": 34,
+   "t": -1.92
+  },
+  "anno2": {
+   "n": 114,
+   "media": -1.88,
+   "vinte": 25,
+   "t": -3.44
+  },
+  "asset_positivi": "2/10"
+ }
+}
