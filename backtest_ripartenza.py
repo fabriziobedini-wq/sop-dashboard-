@@ -16,7 +16,7 @@ Entrata all'apertura della candela successiva. Due modi di uscita:
  B) con stop e target: stop sotto il minimo delle ultime 12 candele (-0,5 ATR), target 2 volte il rischio, massimo 7 giorni
 Confronto: ricomprare in un momento qualsiasi della stessa discesa (stesse regole di uscita).
 Costi 0,1%. Dati: archivio Binance Futures, 01/11/2024 → 31/10/2026, 10 crypto."""
-import json, math
+import json, math, os
 from datetime import datetime, timezone
 import backtest_derivati as bd
 
@@ -96,6 +96,8 @@ def summ(x):
 
 
 def run():
+    import os
+    os.makedirs(bd.CACHE, exist_ok=True)
     series = {}
     for a in bd.ASSETS:
         B = bd.build(a)

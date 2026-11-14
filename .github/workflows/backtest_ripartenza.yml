@@ -1,7 +1,5 @@
 name: SOP Backtest ripartenza (manuale)
 on:
-  schedule:
-    - cron: '40 20 14 11 *'   # nuovo tentativo stasera alle 21:40 (ora di Roma)
   workflow_dispatch:
 permissions:
   contents: write
