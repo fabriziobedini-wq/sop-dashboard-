@@ -74,7 +74,10 @@ def days():
 
 def load(asset):
     s = asset + 'USDT'
-    urls_k = [f'{BASE}/monthly/klines/{s}/1h/{s}-1h-{m}.zip' for m in months()]
+    cur = END.strftime('%Y-%m')
+    urls_k = [f'{BASE}/monthly/klines/{s}/1h/{s}-1h-{m}.zip' for m in months() if m != cur or END.month != (END + timedelta(days=1)).month]
+    if END.month == (END + timedelta(days=1)).month:  # mese in corso: file giornalieri
+        urls_k += [f'{BASE}/daily/klines/{s}/1h/{s}-1h-{d}.zip' for d in days() if d.startswith(cur)]
     urls_f = [f'{BASE}/monthly/fundingRate/{s}/{s}-fundingRate-{m}.zip' for m in months()]
     urls_m = [f'{BASE}/daily/metrics/{s}/{s}-metrics-{d}.zip' for d in days()]
     with ThreadPoolExecutor(16) as ex:
