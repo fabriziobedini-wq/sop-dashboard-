@@ -13,6 +13,13 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install requests
+      - name: Archivio Binance in cache
+        uses: actions/cache@v4
+        with:
+          path: bt_cache
+          key: bt-cache-${{ github.run_id }}
+          restore-keys: |
+            bt-cache-
       - name: Backtest checklist fine della discesa
         run: python backtest_ripartenza.py
       - name: Salva i risultati

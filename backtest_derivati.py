@@ -29,6 +29,9 @@ H4 = 4 * 3600 * 1000
 COST = 0.10          # % andata e ritorno (commissioni + slippage stimati)
 HORIZONS = (6, 18)   # barre da 4h: 24 ore e 72 ore
 session = requests.Session()
+session.headers['User-Agent'] = 'Mozilla/5.0 (sop-backtest)'
+LAST_ERR = ['']
+THREADS = int(os.environ.get('BT_THREADS', '6'))
 
 
 def fetch(url):
@@ -42,8 +45,9 @@ def fetch(url):
                 open(path, 'wb').close(); return None
             if r.ok:
                 open(path, 'wb').write(r.content); return r.content
-        except Exception:
-            pass
+            LAST_ERR[0] = f'HTTP {r.status_code}'
+        except Exception as e:
+            LAST_ERR[0] = repr(e)[:120]
         time.sleep(1 + i * 2)
     return None
 
@@ -80,9 +84,9 @@ def load(asset):
         urls_k += [f'{BASE}/daily/klines/{s}/1h/{s}-1h-{d}.zip' for d in days() if d.startswith(cur)]
     urls_f = [f'{BASE}/monthly/fundingRate/{s}/{s}-fundingRate-{m}.zip' for m in months()]
     urls_m = [f'{BASE}/daily/metrics/{s}/{s}-metrics-{d}.zip' for d in days()]
-    with ThreadPoolExecutor(16) as ex:
+    with ThreadPoolExecutor(THREADS) as ex:
         K = list(ex.map(fetch, urls_k)); F = list(ex.map(fetch, urls_f)); M = list(ex.map(fetch, urls_m))
-    print(f'{asset}: klines {sum(1 for x in K if x)}/{len(K)} mesi, funding {sum(1 for x in F if x)}/{len(F)}, metrics {sum(1 for x in M if x)}/{len(M)} giorni', flush=True)
+    print(f'{asset}: klines {sum(1 for x in K if x)}/{len(K)} mesi, funding {sum(1 for x in F if x)}/{len(F)}, metrics {sum(1 for x in M if x)}/{len(M)} giorni {LAST_ERR[0]}', flush=True)
     # barre 4h dalle 1h
     bars = {}
     for b in K:
