@@ -90,6 +90,53 @@ def load_plus(a):
 bd.load = load_plus
 
 
+def live_liq(a):
+    """Segnale liquidazioni in tempo reale su OKX: ultime candele 4h chiuse (UTC) + open interest orario."""
+    inst = f'{a}-USDT-SWAP'
+    c = okx('/market/history-candles', instId=inst, bar='4Hutc', limit='40')
+    oi = okx('/rubik/stat/contracts/open-interest-history', instId=inst, period='1H', limit='100')
+    if not c or not oi:
+        return None
+    C = sorted([(int(x[0]), float(x[1]), float(x[2]), float(x[3]), float(x[4])) for x in c if x[8] == '1'])
+    OI = {int(x[0]): float(x[3]) for x in oi}
+    atr = None; out = []
+    for i, (t, o, h, l, cl) in enumerate(C):
+        prev_atr = atr
+        tr = h - l if i == 0 else max(h - l, abs(h - C[i - 1][4]), abs(l - C[i - 1][4]))
+        atr = tr if atr is None else (atr * 13 + tr) / 14
+        o0, o1 = OI.get(t), OI.get(t + 4 * 3600000)
+        if i < 15 or not prev_atr or not o0 or not o1:
+            continue
+        oi_ch = (o1 / o0 - 1) * 100
+        if abs(cl - o) > 2.5 * prev_atr and oi_ch < -2:
+            out.append({'segnale': 'liquidazioni (tempo reale OKX)', 'lato': 'long' if cl < o else 'short',
+                        'quando': datetime.fromtimestamp((t + 4 * 3600000) / 1000, timezone.utc).strftime('%d/%m %H:%M UTC'),
+                        'chiusura_ts': t + 4 * 3600000, 'prezzo_segnale': cl, 'oi_var_pct': round(oi_ch, 1),
+                        'scade': datetime.fromtimestamp((t + 4 * 3600000 + 72 * 3600000) / 1000, timezone.utc).strftime('%d/%m %H:%M UTC')})
+    # massimo dell'OI negli ultimi ~4 giorni, per misurare quanta leva è già uscita
+    vals = [x[1] for x in sorted(OI.items())]
+    ctx = {'oi_dal_massimo_4g_pct': round((vals[-1] / max(vals) - 1) * 100, 1) if vals else None}
+    if C:
+        last = C[-1]
+        e20 = None
+        for x in C:
+            e20 = x[4] if e20 is None else x[4] * 2 / 21 + e20 * 19 / 21
+        ctx['sopra_media20_4h'] = last[4] > e20
+        lows = [x[3] for x in C[-12:]]
+        ctx['minimo_crescente_4h'] = len(C) >= 12 and min(lows[-6:]) > min(lows[:6])
+    return {'segnali': out[-1:], 'contesto': ctx}
+
+
+def send_tg(msg):
+    tok, chat = os.environ.get('TG_TOKEN'), os.environ.get('TG_CHAT')
+    if not tok or not chat:
+        print('[TG]', msg); return
+    try:
+        S.post(f'https://api.telegram.org/bot{tok}/sendMessage', json={'chat_id': chat, 'text': msg, 'parse_mode': 'HTML'}, timeout=10)
+    except Exception as e:
+        print('TG error', e)
+
+
 def main():
     os.makedirs(bd.CACHE, exist_ok=True)
     res = {'creato': datetime.now(timezone.utc).isoformat(timespec='minutes'), 'archivio_fino_a': bd.END.isoformat(), 'asset': {}}
@@ -124,10 +171,40 @@ def main():
             row['segnali_validati_72h'] = list(last.values())
             row['crowd_oggi'] = 'short (folla troppo long)' if (f.get('ls_all_rk') or 0.5) >= 0.95 else 'long (folla troppo short)' if (f.get('ls_all_rk') or 0.5) <= 0.05 else 'nessuno'
         row['okx_ora'] = okx_snapshot(a)
+        lv = live_liq(a)
+        if lv:
+            row['contesto_4h'] = lv['contesto']
+            row['segnali_validati_72h'] = [x for x in row.get('segnali_validati_72h', []) if x['segnale'] != 'liquidazioni'] + lv['segnali']
+        # checklist "fine della discesa": solo descrittiva, tranne la cascata di liquidazioni (validata)
+        o = row['okx_ora']; c4 = row.get('contesto_4h', {})
+        row['checklist_ripartenza'] = {
+            'cascata_liquidazioni_long': any(x['lato'] == 'long' and 'liquidazioni' in x['segnale'] for x in row.get('segnali_validati_72h', [])),
+            'folla_non_piu_long_estrema': (row.get('ls_folla_percentile_90g') or 100) < 70,
+            'leva_scaricata_oi_-10pct': (c4.get('oi_dal_massimo_4g_pct') or 0) <= -10,
+            'funding_negativo': (o.get('funding_pct') or 0) < 0,
+            'acquisti_aggressivi_tornano': (o.get('acquisti_aggressivi_pct') or 0) > 51,
+            'prezzo_sopra_media20_4h': bool(c4.get('sopra_media20_4h')),
+            'minimo_crescente_4h': bool(c4.get('minimo_crescente_4h')),
+        }
         res['asset'][a] = row
         print(a, json.dumps(row, ensure_ascii=False), flush=True)
     os.makedirs('oggi', exist_ok=True)
     json.dump(res, open('oggi/crypto_oggi.json', 'w'), ensure_ascii=False, indent=1)
+    # avvisi Telegram solo per i segnali validati nuovi
+    sent_p = 'oggi/avvisi_inviati.json'
+    sent = json.load(open(sent_p)) if os.path.exists(sent_p) else []
+    for a, r in res['asset'].items():
+        for x in r.get('segnali_validati_72h', []):
+            key = f"{a}|{x['segnale']}|{x['quando']}"
+            if key in sent:
+                continue
+            sent.append(key)
+            ck = r.get('checklist_ripartenza', {})
+            send_tg(f"<b>Crypto: segnale validato</b>\n{a} — <b>{x['lato'].upper()}</b> ({x['segnale']})\n"
+                    f"Candela del {x['quando']} a {x['prezzo_segnale']}. Orizzonte 72 ore, scade {x['scade']}.\n"
+                    f"Checklist ripartenza: {sum(1 for v in ck.values() if v)}/{len(ck)}.\n"
+                    f"Solo misura statistica, non un ordine.")
+    json.dump(sent[-500:], open(sent_p, 'w'), indent=0)
 
 
 if __name__ == '__main__':
