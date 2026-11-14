@@ -38,9 +38,9 @@ def fetch(url):
     path = os.path.join(CACHE, url.replace(BASE + '/', '').replace('/', '_'))
     if os.path.exists(path):
         return open(path, 'rb').read() or None
-    for i in range(4):
+    for i in range(3):
         try:
-            r = session.get(url, timeout=30)
+            r = session.get(url, timeout=15)
             if r.status_code == 404:
                 open(path, 'wb').close(); return None
             if r.ok:
