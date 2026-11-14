@@ -99,7 +99,7 @@ bd.load = load_plus
 def live_liq(a):
     """Segnale liquidazioni in tempo reale su OKX: ultime candele 4h chiuse (UTC) + open interest orario."""
     inst = f'{a}-USDT-SWAP'
-    c = okx('/market/history-candles', instId=inst, bar='4Hutc', limit='40')
+    c = okx('/market/history-candles', instId=inst, bar='4H', limit='40')
     oi = okx('/rubik/stat/contracts/open-interest-history', instId=inst, period='1H', limit='100')
     if not c or not oi:
         return None
