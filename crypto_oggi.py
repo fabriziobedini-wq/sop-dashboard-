@@ -19,12 +19,18 @@ S = requests.Session()
 
 
 def okx(path, **params):
-    try:
-        r = S.get(OKX + path, params=params, timeout=20)
-        j = r.json()
-        return j.get('data') if j.get('code') == '0' else None
-    except Exception:
-        return None
+    for i in range(4):
+        try:
+            r = S.get(OKX + path, params=params, timeout=20)
+            j = r.json()
+            if j.get('code') == '0':
+                time.sleep(0.5)
+                return j.get('data')
+            print('OKX', path, params.get('instId') or params.get('instFamily'), j.get('code'), j.get('msg'), flush=True)
+        except Exception as e:
+            print('OKX errore', path, e, flush=True)
+        time.sleep(2 + 2 * i)
+    return None
 
 
 def okx_snapshot(a):
