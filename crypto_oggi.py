@@ -117,7 +117,7 @@ def live_liq(a):
         if abs(cl - o) > 2.5 * prev_atr and oi_ch < -2:
             out.append({'segnale': 'liquidazioni (tempo reale OKX)', 'lato': 'long' if cl < o else 'short',
                         'quando': datetime.fromtimestamp((t + 4 * 3600000) / 1000, timezone.utc).strftime('%d/%m %H:%M UTC'),
-                        'chiusura_ts': t + 4 * 3600000, 'prezzo_segnale': cl, 'oi_var_pct': round(oi_ch, 1),
+                        'chiusura_ts': t + 4 * 3600000, 'prezzo_segnale': cl, 'oi_var_pct': round(oi_ch, 1), 'atr': round(prev_atr, 6),
                         'scade': datetime.fromtimestamp((t + 4 * 3600000 + 72 * 3600000) / 1000, timezone.utc).strftime('%d/%m %H:%M UTC')})
     # massimo dell'OI negli ultimi ~4 giorni, per misurare quanta leva è già uscita
     vals = [x[1] for x in sorted(OI.items())]
@@ -167,7 +167,7 @@ def main():
                 crowd = bd.SIGNALS['Long/short folla estremo, contrarian'](ff, bb, B)
                 for name, d in (('liquidazioni', liq), ('folla estrema', crowd)):
                     if d:
-                        sig.append({'segnale': name, 'lato': 'long' if d > 0 else 'short',
+                        sig.append({'segnale': name, 'lato': 'long' if d > 0 else 'short', 'chiusura_ts': bb['t'] + bd.H4, 'atr': round(B[i - 1]['atr'], 6),
                                     'quando': datetime.fromtimestamp((bb['t'] + bd.H4) / 1000, timezone.utc).strftime('%d/%m %H:%M UTC'),
                                     'prezzo_segnale': bb['c'], 'scade': datetime.fromtimestamp((bb['t'] + bd.H4 + 72 * 3600000) / 1000, timezone.utc).strftime('%d/%m %H:%M UTC')})
             # tieni solo l'ultimo per tipo
@@ -196,6 +196,46 @@ def main():
         print(a, json.dumps(row, ensure_ascii=False), flush=True)
     os.makedirs('oggi', exist_ok=True)
     json.dump(res, open('oggi/crypto_oggi.json', 'w'), ensure_ascii=False, indent=1)
+    # registro dei segnali futures: regola testata = entrata al prezzo del segnale, uscita dopo 72 ore
+    reg_p = 'oggi/segnali_futures.json'
+    reg = json.load(open(reg_p)) if os.path.exists(reg_p) else []
+    known = {(r['asset'], r['segnale'].split(' (')[0], r['chiusura_ts']) for r in reg}
+    for a, r in res['asset'].items():
+        for x in r.get('segnali_validati_72h', []):
+            k = (a, x['segnale'].split(' (')[0], x.get('chiusura_ts'))
+            if not x.get('chiusura_ts') or k in known:
+                continue
+            known.add(k)
+            d = 1 if x['lato'] == 'long' else -1
+            atr = x.get('atr') or 0
+            reg.append({'asset': a, 'segnale': x['segnale'].split(' (')[0], 'lato': x['lato'], 'chiusura_ts': x['chiusura_ts'],
+                        'quando': x['quando'], 'entrata': x['prezzo_segnale'], 'scade_ts': x['chiusura_ts'] + 72 * 3600000,
+                        'stop_indicativo': round(x['prezzo_segnale'] - d * 2 * atr, 6) if atr else None, 'stato': 'aperto'})
+    now = time.time() * 1000
+    for r in reg:
+        if r['stato'] != 'aperto':
+            continue
+        c = okx('/market/history-candles', instId=f"{r['asset']}-USDT-SWAP", bar='1H', limit='100')
+        if not c:
+            continue
+        C = sorted([(int(x[0]), float(x[2]), float(x[3]), float(x[4])) for x in c if x[8] == '1'])
+        d = 1 if r['lato'] == 'long' else -1
+        after = [x for x in C if x[0] >= r['chiusura_ts'] and x[0] + 3600000 <= r['scade_ts']]
+        if not after:
+            continue
+        e = r['entrata']
+        r['prezzo_attuale'] = after[-1][3]
+        r['risultato_pct'] = round(d * (after[-1][3] / e - 1) * 100, 2)
+        worst = min(d * ((x[2] if d > 0 else x[1]) / e - 1) * 100 for x in after)
+        best = max(d * ((x[1] if d > 0 else x[2]) / e - 1) * 100 for x in after)
+        r['peggiore_pct'] = round(min(worst, r.get('peggiore_pct', 0)), 2)
+        r['migliore_pct'] = round(max(best, r.get('migliore_pct', 0)), 2)
+        if r.get('stop_indicativo') and any((x[2] <= r['stop_indicativo']) if d > 0 else (x[1] >= r['stop_indicativo']) for x in after):
+            r['stop_toccato'] = True
+        if now >= r['scade_ts'] and after[-1][0] + 3600000 >= r['scade_ts'] - 3600000:
+            r['stato'] = 'chiuso'
+    json.dump(reg, open(reg_p, 'w'), ensure_ascii=False, indent=1)
+
     # avvisi Telegram solo per i segnali validati nuovi
     sent_p = 'oggi/avvisi_inviati.json'
     sent = json.load(open(sent_p)) if os.path.exists(sent_p) else []
@@ -206,8 +246,10 @@ def main():
                 continue
             sent.append(key)
             ck = r.get('checklist_ripartenza', {})
+            st = round(x['prezzo_segnale'] - (1 if x['lato'] == 'long' else -1) * 2 * x['atr'], 6) if x.get('atr') else None
             send_tg(f"<b>Crypto: segnale validato</b>\n{a} — <b>{x['lato'].upper()}</b> ({x['segnale']})\n"
-                    f"Candela del {x['quando']} a {x['prezzo_segnale']}. Orizzonte 72 ore, scade {x['scade']}.\n"
+                    f"Entrata {x['prezzo_segnale']} (candela del {x['quando']}). Uscita dopo 72 ore: {x['scade']}.\n"
+                    f"Stop di emergenza indicativo {st} (2 ATR, non testato).\n"
                     f"Checklist ripartenza: {sum(1 for v in ck.values() if v)}/{len(ck)}.\n"
                     f"Solo misura statistica, non un ordine.")
     json.dump(sent[-500:], open(sent_p, 'w'), indent=0)
