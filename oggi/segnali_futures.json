@@ -9,10 +9,10 @@
   "scade_ts": 1794873600000,
   "stop_indicativo": 70600.13735,
   "stato": "aperto",
-  "prezzo_attuale": 65894.3,
-  "risultato_pct": 3.49,
+  "prezzo_attuale": 65692.6,
+  "risultato_pct": 3.79,
   "peggiore_pct": -0.21,
-  "migliore_pct": 3.68
+  "migliore_pct": 4.87
  },
  {
   "asset": "BTC",
@@ -24,9 +24,9 @@
   "scade_ts": 1794801600000,
   "stop_indicativo": 67207.506714,
   "stato": "aperto",
-  "prezzo_attuale": 65894.3,
-  "risultato_pct": -4.4,
-  "peggiore_pct": -4.59,
+  "prezzo_attuale": 65692.6,
+  "risultato_pct": -4.69,
+  "peggiore_pct": -5.76,
   "migliore_pct": 1.83,
   "stop_toccato": true
  },
@@ -40,10 +40,10 @@
   "scade_ts": 1794873600000,
   "stop_indicativo": 2014.204038,
   "stato": "aperto",
-  "prezzo_attuale": 1852.99,
-  "risultato_pct": 3.95,
+  "prezzo_attuale": 1834.07,
+  "risultato_pct": 4.93,
   "peggiore_pct": -0.34,
-  "migliore_pct": 4.55
+  "migliore_pct": 6.23
  },
  {
   "asset": "SOL",
@@ -55,10 +55,10 @@
   "scade_ts": 1794873600000,
   "stop_indicativo": 81.880386,
   "stato": "aperto",
-  "prezzo_attuale": 74.04,
-  "risultato_pct": 5.28,
+  "prezzo_attuale": 72.19,
+  "risultato_pct": 7.65,
   "peggiore_pct": -0.36,
-  "migliore_pct": 5.77
+  "migliore_pct": 8.39
  },
  {
   "asset": "BNB",
@@ -70,9 +70,9 @@
   "scade_ts": 1794801600000,
   "stop_indicativo": 617.511546,
   "stato": "aperto",
-  "prezzo_attuale": 599.45,
-  "risultato_pct": -5.32,
-  "peggiore_pct": -5.65,
+  "prezzo_attuale": 590.04,
+  "risultato_pct": -6.8,
+  "peggiore_pct": -7.95,
   "migliore_pct": 2.59,
   "stop_toccato": true
  },
@@ -86,9 +86,9 @@
   "scade_ts": 1794873600000,
   "stop_indicativo": 0.308828,
   "stato": "aperto",
-  "prezzo_attuale": 0.30939,
-  "risultato_pct": -0.77,
-  "peggiore_pct": -1.29,
+  "prezzo_attuale": 0.30828,
+  "risultato_pct": -1.13,
+  "peggiore_pct": -1.75,
   "migliore_pct": 0.66,
   "stop_toccato": true
  }
