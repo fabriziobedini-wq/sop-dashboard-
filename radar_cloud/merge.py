@@ -72,11 +72,16 @@ for pid, p in props.items():
         updates.append({'doc_id': pid, 'fields': r}); p.update(r)
 
 # 2) proposte nuove dalla scansione del cloud
-sop = {}
-if sop_path and os.path.exists(sop_path):
-    st = json.load(open(sop_path))
-    if now - st.get('lastRun', 0) < 12 * 3600000:
-        sop = {a['sym']: a['bias'] for a in st.get('assets', [])}
+deriv = {}
+oggi_p = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'oggi', 'crypto_oggi.json')
+if os.path.exists(oggi_p):
+    og = json.load(open(oggi_p))
+    try:
+        fresh_og = now - time.mktime(time.strptime(og.get('creato', '')[:16], '%Y-%m-%dT%H:%M')) * 1000 < 10 * 3600000 + 7200000
+    except Exception:
+        fresh_og = False
+    if fresh_og:
+        deriv = og.get('asset', {})
 new, skipped = [], []
 fresh = now - scan.get('at', 0) < 36 * 3600000
 for c in cands if fresh else []:
@@ -91,10 +96,12 @@ for c in cands if fresh else []:
                and q.get('cluster') == d.get('cluster') and q.get('symbol') != sym)
     if busy >= MAX_CLUSTER:
         skipped.append((sym, 'gruppo pieno')); continue
-    if sym.startswith('BINANCE:') and sop:
-        b = sop.get(sym.split(':')[1].replace('USDT', ''))
-        if b:
-            d['sop'] = 'neutro' if b == 'wait' else ('concorde' if (b == 'long') == (dr > 0) else 'discorde')
+    if sym.startswith('BINANCE:') and deriv:
+        a = deriv.get(sym.split(':')[1].replace('USDT', ''))
+        if a and a.get('ls_folla_percentile_90g') is not None:
+            rk = a['ls_folla_percentile_90g']; cs = 1 if rk >= 95 else -1 if rk <= 5 else 0
+            d['deriv'] = {'folla': 'neutra' if cs == 0 else ('a favore' if (cs == 1) == (dr < 0) else 'contro'), 'folla_rk': rk,
+                          'checklist': sum(1 for v in (a.get('checklist_ripartenza') or {}).values() if v)}
     d['cloud'] = True
     new.append({'doc_id': c['id'], 'data': d}); props[c['id']] = d
 
