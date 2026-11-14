@@ -1,4 +1,4 @@
-# Report affidabilità SOP — 2026-11-14 02:50 UTC
+# Report affidabilità SOP — 2026-11-14 09:40 UTC
 
 Trade chiusi attivati: **60** · mai attivati (entry non raggiunta): 11 · aperti ora: 0 · in attesa: 0
 
@@ -12,7 +12,7 @@ Trade chiusi attivati: **60** · mai attivati (entry non raggiunta): 11 · apert
   - 13/10 TRX long: -1.47% (stop)
 
 ## SEGNALI CONSIGLIATI (registro simulato, anche quelli non aperti)
-- Registrati dal 18/10/2026: **63** · chiusi (simulati) 58 · ancora aperti 5
+- Registrati dal 18/10/2026: **64** · chiusi (simulati) 58 · ancora aperti 6
 - Regole simulate come in dashboard (pareggio al 45% verso TP1, TP1 poi pareggio, TP2). Nella stessa candela 15m stop e target -> vale lo stop. Non simulabili: chiusura per bias invertito e manuale.
 - Tutti i segnali: n= 58  WR= 12.1%  pnl tot=  +5.88%  medio=+0.10%  win medio=+10.67%  loss medio= -1.35%
 - NON aperti: n= 58  WR= 12.1%  pnl tot=  +5.88%  medio=+0.10%  win medio=+10.67%  loss medio= -1.35%
@@ -22,12 +22,13 @@ Trade chiusi attivati: **60** · mai attivati (entry non raggiunta): 11 · apert
   - aperto: ZEC short @ 1009.41 (stop 1009.41, TP1 814.179642)
   - aperto: BNB short @ 652.94 (stop 652.94, TP1 621.59)
   - aperto: XRP short @ 1.026 (stop 1.026, TP1 0.936053)
+  - aperto: ETH short @ 1908.09 (stop 1973.545714, TP1 1744.450715)
 - Bloccati dal veto MA20 (non notificati, simulati lo stesso): 14 registrati, 13 chiusi
   - Se li avessi presi: n= 13  WR=  7.7%  pnl tot= -19.57%  medio=-1.51%  win medio=+6.00%  loss medio= -2.13%
   - Lettura: risultato medio negativo = il veto evita perdite; positivo = il veto toglie occasioni.
 
 ## STATO DEL MERCATO NEL TEMPO (macro del backend)
-- Dal 18/10, 643 ore osservate: bullish 52%, neutral 36%, bearish 12%
+- Dal 18/10, 650 ore osservate: bullish 51%, neutral 37%, bearish 12%
 
 ## Storico completo (include il periodo prima del nuovo percorso)
 - Tutti: n= 60  WR= 43.3%  pnl tot= -35.77%  medio=-0.60%  win medio=+5.70%  loss medio= -5.41%

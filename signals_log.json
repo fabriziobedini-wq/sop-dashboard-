@@ -2042,7 +2042,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1794624300000
+  "checkedUntil": 1794648600000
  },
  {
   "id": 1794178295199,
@@ -2098,7 +2098,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1794624300000
+  "checkedUntil": 1794648600000
  },
  {
   "id": 1794256342662,
@@ -2184,7 +2184,7 @@
   "status": "open",
   "tp1Hit": true,
   "breakevenSet": true,
-  "checkedUntil": 1794624300000,
+  "checkedUntil": 1794648600000,
   "tp1HitAt": 1794622500000
  },
  {
@@ -2211,7 +2211,7 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1794624300000
+  "checkedUntil": 1794648600000
  },
  {
   "id": 1794420188940,
@@ -2267,7 +2267,7 @@
   "status": "open",
   "tp1Hit": true,
   "breakevenSet": true,
-  "checkedUntil": 1794624300000,
+  "checkedUntil": 1794648600000,
   "tp1HitAt": 1794622500000
  },
  {
@@ -2294,6 +2294,32 @@
   "status": "open",
   "tp1Hit": false,
   "breakevenSet": true,
-  "checkedUntil": 1794624300000
+  "checkedUntil": 1794648600000
+ },
+ {
+  "id": 1794649242849,
+  "sym": "ETH",
+  "dir": "short",
+  "createdAt": 1794649242849,
+  "entry": 1908.09,
+  "stop": 1973.545714,
+  "stopInitial": 1973.545714,
+  "tp1": 1744.450715,
+  "tp2": 1646.267144,
+  "rr": 2.5,
+  "stopPct": 3.43,
+  "pattern": "Pin Bar Bearish",
+  "patternStrength": "moderata",
+  "timeframe": "1h",
+  "score": 3,
+  "macro": "neutral",
+  "bias": "short",
+  "solidity": "moderato",
+  "regime": "structural",
+  "vetoed": null,
+  "status": "open",
+  "tp1Hit": false,
+  "breakevenSet": false,
+  "checkedUntil": 1794649242849
  }
 ]
