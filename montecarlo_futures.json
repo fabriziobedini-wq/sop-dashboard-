@@ -1,0 +1,88 @@
+{
+ "liquidazioni": {
+  "operazioni": 121,
+  "per_anno": 60,
+  "k_atr": 7.45,
+  "media_pct": 2.73,
+  "media_R": 0.06,
+  "vinte": 63,
+  "peggiore_R": -2.83,
+  "migliore_R": 1.16,
+  "escursione_contraria_mediana_atr": 1.4,
+  "rischio": {
+   "0.5%": {
+    "replay_risultato": 3.6,
+    "replay_dd": 2.9,
+    "dd_mediano": 1.7,
+    "dd_95": 3.7,
+    "dd_99": 4.8,
+    "risultato_mediano": 3.0,
+    "prob_perdita": 11.3,
+    "serie_negativa_95": 7
+   },
+   "1%": {
+    "replay_risultato": 7.3,
+    "replay_dd": 5.7,
+    "dd_mediano": 3.4,
+    "dd_95": 7.3,
+    "dd_99": 9.5,
+    "risultato_mediano": 6.1,
+    "prob_perdita": 11.6,
+    "serie_negativa_95": 7
+   },
+   "2%": {
+    "replay_risultato": 14.9,
+    "replay_dd": 11.2,
+    "dd_mediano": 6.8,
+    "dd_95": 14.3,
+    "dd_99": 18.2,
+    "risultato_mediano": 12.3,
+    "prob_perdita": 12.1,
+    "serie_negativa_95": 7
+   }
+  }
+ },
+ "folla estrema": {
+  "operazioni": 811,
+  "per_anno": 406,
+  "k_atr": 5.47,
+  "media_pct": 0.7,
+  "media_R": 0.051,
+  "vinte": 51,
+  "peggiore_R": -8.87,
+  "migliore_R": 3.43,
+  "escursione_contraria_mediana_atr": 1.7,
+  "rischio": {
+   "0.5%": {
+    "replay_risultato": 22.6,
+    "replay_dd": 7.9,
+    "dd_mediano": 2.1,
+    "dd_95": 6.2,
+    "dd_99": 8.5,
+    "risultato_mediano": 2.8,
+    "prob_perdita": 21.4,
+    "serie_negativa_95": 9
+   },
+   "1%": {
+    "replay_risultato": 48.8,
+    "replay_dd": 15.4,
+    "dd_mediano": 4.3,
+    "dd_95": 12.3,
+    "dd_99": 16.6,
+    "risultato_mediano": 5.5,
+    "prob_perdita": 21.9,
+    "serie_negativa_95": 9
+   },
+   "2%": {
+    "replay_risultato": 112.4,
+    "replay_dd": 29.5,
+    "dd_mediano": 8.4,
+    "dd_95": 23.8,
+    "dd_99": 31.6,
+    "risultato_mediano": 10.8,
+    "prob_perdita": 23.3,
+    "serie_negativa_95": 9
+   }
+  }
+ }
+}
