@@ -7,12 +7,17 @@
   "quando": "14/11 00:00 UTC",
   "entrata": 68279.8,
   "scade_ts": 1794873600000,
-  "stop_indicativo": 70600.13735,
   "stato": "aperto",
   "prezzo_attuale": 64478.6,
   "risultato_pct": 5.57,
   "peggiore_pct": -0.21,
-  "migliore_pct": 9.3
+  "migliore_pct": 9.3,
+  "atr": 1160.168675,
+  "k_atr": 5.47,
+  "rischio_pct_prezzo": 9.29,
+  "risultato_R": 0.6,
+  "decisione": "BLOCK",
+  "motivo": "c'è già un segnale aperto su BTC"
  },
  {
   "asset": "BTC",
@@ -22,13 +27,17 @@
   "quando": "13/11 04:00 UTC",
   "entrata": 68927.1,
   "scade_ts": 1794801600000,
-  "stop_indicativo": 67207.506714,
   "stato": "aperto",
   "prezzo_attuale": 64478.6,
   "risultato_pct": -6.45,
   "peggiore_pct": -10.15,
   "migliore_pct": 1.83,
-  "stop_toccato": true
+  "atr": 859.796643,
+  "k_atr": 7.45,
+  "rischio_pct_prezzo": 9.29,
+  "risultato_R": -0.69,
+  "decisione": "PASS",
+  "motivo": "dentro il budget"
  },
  {
   "asset": "ETH",
@@ -38,12 +47,17 @@
   "quando": "14/11 00:00 UTC",
   "entrata": 1929.21,
   "scade_ts": 1794873600000,
-  "stop_indicativo": 2014.204038,
   "stato": "aperto",
   "prezzo_attuale": 1799.54,
   "risultato_pct": 6.72,
   "peggiore_pct": -0.34,
-  "migliore_pct": 11.41
+  "migliore_pct": 11.41,
+  "atr": 42.497019,
+  "k_atr": 5.47,
+  "rischio_pct_prezzo": 12.05,
+  "risultato_R": 0.56,
+  "decisione": "BLOCK",
+  "motivo": "già 2 segnali nelle ultime 24 ore"
  },
  {
   "asset": "SOL",
@@ -53,12 +67,17 @@
   "quando": "14/11 00:00 UTC",
   "entrata": 78.17,
   "scade_ts": 1794873600000,
-  "stop_indicativo": 81.880386,
   "stato": "aperto",
   "prezzo_attuale": 70.75,
   "risultato_pct": 9.49,
   "peggiore_pct": -0.36,
-  "migliore_pct": 13.87
+  "migliore_pct": 13.87,
+  "atr": 1.855193,
+  "k_atr": 5.47,
+  "rischio_pct_prezzo": 12.98,
+  "risultato_R": 0.73,
+  "decisione": "BLOCK",
+  "motivo": "già 2 segnali nelle ultime 24 ore"
  },
  {
   "asset": "BNB",
@@ -68,13 +87,17 @@
   "quando": "13/11 04:00 UTC",
   "entrata": 633.12,
   "scade_ts": 1794801600000,
-  "stop_indicativo": 617.511546,
   "stato": "aperto",
   "prezzo_attuale": 592.7,
   "risultato_pct": -6.38,
   "peggiore_pct": -10.66,
   "migliore_pct": 2.59,
-  "stop_toccato": true
+  "atr": 7.804227,
+  "k_atr": 7.45,
+  "rischio_pct_prezzo": 9.18,
+  "risultato_R": -0.69,
+  "decisione": "PASS",
+  "motivo": "dentro il budget"
  },
  {
   "asset": "TRX",
@@ -84,12 +107,16 @@
   "quando": "14/11 00:00 UTC",
   "entrata": 0.31179,
   "scade_ts": 1794873600000,
-  "stop_indicativo": 0.308828,
   "stato": "aperto",
   "prezzo_attuale": 0.30703,
   "risultato_pct": -1.53,
   "peggiore_pct": -2.31,
   "migliore_pct": 0.66,
-  "stop_toccato": true
+  "atr": 0.001481,
+  "k_atr": 5.47,
+  "rischio_pct_prezzo": 2.6,
+  "risultato_R": -0.59,
+  "decisione": "BLOCK",
+  "motivo": "già 2 segnali long aperti: le crypto si muovono insieme"
  }
 ]
