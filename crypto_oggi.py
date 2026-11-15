@@ -133,6 +133,46 @@ def live_liq(a):
     return {'segnali': out[-1:], 'contesto': ctx}
 
 
+# ---- budget di rischio (PASS/BLOCK), deciso una volta sola quando il segnale entra nel registro ----
+MAX_OPEN, MAX_SAME_SIDE, MAX_PER_DAY, WEEK_STOP_R = 3, 2, 2, -3.0
+
+
+def k_atr(segnale):
+    try:
+        mc = json.load(open('montecarlo_futures.json'))
+        return float(mc[segnale]['k_atr'])
+    except Exception:
+        return 3.0
+
+
+def budget(reg):
+    for r in reg:  # R e unità di rischio per tutti
+        if not r.get('atr') and r.get('stop_indicativo'):
+            r['atr'] = round(abs(r['entrata'] - r['stop_indicativo']) / 2, 6)
+        r.pop('stop_indicativo', None); r.pop('stop_toccato', None)
+        if r.get('atr'):
+            r['k_atr'] = r.get('k_atr') or k_atr(r['segnale'])
+            r['rischio_pct_prezzo'] = round(r['k_atr'] * r['atr'] / r['entrata'] * 100, 2)
+            if r.get('risultato_pct') is not None:
+                r['risultato_R'] = round(r['risultato_pct'] / r['rischio_pct_prezzo'], 2)
+    ordered = sorted(reg, key=lambda z: (z['chiusura_ts'], z['asset']))
+    for r in ordered:
+        if r.get('decisione'):
+            continue
+        t = r['chiusura_ts']
+        live = [q for q in ordered if q is not r and q.get('decisione') == 'PASS' and q['chiusura_ts'] <= t < q['scade_ts']]
+        today = [q for q in ordered if q is not r and q.get('decisione') == 'PASS' and t - 86400000 < q['chiusura_ts'] <= t]
+        week = sum(q.get('risultato_R') or 0 for q in ordered if q.get('decisione') == 'PASS' and q['scade_ts'] <= t and t - q['scade_ts'] < 7 * 86400000)
+        why = None
+        if any(q['asset'] == r['asset'] for q in live): why = f"c'è già un segnale aperto su {r['asset']}"
+        elif len(live) >= MAX_OPEN: why = f"già {MAX_OPEN} segnali aperti"
+        elif sum(1 for q in live if q['lato'] == r['lato']) >= MAX_SAME_SIDE: why = f"già {MAX_SAME_SIDE} segnali {r['lato']} aperti: le crypto si muovono insieme"
+        elif len(today) >= MAX_PER_DAY: why = f"già {MAX_PER_DAY} segnali nelle ultime 24 ore"
+        elif week <= WEEK_STOP_R: why = f"perdita della settimana {week:+.1f} R: stop settimanale a {WEEK_STOP_R:.0f} R"
+        r['decisione'] = 'BLOCK' if why else 'PASS'
+        r['motivo'] = why or 'dentro il budget'
+
+
 def send_tg(msg):
     tok, chat = os.environ.get('TG_TOKEN'), os.environ.get('TG_CHAT')
     if not tok or not chat:
@@ -210,7 +250,7 @@ def main():
             atr = x.get('atr') or 0
             reg.append({'asset': a, 'segnale': x['segnale'].split(' (')[0], 'lato': x['lato'], 'chiusura_ts': x['chiusura_ts'],
                         'quando': x['quando'], 'entrata': x['prezzo_segnale'], 'scade_ts': x['chiusura_ts'] + 72 * 3600000,
-                        'stop_indicativo': round(x['prezzo_segnale'] - d * 2 * atr, 6) if atr else None, 'stato': 'aperto'})
+                        'atr': atr or None, 'stato': 'aperto'})
     now = time.time() * 1000
     for r in reg:
         if r['stato'] != 'aperto':
@@ -230,10 +270,9 @@ def main():
         best = max(d * ((x[1] if d > 0 else x[2]) / e - 1) * 100 for x in after)
         r['peggiore_pct'] = round(min(worst, r.get('peggiore_pct', 0)), 2)
         r['migliore_pct'] = round(max(best, r.get('migliore_pct', 0)), 2)
-        if r.get('stop_indicativo') and any((x[2] <= r['stop_indicativo']) if d > 0 else (x[1] >= r['stop_indicativo']) for x in after):
-            r['stop_toccato'] = True
         if now >= r['scade_ts'] and after[-1][0] + 3600000 >= r['scade_ts'] - 3600000:
             r['stato'] = 'chiuso'
+    budget(reg)
     json.dump(reg, open(reg_p, 'w'), ensure_ascii=False, indent=1)
 
     # avvisi Telegram solo per i segnali validati nuovi
@@ -246,10 +285,11 @@ def main():
                 continue
             sent.append(key)
             ck = r.get('checklist_ripartenza', {})
-            st = round(x['prezzo_segnale'] - (1 if x['lato'] == 'long' else -1) * 2 * x['atr'], 6) if x.get('atr') else None
+            rr = next((q for q in reg if q['asset'] == a and q['chiusura_ts'] == x.get('chiusura_ts')), {})
             send_tg(f"<b>Crypto: segnale validato</b>\n{a} — <b>{x['lato'].upper()}</b> ({x['segnale']})\n"
                     f"Entrata {x['prezzo_segnale']} (candela del {x['quando']}). Uscita dopo 72 ore: {x['scade']}.\n"
-                    f"Stop di emergenza indicativo {st} (2 ATR, non testato).\n"
+                    f"Budget: <b>{rr.get('decisione', '?')}</b> ({rr.get('motivo', '')}). "
+                    f"1R = {rr.get('rischio_pct_prezzo', '?')}% del prezzo: per rischiare l'1% del capitale, posizione pari al {round(100 / rr['rischio_pct_prezzo'], 1) if rr.get('rischio_pct_prezzo') else '?'}% del capitale.\n"
                     f"Checklist ripartenza: {sum(1 for v in ck.values() if v)}/{len(ck)}.\n"
                     f"Solo misura statistica, non un ordine.")
     json.dump(sent[-500:], open(sent_p, 'w'), indent=0)
