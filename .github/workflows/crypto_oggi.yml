@@ -24,6 +24,6 @@ jobs:
         run: |
           git config user.name "sop-monitor"
           git config user.email "sop-monitor@users.noreply.github.com"
-          git add oggi/crypto_oggi.json oggi/avvisi_inviati.json oggi/segnali_futures.json
+          git add oggi/crypto_oggi.json oggi/avvisi_inviati.json oggi/segnali_futures.json oggi/dominance_storico.json
           git commit -m "Fotografia crypto del giorno (automatico)" || exit 0
           for i in 1 2 3; do git pull --rebase -q origin main && git push -q origin HEAD:main && break; sleep 5; done

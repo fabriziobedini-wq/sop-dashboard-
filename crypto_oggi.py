@@ -183,9 +183,33 @@ def send_tg(msg):
         print('TG error', e)
 
 
+def mercato():
+    """Dominance dal riepilogo globale di CoinGecko (gratuito, senza chiave) + storico giornaliero nel repo."""
+    try:
+        g = S.get('https://api.coingecko.com/api/v3/global', timeout=20).json()['data']
+    except Exception as e:
+        print('CoinGecko errore', e); return None
+    mp = g.get('market_cap_percentage', {})
+    now = {'t': int(time.time() * 1000), 'tot': g['total_market_cap']['usd'], 'btc': mp.get('btc'), 'eth': mp.get('eth'),
+           'usdt': mp.get('usdt'), 'usdc': mp.get('usdc', 0), 'var24h_tot': g.get('market_cap_change_percentage_24h_usd')}
+    now['alt'] = 100 - (now['btc'] or 0) - (now['eth'] or 0) - (now['usdt'] or 0) - (now['usdc'] or 0)
+    hp = 'oggi/dominance_storico.json'
+    hist = json.load(open(hp)) if os.path.exists(hp) else []
+    day = datetime.now(timezone.utc).strftime('%Y-%m-%d')
+    hist = [h for h in hist if h.get('giorno') != day] + [{**now, 'giorno': day}]
+    hist = hist[-120:]
+    os.makedirs('oggi', exist_ok=True)
+    json.dump(hist, open(hp, 'w'), indent=0)
+    def ago(days):
+        target = (datetime.now(timezone.utc) - timedelta(days=days)).strftime('%Y-%m-%d')
+        old = [h for h in hist if h['giorno'] <= target]
+        return old[-1] if old else None
+    return {'ora': now, 'fa7': ago(7), 'fa30': ago(30), 'storico_giorni': len(hist)}
+
+
 def main():
     os.makedirs(bd.CACHE, exist_ok=True)
-    res = {'creato': datetime.now(timezone.utc).isoformat(timespec='minutes'), 'archivio_fino_a': bd.END.isoformat(), 'asset': {}}
+    res = {'creato': datetime.now(timezone.utc).isoformat(timespec='minutes'), 'archivio_fino_a': bd.END.isoformat(), 'asset': {}, 'mercato': mercato()}
     for a in ASSETS:
         B = bd.build(a)
         row = {}
