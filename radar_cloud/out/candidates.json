@@ -1,6 +1,6 @@
 [
  {
-  "id": "2026-11-15_BINANCE:SUIUSDT_signal_S",
+  "id": "2026-11-16_BINANCE:SUIUSDT_signal_S",
   "doc": {
    "symbol": "BINANCE:SUIUSDT",
    "cls": "crypto",
@@ -9,22 +9,22 @@
    "source": "scopri",
    "kind": "signal",
    "dir": -1,
-   "entry": 0.7212,
-   "stop": 0.8785430283144375,
-   "tp1": 0.4791291477255749,
+   "entry": 0.7208,
+   "stop": 0.8783685262919778,
+   "tp1": 0.4783822210889513,
    "tp2": null,
    "zone": null,
    "grade": "C",
    "verdict": "sell",
-   "score": -85,
+   "score": -64,
    "bias": "down",
-   "date": "2026-11-15",
-   "ts": 1794725152755,
+   "date": "2026-11-16",
+   "ts": 1794811502181,
    "status": "open"
   }
  },
  {
-  "id": "2026-11-15_BINANCE:ATOMUSDT_signal_S",
+  "id": "2026-11-16_BINANCE:ATOMUSDT_signal_S",
   "doc": {
    "symbol": "BINANCE:ATOMUSDT",
    "cls": "crypto",
@@ -33,22 +33,22 @@
    "source": "scopri",
    "kind": "signal",
    "dir": -1,
-   "entry": 1.289,
-   "stop": 1.5265731158541018,
-   "tp1": 0.8599979083181488,
+   "entry": 1.295,
+   "stop": 1.5339964647216657,
+   "tp1": 0.8634276695136083,
    "tp2": null,
    "zone": null,
    "grade": "B",
    "verdict": "sell",
-   "score": -75,
+   "score": -49,
    "bias": "down",
-   "date": "2026-11-15",
-   "ts": 1794725152755,
+   "date": "2026-11-16",
+   "ts": 1794811502181,
    "status": "open"
   }
  },
  {
-  "id": "2026-11-15_NASDAQ:AAPL_signal_L",
+  "id": "2026-11-16_NASDAQ:AAPL_signal_L",
   "doc": {
    "symbol": "NASDAQ:AAPL",
    "cls": "stock",
@@ -66,13 +66,13 @@
    "verdict": "buy",
    "score": 51,
    "bias": "up",
-   "date": "2026-11-15",
-   "ts": 1794725152755,
+   "date": "2026-11-16",
+   "ts": 1794811502181,
    "status": "open"
   }
  },
  {
-  "id": "2026-11-15_NYSE:LLY_signal_L",
+  "id": "2026-11-16_NYSE:LLY_signal_L",
   "doc": {
    "symbol": "NYSE:LLY",
    "cls": "stock",
@@ -90,13 +90,13 @@
    "verdict": "buy",
    "score": 49,
    "bias": "up",
-   "date": "2026-11-15",
-   "ts": 1794725152755,
+   "date": "2026-11-16",
+   "ts": 1794811502181,
    "status": "open"
   }
  },
  {
-  "id": "2026-11-15_NYSE:WMT_signal_L",
+  "id": "2026-11-16_NYSE:WMT_signal_L",
   "doc": {
    "symbol": "NYSE:WMT",
    "cls": "stock",
@@ -114,13 +114,13 @@
    "verdict": "buy",
    "score": 43,
    "bias": "up",
-   "date": "2026-11-15",
-   "ts": 1794725152755,
+   "date": "2026-11-16",
+   "ts": 1794811502182,
    "status": "open"
   }
  },
  {
-  "id": "2026-11-15_NYSE:ADM_signal_S",
+  "id": "2026-11-16_NYSE:ADM_signal_S",
   "doc": {
    "symbol": "NYSE:ADM",
    "cls": "stock",
@@ -138,13 +138,13 @@
    "verdict": "sell",
    "score": -43,
    "bias": "flat",
-   "date": "2026-11-15",
-   "ts": 1794725152755,
+   "date": "2026-11-16",
+   "ts": 1794811502182,
    "status": "open"
   }
  },
  {
-  "id": "2026-11-15_XETR:SAP_signal_L",
+  "id": "2026-11-16_XETR:SAP_signal_L",
   "doc": {
    "symbol": "XETR:SAP",
    "cls": "stock",
@@ -162,13 +162,13 @@
    "verdict": "buy",
    "score": 40,
    "bias": "up",
-   "date": "2026-11-15",
-   "ts": 1794725152756,
+   "date": "2026-11-16",
+   "ts": 1794811502182,
    "status": "open"
   }
  },
  {
-  "id": "2026-11-15_AMEX:XLF_signal_L",
+  "id": "2026-11-16_AMEX:XLF_signal_L",
   "doc": {
    "symbol": "AMEX:XLF",
    "cls": "etf",
@@ -186,13 +186,13 @@
    "verdict": "buy",
    "score": 45,
    "bias": "up",
-   "date": "2026-11-15",
-   "ts": 1794725152756,
+   "date": "2026-11-16",
+   "ts": 1794811502182,
    "status": "open"
   }
  },
  {
-  "id": "2026-11-15_AMEX:XLV_signal_L",
+  "id": "2026-11-16_AMEX:XLV_signal_L",
   "doc": {
    "symbol": "AMEX:XLV",
    "cls": "etf",
@@ -210,8 +210,8 @@
    "verdict": "buy",
    "score": 48,
    "bias": "up",
-   "date": "2026-11-15",
-   "ts": 1794725152756,
+   "date": "2026-11-16",
+   "ts": 1794811502182,
    "status": "open"
   }
  }
