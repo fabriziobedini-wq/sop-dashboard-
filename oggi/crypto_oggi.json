@@ -1,14 +1,14 @@
 {
- "creato": "2026-11-23T00:48+00:00",
+ "creato": "2026-11-23T14:29+00:00",
  "archivio_fino_a": "2026-11-22",
  "asset": {
   "BTC": {
-   "archivio_ultima_candela": "22/11 00:00 UTC",
-   "ls_folla_binance": 2.19,
-   "ls_folla_percentile_90g": 74,
-   "funding_percentile_90g": 2,
-   "acquisti_aggressivi_percentile_90g": 98,
-   "oi_var_24h_percentile_90g": 22,
+   "archivio_ultima_candela": "23/11 00:00 UTC",
+   "ls_folla_binance": 2.1,
+   "ls_folla_percentile_90g": 70,
+   "funding_percentile_90g": 23,
+   "acquisti_aggressivi_percentile_90g": 54,
+   "oi_var_24h_percentile_90g": 91,
    "segnali_validati_72h": [
     {
      "segnale": "folla estrema",
@@ -22,27 +22,27 @@
    ],
    "crowd_oggi": "nessuno",
    "okx_ora": {
-    "prezzo": 61058.3,
-    "var_24h": 1.43,
-    "funding_pct": 0.0015,
-    "ls_folla_okx": 2.02,
-    "ls_folla_okx_24h_fa": 2.01,
-    "cvd_24h_usd_mln": 182.7,
-    "acquisti_aggressivi_pct": 51.3,
-    "oi_usd_mln": 1941.0,
-    "oi_var_24h_pct": 2.58,
-    "liq_long_24h_usd_mln": 0.04,
-    "liq_short_24h_usd_mln": 1.06
+    "prezzo": 64221.7,
+    "var_24h": 5.97,
+    "funding_pct": 0.0033,
+    "ls_folla_okx": 2.25,
+    "ls_folla_okx_24h_fa": 2.06,
+    "cvd_24h_usd_mln": 540.9,
+    "acquisti_aggressivi_pct": 53.3,
+    "oi_usd_mln": 1972.0,
+    "oi_var_24h_pct": 1.93,
+    "liq_long_24h_usd_mln": 0.0,
+    "liq_short_24h_usd_mln": 1.28
    },
    "contesto_4h": {
-    "oi_dal_massimo_4g_pct": -10.3,
+    "oi_dal_massimo_4g_pct": -8.8,
     "sopra_media20_4h": true,
     "minimo_crescente_4h": true
    },
    "checklist_ripartenza": {
     "cascata_liquidazioni_long": false,
     "folla_non_piu_long_estrema": false,
-    "leva_scaricata_oi_-10pct": true,
+    "leva_scaricata_oi_-10pct": false,
     "funding_negativo": false,
     "acquisti_aggressivi_tornano": true,
     "prezzo_sopra_media20_4h": true,
@@ -50,46 +50,56 @@
    }
   },
   "ETH": {
-   "archivio_ultima_candela": "22/11 00:00 UTC",
-   "ls_folla_binance": 1.87,
+   "archivio_ultima_candela": "23/11 00:00 UTC",
+   "ls_folla_binance": 1.86,
    "ls_folla_percentile_90g": 1,
-   "funding_percentile_90g": 12,
-   "acquisti_aggressivi_percentile_90g": 64,
-   "oi_var_24h_percentile_90g": 81,
+   "funding_percentile_90g": 5,
+   "acquisti_aggressivi_percentile_90g": 68,
+   "oi_var_24h_percentile_90g": 88,
    "segnali_validati_72h": [
     {
      "segnale": "folla estrema",
      "lato": "long",
-     "chiusura_ts": 1795305600000,
-     "atr": 51.623578,
-     "quando": "22/11 00:00 UTC",
-     "prezzo_segnale": 1684.86,
-     "scade": "25/11 00:00 UTC"
+     "chiusura_ts": 1795392000000,
+     "atr": 44.29168,
+     "quando": "23/11 00:00 UTC",
+     "prezzo_segnale": 1723.33,
+     "scade": "26/11 00:00 UTC"
+    },
+    {
+     "segnale": "liquidazioni (tempo reale OKX)",
+     "lato": "long",
+     "quando": "20/11 16:00 UTC",
+     "chiusura_ts": 1795190400000,
+     "prezzo_segnale": 1654.38,
+     "oi_var_pct": -2.7,
+     "atr": 34.090797,
+     "scade": "23/11 16:00 UTC"
     }
    ],
    "crowd_oggi": "long (folla troppo short)",
    "okx_ora": {
-    "prezzo": 1713.84,
-    "var_24h": 1.87,
-    "funding_pct": -0.0059,
-    "ls_folla_okx": 2.12,
-    "ls_folla_okx_24h_fa": 2.29,
-    "cvd_24h_usd_mln": 102.8,
-    "acquisti_aggressivi_pct": 51.1,
-    "oi_usd_mln": 1164.0,
-    "oi_var_24h_pct": 4.36,
-    "liq_long_24h_usd_mln": 0.13,
-    "liq_short_24h_usd_mln": 0.53
+    "prezzo": 1830.56,
+    "var_24h": 7.52,
+    "funding_pct": -0.0021,
+    "ls_folla_okx": 2.36,
+    "ls_folla_okx_24h_fa": 2.24,
+    "cvd_24h_usd_mln": 309.6,
+    "acquisti_aggressivi_pct": 53.0,
+    "oi_usd_mln": 1236.0,
+    "oi_var_24h_pct": 8.3,
+    "liq_long_24h_usd_mln": 0.26,
+    "liq_short_24h_usd_mln": 2.08
    },
    "contesto_4h": {
-    "oi_dal_massimo_4g_pct": -10.3,
+    "oi_dal_massimo_4g_pct": -4.8,
     "sopra_media20_4h": true,
     "minimo_crescente_4h": true
    },
    "checklist_ripartenza": {
-    "cascata_liquidazioni_long": false,
+    "cascata_liquidazioni_long": true,
     "folla_non_piu_long_estrema": true,
-    "leva_scaricata_oi_-10pct": true,
+    "leva_scaricata_oi_-10pct": false,
     "funding_negativo": true,
     "acquisti_aggressivi_tornano": true,
     "prezzo_sopra_media20_4h": true,
@@ -97,12 +107,12 @@
    }
   },
   "SOL": {
-   "archivio_ultima_candela": "22/11 00:00 UTC",
-   "ls_folla_binance": 3.31,
-   "ls_folla_percentile_90g": 82,
-   "funding_percentile_90g": 31,
-   "acquisti_aggressivi_percentile_90g": 33,
-   "oi_var_24h_percentile_90g": 44,
+   "archivio_ultima_candela": "23/11 00:00 UTC",
+   "ls_folla_binance": 3.46,
+   "ls_folla_percentile_90g": 88,
+   "funding_percentile_90g": 34,
+   "acquisti_aggressivi_percentile_90g": 93,
+   "oi_var_24h_percentile_90g": 24,
    "segnali_validati_72h": [
     {
      "segnale": "folla estrema",
@@ -116,20 +126,20 @@
    ],
    "crowd_oggi": "nessuno",
    "okx_ora": {
-    "prezzo": 70.43,
-    "var_24h": 0.16,
-    "funding_pct": -0.0015,
-    "ls_folla_okx": 2.36,
-    "ls_folla_okx_24h_fa": 2.2,
-    "cvd_24h_usd_mln": 11.4,
-    "acquisti_aggressivi_pct": 51.1,
-    "oi_usd_mln": 213.0,
-    "oi_var_24h_pct": 0.3,
-    "liq_long_24h_usd_mln": 0.27,
-    "liq_short_24h_usd_mln": 0.03
+    "prezzo": 77.38,
+    "var_24h": 10.51,
+    "funding_pct": -0.0055,
+    "ls_folla_okx": 2.41,
+    "ls_folla_okx_24h_fa": 2.35,
+    "cvd_24h_usd_mln": 50.9,
+    "acquisti_aggressivi_pct": 53.5,
+    "oi_usd_mln": 227.0,
+    "oi_var_24h_pct": 5.92,
+    "liq_long_24h_usd_mln": 0.04,
+    "liq_short_24h_usd_mln": 0.44
    },
    "contesto_4h": {
-    "oi_dal_massimo_4g_pct": -8.7,
+    "oi_dal_massimo_4g_pct": -2.6,
     "sopra_media20_4h": true,
     "minimo_crescente_4h": true
    },
@@ -144,30 +154,30 @@
    }
   },
   "XRP": {
-   "archivio_ultima_candela": "22/11 00:00 UTC",
-   "ls_folla_binance": 2.67,
-   "ls_folla_percentile_90g": 66,
-   "funding_percentile_90g": 43,
-   "acquisti_aggressivi_percentile_90g": 26,
-   "oi_var_24h_percentile_90g": 71,
+   "archivio_ultima_candela": "23/11 00:00 UTC",
+   "ls_folla_binance": 2.7,
+   "ls_folla_percentile_90g": 68,
+   "funding_percentile_90g": 36,
+   "acquisti_aggressivi_percentile_90g": 67,
+   "oi_var_24h_percentile_90g": 63,
    "segnali_validati_72h": [],
    "crowd_oggi": "nessuno",
    "okx_ora": {
-    "prezzo": 0.9211,
-    "var_24h": -1.0,
-    "funding_pct": 0.0014,
-    "ls_folla_okx": 1.93,
-    "ls_folla_okx_24h_fa": 1.88,
-    "cvd_24h_usd_mln": -0.5,
-    "acquisti_aggressivi_pct": 49.9,
-    "oi_usd_mln": 61.0,
-    "oi_var_24h_pct": -3.38,
-    "liq_long_24h_usd_mln": 0.36,
-    "liq_short_24h_usd_mln": 0.05
+    "prezzo": 1.008,
+    "var_24h": 9.67,
+    "funding_pct": 0.0001,
+    "ls_folla_okx": 1.86,
+    "ls_folla_okx_24h_fa": 1.89,
+    "cvd_24h_usd_mln": 8.1,
+    "acquisti_aggressivi_pct": 51.9,
+    "oi_usd_mln": 65.0,
+    "oi_var_24h_pct": 5.82,
+    "liq_long_24h_usd_mln": 0.2,
+    "liq_short_24h_usd_mln": 0.83
    },
    "contesto_4h": {
-    "oi_dal_massimo_4g_pct": -18.5,
-    "sopra_media20_4h": false,
+    "oi_dal_massimo_4g_pct": -10.3,
+    "sopra_media20_4h": true,
     "minimo_crescente_4h": true
    },
    "checklist_ripartenza": {
@@ -175,146 +185,131 @@
     "folla_non_piu_long_estrema": true,
     "leva_scaricata_oi_-10pct": true,
     "funding_negativo": false,
-    "acquisti_aggressivi_tornano": false,
-    "prezzo_sopra_media20_4h": false,
+    "acquisti_aggressivi_tornano": true,
+    "prezzo_sopra_media20_4h": true,
     "minimo_crescente_4h": true
    }
   },
   "BNB": {
-   "archivio_ultima_candela": "22/11 00:00 UTC",
+   "archivio_ultima_candela": "23/11 00:00 UTC",
    "ls_folla_binance": 2.37,
-   "ls_folla_percentile_90g": 40,
-   "funding_percentile_90g": 6,
-   "acquisti_aggressivi_percentile_90g": 11,
-   "oi_var_24h_percentile_90g": 48,
-   "segnali_validati_72h": [],
+   "ls_folla_percentile_90g": 43,
+   "funding_percentile_90g": 46,
+   "acquisti_aggressivi_percentile_90g": 70,
+   "oi_var_24h_percentile_90g": 70,
+   "segnali_validati_72h": [
+    {
+     "segnale": "liquidazioni (tempo reale OKX)",
+     "lato": "long",
+     "quando": "20/11 16:00 UTC",
+     "chiusura_ts": 1795190400000,
+     "prezzo_segnale": 546.32,
+     "oi_var_pct": -3.9,
+     "atr": 7.907614,
+     "scade": "23/11 16:00 UTC"
+    }
+   ],
    "crowd_oggi": "nessuno",
    "okx_ora": {
-    "prezzo": 558.48,
-    "var_24h": 1.56,
-    "funding_pct": -0.001,
+    "prezzo": 582.16,
+    "var_24h": 5.02,
+    "funding_pct": 0.0055,
     "ls_folla_okx": 1.5,
     "ls_folla_okx_24h_fa": 1.47,
-    "cvd_24h_usd_mln": 0.6,
-    "acquisti_aggressivi_pct": 50.8,
+    "cvd_24h_usd_mln": -0.6,
+    "acquisti_aggressivi_pct": 49.3,
     "oi_usd_mln": 31.0,
-    "oi_var_24h_pct": 0.88,
-    "liq_long_24h_usd_mln": 0.07,
-    "liq_short_24h_usd_mln": 0.05
+    "oi_var_24h_pct": 1.65,
+    "liq_long_24h_usd_mln": 0.0,
+    "liq_short_24h_usd_mln": 0.13
    },
    "contesto_4h": {
-    "oi_dal_massimo_4g_pct": -15.4,
+    "oi_dal_massimo_4g_pct": -12.9,
     "sopra_media20_4h": true,
     "minimo_crescente_4h": true
    },
    "checklist_ripartenza": {
-    "cascata_liquidazioni_long": false,
+    "cascata_liquidazioni_long": true,
     "folla_non_piu_long_estrema": true,
     "leva_scaricata_oi_-10pct": true,
-    "funding_negativo": true,
+    "funding_negativo": false,
     "acquisti_aggressivi_tornano": false,
     "prezzo_sopra_media20_4h": true,
     "minimo_crescente_4h": true
    }
   },
   "DOGE": {
-   "archivio_ultima_candela": "22/11 00:00 UTC",
+   "archivio_ultima_candela": "23/11 00:00 UTC",
    "ls_folla_binance": 2.28,
    "ls_folla_percentile_90g": 9,
-   "funding_percentile_90g": 56,
-   "acquisti_aggressivi_percentile_90g": 81,
-   "oi_var_24h_percentile_90g": 83,
-   "segnali_validati_72h": [],
+   "funding_percentile_90g": 4,
+   "acquisti_aggressivi_percentile_90g": 98,
+   "oi_var_24h_percentile_90g": 43,
+   "segnali_validati_72h": [
+    {
+     "segnale": "liquidazioni (tempo reale OKX)",
+     "lato": "long",
+     "quando": "20/11 16:00 UTC",
+     "chiusura_ts": 1795190400000,
+     "prezzo_segnale": 0.05381,
+     "oi_var_pct": -4.7,
+     "atr": 0.001114,
+     "scade": "23/11 16:00 UTC"
+    }
+   ],
    "crowd_oggi": "nessuno",
    "okx_ora": {
-    "prezzo": 0.05503,
-    "var_24h": -0.33,
-    "funding_pct": -0.0039,
-    "ls_folla_okx": 3.5,
-    "ls_folla_okx_24h_fa": 3.41,
-    "cvd_24h_usd_mln": 0.8,
-    "acquisti_aggressivi_pct": 50.3,
-    "oi_usd_mln": 57.0,
-    "oi_var_24h_pct": -0.8,
-    "liq_long_24h_usd_mln": 0.03,
-    "liq_short_24h_usd_mln": 0.16
+    "prezzo": 0.05968,
+    "var_24h": 8.85,
+    "funding_pct": 0.0051,
+    "ls_folla_okx": 3.7,
+    "ls_folla_okx_24h_fa": 3.48,
+    "cvd_24h_usd_mln": 8.5,
+    "acquisti_aggressivi_pct": 52.6,
+    "oi_usd_mln": 61.0,
+    "oi_var_24h_pct": 6.03,
+    "liq_long_24h_usd_mln": 0.0,
+    "liq_short_24h_usd_mln": 0.43
    },
    "contesto_4h": {
-    "oi_dal_massimo_4g_pct": -9.1,
-    "sopra_media20_4h": false,
+    "oi_dal_massimo_4g_pct": -2.3,
+    "sopra_media20_4h": true,
     "minimo_crescente_4h": true
    },
    "checklist_ripartenza": {
-    "cascata_liquidazioni_long": false,
+    "cascata_liquidazioni_long": true,
     "folla_non_piu_long_estrema": true,
     "leva_scaricata_oi_-10pct": false,
-    "funding_negativo": true,
-    "acquisti_aggressivi_tornano": false,
-    "prezzo_sopra_media20_4h": false,
+    "funding_negativo": false,
+    "acquisti_aggressivi_tornano": true,
+    "prezzo_sopra_media20_4h": true,
     "minimo_crescente_4h": true
    }
   },
   "ADA": {
-   "archivio_ultima_candela": "22/11 00:00 UTC",
-   "ls_folla_binance": 2.28,
+   "archivio_ultima_candela": "23/11 00:00 UTC",
+   "ls_folla_binance": 2.29,
    "ls_folla_percentile_90g": 86,
-   "funding_percentile_90g": 19,
-   "acquisti_aggressivi_percentile_90g": 44,
-   "oi_var_24h_percentile_90g": 74,
+   "funding_percentile_90g": 16,
+   "acquisti_aggressivi_percentile_90g": 66,
+   "oi_var_24h_percentile_90g": 63,
    "segnali_validati_72h": [],
    "crowd_oggi": "nessuno",
    "okx_ora": {
-    "prezzo": 0.1434,
-    "var_24h": -0.62,
-    "funding_pct": -0.0066,
-    "ls_folla_okx": 2.54,
-    "ls_folla_okx_24h_fa": 2.49,
-    "cvd_24h_usd_mln": 0.8,
-    "acquisti_aggressivi_pct": 51.7,
-    "oi_usd_mln": 17.0,
-    "oi_var_24h_pct": -1.22,
-    "liq_long_24h_usd_mln": 0.02,
-    "liq_short_24h_usd_mln": 0.0
-   },
-   "contesto_4h": {
-    "oi_dal_massimo_4g_pct": -7.1,
-    "sopra_media20_4h": false,
-    "minimo_crescente_4h": true
-   },
-   "checklist_ripartenza": {
-    "cascata_liquidazioni_long": false,
-    "folla_non_piu_long_estrema": false,
-    "leva_scaricata_oi_-10pct": false,
-    "funding_negativo": true,
-    "acquisti_aggressivi_tornano": true,
-    "prezzo_sopra_media20_4h": false,
-    "minimo_crescente_4h": true
-   }
-  },
-  "LINK": {
-   "archivio_ultima_candela": "22/11 00:00 UTC",
-   "ls_folla_binance": 1.83,
-   "ls_folla_percentile_90g": 79,
-   "funding_percentile_90g": 53,
-   "acquisti_aggressivi_percentile_90g": 97,
-   "oi_var_24h_percentile_90g": 46,
-   "segnali_validati_72h": [],
-   "crowd_oggi": "nessuno",
-   "okx_ora": {
-    "prezzo": 8.805,
-    "var_24h": 2.41,
-    "funding_pct": -0.0054,
-    "ls_folla_okx": 1.87,
-    "ls_folla_okx_24h_fa": 1.95,
-    "cvd_24h_usd_mln": 0.3,
-    "acquisti_aggressivi_pct": 50.9,
-    "oi_usd_mln": 17.0,
-    "oi_var_24h_pct": 3.73,
+    "prezzo": 0.1551,
+    "var_24h": 7.78,
+    "funding_pct": 0.01,
+    "ls_folla_okx": 2.27,
+    "ls_folla_okx_24h_fa": 2.52,
+    "cvd_24h_usd_mln": 1.8,
+    "acquisti_aggressivi_pct": 52.8,
+    "oi_usd_mln": 19.0,
+    "oi_var_24h_pct": 3.83,
     "liq_long_24h_usd_mln": 0.0,
-    "liq_short_24h_usd_mln": 0.04
+    "liq_short_24h_usd_mln": 0.08
    },
    "contesto_4h": {
-    "oi_dal_massimo_4g_pct": -6.0,
+    "oi_dal_massimo_4g_pct": -1.4,
     "sopra_media20_4h": true,
     "minimo_crescente_4h": true
    },
@@ -322,56 +317,93 @@
     "cascata_liquidazioni_long": false,
     "folla_non_piu_long_estrema": false,
     "leva_scaricata_oi_-10pct": false,
-    "funding_negativo": true,
+    "funding_negativo": false,
+    "acquisti_aggressivi_tornano": true,
+    "prezzo_sopra_media20_4h": true,
+    "minimo_crescente_4h": true
+   }
+  },
+  "LINK": {
+   "archivio_ultima_candela": "23/11 00:00 UTC",
+   "ls_folla_binance": 1.77,
+   "ls_folla_percentile_90g": 69,
+   "funding_percentile_90g": 5,
+   "acquisti_aggressivi_percentile_90g": 85,
+   "oi_var_24h_percentile_90g": 63,
+   "segnali_validati_72h": [],
+   "crowd_oggi": "nessuno",
+   "okx_ora": {
+    "prezzo": 9.476,
+    "var_24h": 8.35,
+    "funding_pct": 0.005,
+    "ls_folla_okx": 1.85,
+    "ls_folla_okx_24h_fa": 1.85,
+    "cvd_24h_usd_mln": 0.0,
+    "acquisti_aggressivi_pct": 50.1,
+    "oi_usd_mln": 18.0,
+    "oi_var_24h_pct": 9.69,
+    "liq_long_24h_usd_mln": 0.0,
+    "liq_short_24h_usd_mln": 0.09
+   },
+   "contesto_4h": {
+    "oi_dal_massimo_4g_pct": 0.0,
+    "sopra_media20_4h": true,
+    "minimo_crescente_4h": true
+   },
+   "checklist_ripartenza": {
+    "cascata_liquidazioni_long": false,
+    "folla_non_piu_long_estrema": true,
+    "leva_scaricata_oi_-10pct": false,
+    "funding_negativo": false,
     "acquisti_aggressivi_tornano": false,
     "prezzo_sopra_media20_4h": true,
     "minimo_crescente_4h": true
    }
   },
   "AVAX": {
-   "archivio_ultima_candela": "22/11 00:00 UTC",
+   "archivio_ultima_candela": "23/11 00:00 UTC",
    "ls_folla_binance": 1.65,
-   "ls_folla_percentile_90g": 28,
-   "funding_percentile_90g": 14,
-   "acquisti_aggressivi_percentile_90g": 36,
-   "oi_var_24h_percentile_90g": 62,
+   "ls_folla_percentile_90g": 29,
+   "funding_percentile_90g": 0,
+   "acquisti_aggressivi_percentile_90g": 74,
+   "oi_var_24h_percentile_90g": 54,
    "segnali_validati_72h": [],
    "crowd_oggi": "nessuno",
    "okx_ora": {
-    "prezzo": 6.646,
-    "var_24h": 1.03,
-    "funding_pct": -0.0213,
-    "ls_folla_okx": 2.09,
-    "ls_folla_okx_24h_fa": 2.13,
-    "cvd_24h_usd_mln": 0.2,
-    "acquisti_aggressivi_pct": 50.9,
+    "prezzo": 7.17,
+    "var_24h": 7.88,
+    "funding_pct": -0.0103,
+    "ls_folla_okx": 1.7,
+    "ls_folla_okx_24h_fa": 2.12,
+    "cvd_24h_usd_mln": 0.5,
+    "acquisti_aggressivi_pct": 51.8,
     "oi_usd_mln": 10.0,
-    "oi_var_24h_pct": -1.17,
+    "oi_var_24h_pct": 3.52,
     "liq_long_24h_usd_mln": 0.0,
-    "liq_short_24h_usd_mln": 0.01
+    "liq_short_24h_usd_mln": 0.02
    },
    "contesto_4h": {
-    "oi_dal_massimo_4g_pct": -13.3,
+    "oi_dal_massimo_4g_pct": -7.2,
     "sopra_media20_4h": true,
     "minimo_crescente_4h": true
    },
    "checklist_ripartenza": {
     "cascata_liquidazioni_long": false,
     "folla_non_piu_long_estrema": true,
-    "leva_scaricata_oi_-10pct": true,
+    "leva_scaricata_oi_-10pct": false,
     "funding_negativo": true,
-    "acquisti_aggressivi_tornano": false,
+    "acquisti_aggressivi_tornano": true,
     "prezzo_sopra_media20_4h": true,
     "minimo_crescente_4h": true
    }
   },
   "TRX": {
-   "archivio_ultima_candela": "22/11 00:00 UTC",
-   "ls_folla_binance": 1.11,
-   "ls_folla_percentile_90g": 28,
-   "funding_percentile_90g": 53,
-   "acquisti_aggressivi_percentile_90g": 98,
-   "oi_var_24h_percentile_90g": 12,
+   "archivio_ultima_candela": "23/11 00:00 UTC",
+   "ls_folla_binance": 1.22,
+   "ls_folla_percentile_90g": 67,
+   "funding_percentile_90g": 58,
+   "acquisti_aggressivi_percentile_90g": 85,
+   "oi_var_24h_percentile_90g": 29,
    "segnali_validati_72h": [
     {
      "segnale": "folla estrema",
@@ -385,18 +417,67 @@
    ],
    "crowd_oggi": "nessuno",
    "okx_ora": {
-    "prezzo": 0.30512,
-    "var_24h": -0.06,
-    "funding_pct": -0.0093,
-    "ls_folla_okx": 2.07,
-    "ls_folla_okx_24h_fa": 2.0,
-    "cvd_24h_usd_mln": 0.9,
-    "acquisti_aggressivi_pct": 55.7,
+    "prezzo": 0.31063,
+    "var_24h": 1.88,
+    "funding_pct": 0.01,
+    "ls_folla_okx": 1.86,
+    "ls_folla_okx_24h_fa": 2.02,
+    "cvd_24h_usd_mln": 0.0,
+    "acquisti_aggressivi_pct": 50.1,
     "oi_usd_mln": 23.0,
-    "oi_var_24h_pct": -0.68
+    "oi_var_24h_pct": -3.5,
+    "liq_long_24h_usd_mln": 0.0,
+    "liq_short_24h_usd_mln": 0.0
    },
    "contesto_4h": {
-    "oi_dal_massimo_4g_pct": -9.0,
+    "oi_dal_massimo_4g_pct": -11.5,
+    "sopra_media20_4h": true,
+    "minimo_crescente_4h": true
+   },
+   "checklist_ripartenza": {
+    "cascata_liquidazioni_long": false,
+    "folla_non_piu_long_estrema": true,
+    "leva_scaricata_oi_-10pct": true,
+    "funding_negativo": false,
+    "acquisti_aggressivi_tornano": false,
+    "prezzo_sopra_media20_4h": true,
+    "minimo_crescente_4h": true
+   }
+  },
+  "SUI": {
+   "archivio_ultima_candela": "23/11 00:00 UTC",
+   "ls_folla_binance": 1.98,
+   "ls_folla_percentile_90g": 20,
+   "funding_percentile_90g": 21,
+   "acquisti_aggressivi_percentile_90g": 64,
+   "oi_var_24h_percentile_90g": 73,
+   "segnali_validati_72h": [
+    {
+     "segnale": "folla estrema",
+     "lato": "long",
+     "chiusura_ts": 1795334400000,
+     "atr": 0.021871,
+     "quando": "22/11 08:00 UTC",
+     "prezzo_segnale": 0.6392,
+     "scade": "25/11 08:00 UTC"
+    }
+   ],
+   "crowd_oggi": "nessuno",
+   "okx_ora": {
+    "prezzo": 0.7248,
+    "var_24h": 10.57,
+    "funding_pct": 0.0012,
+    "ls_folla_okx": 2.5,
+    "ls_folla_okx_24h_fa": 2.57,
+    "cvd_24h_usd_mln": 2.0,
+    "acquisti_aggressivi_pct": 52.1,
+    "oi_usd_mln": 21.0,
+    "oi_var_24h_pct": 9.19,
+    "liq_long_24h_usd_mln": 0.02,
+    "liq_short_24h_usd_mln": 0.19
+   },
+   "contesto_4h": {
+    "oi_dal_massimo_4g_pct": -2.0,
     "sopra_media20_4h": true,
     "minimo_crescente_4h": true
    },
@@ -404,110 +485,49 @@
     "cascata_liquidazioni_long": false,
     "folla_non_piu_long_estrema": true,
     "leva_scaricata_oi_-10pct": false,
-    "funding_negativo": true,
+    "funding_negativo": false,
     "acquisti_aggressivi_tornano": true,
     "prezzo_sopra_media20_4h": true,
     "minimo_crescente_4h": true
    }
   },
-  "SUI": {
-   "archivio_ultima_candela": "22/11 00:00 UTC",
-   "ls_folla_binance": 1.91,
-   "ls_folla_percentile_90g": 8,
-   "funding_percentile_90g": 10,
-   "acquisti_aggressivi_percentile_90g": 4,
-   "oi_var_24h_percentile_90g": 31,
-   "segnali_validati_72h": [],
-   "crowd_oggi": "nessuno",
-   "okx_ora": {
-    "prezzo": 0.6506,
-    "var_24h": 0.56,
-    "funding_pct": -0.0012,
-    "ls_folla_okx": 2.54,
-    "ls_folla_okx_24h_fa": 2.61,
-    "cvd_24h_usd_mln": -0.2,
-    "acquisti_aggressivi_pct": 49.6,
-    "oi_usd_mln": 19.0,
-    "oi_var_24h_pct": -3.75,
-    "liq_long_24h_usd_mln": 0.03,
-    "liq_short_24h_usd_mln": 0.15
-   },
-   "contesto_4h": {
-    "oi_dal_massimo_4g_pct": -11.7,
-    "sopra_media20_4h": false,
-    "minimo_crescente_4h": true
-   },
-   "checklist_ripartenza": {
-    "cascata_liquidazioni_long": false,
-    "folla_non_piu_long_estrema": true,
-    "leva_scaricata_oi_-10pct": true,
-    "funding_negativo": true,
-    "acquisti_aggressivi_tornano": false,
-    "prezzo_sopra_media20_4h": false,
-    "minimo_crescente_4h": true
-   }
-  },
   "LTC": {
-   "archivio_ultima_candela": "22/11 00:00 UTC",
-   "ls_folla_binance": 1.96,
-   "ls_folla_percentile_90g": 24,
-   "funding_percentile_90g": 0,
-   "acquisti_aggressivi_percentile_90g": 16,
-   "oi_var_24h_percentile_90g": 80,
+   "archivio_ultima_candela": "23/11 00:00 UTC",
+   "ls_folla_binance": 1.92,
+   "ls_folla_percentile_90g": 16,
+   "funding_percentile_90g": 4,
+   "acquisti_aggressivi_percentile_90g": 92,
+   "oi_var_24h_percentile_90g": 70,
    "segnali_validati_72h": [],
    "crowd_oggi": "nessuno",
    "okx_ora": {
-    "prezzo": 39.94,
-    "var_24h": 0.55,
-    "funding_pct": -0.0038,
-    "ls_folla_okx": 2.75,
-    "ls_folla_okx_24h_fa": 2.79,
-    "cvd_24h_usd_mln": 1.0,
-    "acquisti_aggressivi_pct": 53.2,
-    "oi_usd_mln": 19.0,
-    "oi_var_24h_pct": 0.87,
+    "prezzo": 43.42,
+    "var_24h": 9.56,
+    "funding_pct": 0.0027,
+    "ls_folla_okx": 2.64,
+    "ls_folla_okx_24h_fa": 2.69,
+    "cvd_24h_usd_mln": 2.5,
+    "acquisti_aggressivi_pct": 55.9,
+    "oi_usd_mln": 20.0,
+    "oi_var_24h_pct": 1.67,
     "liq_long_24h_usd_mln": 0.0,
-    "liq_short_24h_usd_mln": 0.0
+    "liq_short_24h_usd_mln": 0.08
    },
    "contesto_4h": {
-    "oi_dal_massimo_4g_pct": -7.2,
-    "sopra_media20_4h": false,
+    "oi_dal_massimo_4g_pct": -5.0,
+    "sopra_media20_4h": true,
     "minimo_crescente_4h": true
    },
    "checklist_ripartenza": {
     "cascata_liquidazioni_long": false,
     "folla_non_piu_long_estrema": true,
     "leva_scaricata_oi_-10pct": false,
-    "funding_negativo": true,
+    "funding_negativo": false,
     "acquisti_aggressivi_tornano": true,
-    "prezzo_sopra_media20_4h": false,
+    "prezzo_sopra_media20_4h": true,
     "minimo_crescente_4h": true
    }
   }
  },
- "mercato": {
-  "ora": {
-   "t": 1795394894507,
-   "tot": 2078009913491.789,
-   "btc": 58.88055278338397,
-   "eth": 10.05480994319963,
-   "usdt": 8.371552734233022,
-   "usdc": 3.2791574990639965,
-   "var24h_tot": -2.8216895754897195,
-   "alt": 19.413927040119386
-  },
-  "fa7": {
-   "t": 1794853539739,
-   "tot": 2220294093205.0737,
-   "btc": 58.62499561592672,
-   "eth": 9.985127793639524,
-   "usdt": 7.8749655932357,
-   "usdc": 3.0962323623063157,
-   "var24h_tot": -0.9975320693750936,
-   "alt": 20.418678634891737,
-   "giorno": "2026-11-16"
-  },
-  "fa30": null,
-  "storico_giorni": 9
- }
+ "mercato": null
 }
