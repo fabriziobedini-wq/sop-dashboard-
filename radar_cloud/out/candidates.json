@@ -1,6 +1,30 @@
 [
  {
-  "id": "2026-11-22_BINANCE:XRPUSDT_signal_S",
+  "id": "2026-11-23_BINANCE:ETHUSDT_signal_S",
+  "doc": {
+   "symbol": "BINANCE:ETHUSDT",
+   "cls": "crypto",
+   "v": 3,
+   "cluster": "crypto",
+   "source": "scopri",
+   "kind": "signal",
+   "dir": -1,
+   "entry": 1720.92,
+   "stop": 2000.6771631726476,
+   "tp1": 1230.1728523879826,
+   "tp2": null,
+   "zone": null,
+   "grade": "C",
+   "verdict": "sell",
+   "score": -68,
+   "bias": "down",
+   "date": "2026-11-23",
+   "ts": 1795420278146,
+   "status": "open"
+  }
+ },
+ {
+  "id": "2026-11-23_BINANCE:XRPUSDT_signal_S",
   "doc": {
    "symbol": "BINANCE:XRPUSDT",
    "cls": "crypto",
@@ -9,22 +33,22 @@
    "source": "scopri",
    "kind": "signal",
    "dir": -1,
-   "entry": 0.9143,
-   "stop": 1.0681451991447903,
-   "tp1": 0.6244811839537507,
+   "entry": 0.9371,
+   "stop": 1.0847776849201622,
+   "tp1": 0.6588919251067236,
    "tp2": null,
    "zone": null,
-   "grade": "A",
+   "grade": "C",
    "verdict": "sell",
-   "score": -57,
+   "score": -54,
    "bias": "down",
-   "date": "2026-11-22",
-   "ts": 1795330980596,
+   "date": "2026-11-23",
+   "ts": 1795420278147,
    "status": "open"
   }
  },
  {
-  "id": "2026-11-22_BINANCE:DOGEUSDT_signal_S",
+  "id": "2026-11-23_BINANCE:DOGEUSDT_signal_S",
   "doc": {
    "symbol": "BINANCE:DOGEUSDT",
    "cls": "crypto",
@@ -33,22 +57,22 @@
    "source": "scopri",
    "kind": "signal",
    "dir": -1,
-   "entry": 0.05416,
-   "stop": 0.06394245167616996,
-   "tp1": 0.034403720542733496,
+   "entry": 0.05552,
+   "stop": 0.0650037051278721,
+   "tp1": 0.03636705807921668,
    "tp2": null,
    "zone": null,
    "grade": "C",
    "verdict": "sell",
-   "score": -58,
+   "score": -60,
    "bias": "down",
-   "date": "2026-11-22",
-   "ts": 1795330980596,
+   "date": "2026-11-23",
+   "ts": 1795420278147,
    "status": "open"
   }
  },
  {
-  "id": "2026-11-22_BINANCE:AVAXUSDT_signal_S",
+  "id": "2026-11-23_BINANCE:AVAXUSDT_signal_S",
   "doc": {
    "symbol": "BINANCE:AVAXUSDT",
    "cls": "crypto",
@@ -57,22 +81,22 @@
    "source": "scopri",
    "kind": "signal",
    "dir": -1,
-   "entry": 6.509,
-   "stop": 7.928353124577187,
-   "tp1": 4.024219402502746,
+   "entry": 6.718,
+   "stop": 8.089542187107387,
+   "tp1": 4.316919285014745,
    "tp2": null,
    "zone": null,
    "grade": "C",
    "verdict": "sell",
-   "score": -50,
+   "score": -48,
    "bias": "down",
-   "date": "2026-11-22",
-   "ts": 1795330980596,
+   "date": "2026-11-23",
+   "ts": 1795420278147,
    "status": "open"
   }
  },
  {
-  "id": "2026-11-22_BINANCE:ATOMUSDT_signal_S",
+  "id": "2026-11-23_BINANCE:ATOMUSDT_signal_S",
   "doc": {
    "symbol": "BINANCE:ATOMUSDT",
    "cls": "crypto",
@@ -81,22 +105,46 @@
    "source": "scopri",
    "kind": "signal",
    "dir": -1,
-   "entry": 1.147,
-   "stop": 1.3656030260545564,
-   "tp1": 0.7997613146243218,
+   "entry": 1.194,
+   "stop": 1.4073456670506594,
+   "tp1": 0.8551138583495388,
    "tp2": null,
    "zone": null,
    "grade": "A",
    "verdict": "sell",
-   "score": -77,
+   "score": -57,
    "bias": "down",
-   "date": "2026-11-22",
-   "ts": 1795330980596,
+   "date": "2026-11-23",
+   "ts": 1795420278147,
    "status": "open"
   }
  },
  {
-  "id": "2026-11-22_NASDAQ:COST_signal_L",
+  "id": "2026-11-23_BINANCE:ARBUSDT_signal_S",
+  "doc": {
+   "symbol": "BINANCE:ARBUSDT",
+   "cls": "crypto",
+   "v": 3,
+   "cluster": "crypto",
+   "source": "scopri",
+   "kind": "signal",
+   "dir": -1,
+   "entry": 0.1153,
+   "stop": 0.14588339435435904,
+   "tp1": 0.05829492118069649,
+   "tp2": null,
+   "zone": null,
+   "grade": "A",
+   "verdict": "sell",
+   "score": -50,
+   "bias": "down",
+   "date": "2026-11-23",
+   "ts": 1795420278147,
+   "status": "open"
+  }
+ },
+ {
+  "id": "2026-11-23_NASDAQ:COST_signal_L",
   "doc": {
    "symbol": "NASDAQ:COST",
    "cls": "stock",
@@ -114,13 +162,13 @@
    "verdict": "buy",
    "score": 49,
    "bias": "up",
-   "date": "2026-11-22",
-   "ts": 1795330980596,
+   "date": "2026-11-23",
+   "ts": 1795420278147,
    "status": "open"
   }
  },
  {
-  "id": "2026-11-22_NYSE:LLY_level_L",
+  "id": "2026-11-23_NYSE:LLY_level_L",
   "doc": {
    "symbol": "NYSE:LLY",
    "cls": "stock",
@@ -138,13 +186,13 @@
    "verdict": "hold",
    "score": 25,
    "bias": "up",
-   "date": "2026-11-22",
-   "ts": 1795330980597,
+   "date": "2026-11-23",
+   "ts": 1795420278148,
    "status": "open"
   }
  },
  {
-  "id": "2026-11-22_NYSE:WMT_signal_L",
+  "id": "2026-11-23_NYSE:WMT_signal_L",
   "doc": {
    "symbol": "NYSE:WMT",
    "cls": "stock",
@@ -162,13 +210,13 @@
    "verdict": "buy",
    "score": 52,
    "bias": "up",
-   "date": "2026-11-22",
-   "ts": 1795330980597,
+   "date": "2026-11-23",
+   "ts": 1795420278148,
    "status": "open"
   }
  },
  {
-  "id": "2026-11-22_EURONEXT:MC_signal_S",
+  "id": "2026-11-23_EURONEXT:MC_signal_S",
   "doc": {
    "symbol": "EURONEXT:MC",
    "cls": "stock",
@@ -186,13 +234,13 @@
    "verdict": "sell",
    "score": -52,
    "bias": "down",
-   "date": "2026-11-22",
-   "ts": 1795330980597,
+   "date": "2026-11-23",
+   "ts": 1795420278148,
    "status": "open"
   }
  },
  {
-  "id": "2026-11-22_NYMEX:NG1!_signal_L",
+  "id": "2026-11-23_NYMEX:NG1!_signal_L",
   "doc": {
    "symbol": "NYMEX:NG1!",
    "cls": "cmd",
@@ -201,17 +249,65 @@
    "source": "scopri",
    "kind": "signal",
    "dir": 1,
-   "entry": 3.747999906539917,
-   "stop": 3.271256600141859,
-   "tp1": 4.497184322272476,
+   "entry": 3.559999942779541,
+   "stop": 3.12022092516115,
+   "tp1": 4.251096350309963,
    "tp2": null,
    "zone": null,
    "grade": "C",
    "verdict": "buy",
-   "score": 77,
+   "score": 52,
    "bias": "flat",
-   "date": "2026-11-22",
-   "ts": 1795330980597,
+   "date": "2026-11-23",
+   "ts": 1795420278148,
+   "status": "open"
+  }
+ },
+ {
+  "id": "2026-11-23_CBOT:ZC1!_signal_S",
+  "doc": {
+   "symbol": "CBOT:ZC1!",
+   "cls": "cmd",
+   "v": 3,
+   "cluster": "cmd:ZC1!",
+   "source": "scopri",
+   "kind": "signal",
+   "dir": -1,
+   "entry": 449.75,
+   "stop": 462.25,
+   "tp1": 419.9798870606752,
+   "tp2": null,
+   "zone": null,
+   "grade": "C",
+   "verdict": "sell",
+   "score": -43,
+   "bias": "flat",
+   "date": "2026-11-23",
+   "ts": 1795420278148,
+   "status": "open"
+  }
+ },
+ {
+  "id": "2026-11-23_CBOT:ZC1!_level_S",
+  "doc": {
+   "symbol": "CBOT:ZC1!",
+   "cls": "cmd",
+   "v": 3,
+   "cluster": "cmd:ZC1!",
+   "source": "scopri",
+   "kind": "level",
+   "dir": -1,
+   "entry": 449.75,
+   "stop": 463.8674342908917,
+   "tp1": 407.92348685817836,
+   "tp2": null,
+   "zone": 455.5,
+   "grade": "C",
+   "verdict": "sell",
+   "score": -43,
+   "bias": "flat",
+   "date": "2026-11-23",
+   "ts": 1795420278148,
    "status": "open"
   }
  }
